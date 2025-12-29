@@ -3,897 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XO SUPREME - BUG FIXED</title>
+    <title>XO SUPREME FINAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #020617; --panel: #1e293b; --accent: #38bdf8; --text: #f8fafc; --gold: #fbbf24; }
-        body { font-family: 'Kanit', sans-serif; background: var(--bg); color: var(--text); text-align: center; margin: 0; padding: 10px; }
-        .container { max-width: 450px; margin: 0 auto; }
-        .header { background: var(--panel); padding: 20px; border-radius: 25px; margin-bottom: 15px; border: 1px solid #334155; }
-        .coin-display { font-size: 2.2rem; color: var(--gold); font-weight: bold; }
-        .board { display: grid; grid-template-columns: repeat(3, 100px); gap: 10px; justify-content: center; margin: 20px auto; }
-        .cell { width: 100px; height: 100px; background: var(--panel); border: 2px solid #334155; font-size: 2.5rem; cursor: pointer; color: white; border-radius: 18px; display: flex; align-items: center; justify-content: center; }
-        .cell:hover { border-color: var(--accent); }
-        .shop { background: #0f172a; padding: 15px; border-radius: 20px; display: flex; gap: 10px; margin-bottom: 20px; }
-        .item-btn { flex: 1; padding: 10px; border-radius: 12px; border: none; cursor: pointer; color: white; font-weight: bold; font-size: 0.8rem; }
-        .btn-blue { background: #3b82f6; } .btn-purple { background: #8b5cf6; }
-        .main-btn { background: linear-gradient(45deg, #0ea5e9, #6366f1); color: white; width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; }
-        .leaderboard { background: var(--panel); padding: 15px; border-radius: 20px; text-align: left; border: 1px solid var(--gold); font-size: 0.9rem; }
+        body { font-family: 'Kanit', sans-serif; background: var(--bg); color: var(--text); text-align: center; margin: 0; padding: 10px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 400px; background: var(--panel); padding: 25px; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid #334155; }
+        .coin-box { font-size: 2.5rem; color: var(--gold); font-weight: bold; margin-bottom: 15px; }
+        .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
+        .cell { aspect-ratio: 1/1; background: #0f172a; border: 2px solid #334155; border-radius: 15px; font-size: 2.5rem; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .cell:hover { border-color: var(--accent); background: #1e293b; }
+        .btn { background: linear-gradient(45deg, #0ea5e9, #6366f1); color: white; border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
+        .shop { display: flex; gap: 10px; margin-bottom: 15px; }
+        .shop-item { flex: 1; background: #334155; border: none; color: white; padding: 10px; border-radius: 10px; font-size: 0.75rem; cursor: pointer; }
+        .shop-item:disabled { opacity: 0.5; cursor: not-allowed; }
+        input { width: 90%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; background: #0f172a; color: white; text-align: center; }
+        .leaderboard { text-align: left; margin-top: 20px; padding: 15px; background: #0f172a; border-radius: 15px; font-size: 0.85rem; border: 1px solid #334155; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="setup-screen">
-        <h1 style="color: var(--accent);">XO SUPREME</h1>
-        <input type="text" id="usernameInput" placeholder="ใส่ชื่อของคุณ" style="padding:10px; border-radius:8px; border:none; width:80%; margin-bottom:10px;"><br>
-        <button onclick="startGame()" class="main-btn">เข้าสู่เกม</button>
+    <div id="login-part">
+        <h1 style="color: var(--accent); margin-bottom: 5px;">XO SUPREME</h1>
+        <p style="font-size: 0.8rem; opacity: 0.7;">เวอร์ชันแก้บัคโค้ดหลุด 100%</p>
+        <input type="text" id="nameInp" placeholder="ใส่ชื่อเท่ๆ ของคุณ">
+        <button class="btn" onclick="goPlay()">เริ่มตำนาน</button>
     </div>
 
-    <div id="game-screen" style="display:none;">
-        <div class="header">
-            <div class="coin-display">🪙 <span id="coin-count">0</span></div>
-            <div id="user-display" style="color: var(--accent);"></div>
-            <select id="difficulty" style="background:#0f172a; color:white; border:none; padding:5px; margin-top:10px;">
-                <option value="hard">ยากนรก (5% Win)</option>
-                <option value="easy">ง่าย</option>
-            </select>
-        </div>
-
+    <div id="game-part" style="display:none;">
+        <div class="coin-box">🪙 <span id="c-count">0</span></div>
+        <div id="u-tag" style="color: var(--accent); font-weight: bold; margin-bottom: 10px;"></div>
+        
         <div class="shop">
-            <button class="item-btn btn-blue" onclick="useItem('remove')">🧹 ลบตา AI (100🪙)</button>
-            <button class="item-btn btn-purple" id="double-btn" onclick="useItem('double')">✖️ ชนะ x2 (50🪙)</button>
+            <button class="shop-item" onclick="buy('rem')">🧹 ลบ O AI<br>(100🪙)</button>
+            <button class="shop-item" id="x2-btn" onclick="buy('x2')">✖️ ชนะ x2<br>(50🪙)</button>
         </div>
 
-        <div class="board" id="board"></div>
-        <button onclick="resetGame()" class="main-btn">เริ่มใหม่</button>
+        <div class="board" id="main-board"></div>
+        
+        <button class="btn" onclick="re()">ล้างกระดาน</button>
 
-        <div class="leaderboard" style="margin-top:20px;">
-            <h3 style="margin:0 0 10px 0; color:var(--gold);">🏆 อันดับสูงสุด</h3>
-            <div id="lb-content"></div>
+        <div class="leaderboard">
+            <b style="color: var(--gold);">🏆 TOP RANKING</b>
+            <div id="lb-view" style="margin-top:5px;"></div>
         </div>
     </div>
 </div>
 
 <script>
-    let coins = parseInt(localStorage.getItem('xo_coins')) || 0;
-    let userName = localStorage.getItem('xo_username') || '';
-    let board = Array(9).fill('');
-    let gameActive = true;
-    let isDouble = false;
+    // ตัวแปรระบบ
+    let c = parseInt(localStorage.getItem('xo_c')) || 0;
+    let u = localStorage.getItem('xo_u') || '';
+    let b = Array(9).fill('');
+    let active = true;
+    let isX2 = false;
 
-    function startGame() {
-        const input = document.getElementById('usernameInput').value || userName;
-        if(input) {
-            userName = input;
-            localStorage.setItem('xo_username', userName);
-            document.getElementById('setup-screen').style.display = 'none';
-            document.getElementById('game-screen').style.display = 'block';
-            document.getElementById('user-display').innerText = "นักรบ: " + userName;
-            updateUI();
+    function goPlay() {
+        let val = document.getElementById('nameInp').value || u;
+        if(val) {
+            u = val; localStorage.setItem('xo_u', u);
+            document.getElementById('login-part').style.display = 'none';
+            document.getElementById('game-part').style.display = 'block';
+            document.getElementById('u-tag').innerText = "PLAYER: " + u;
+            draw();
         }
     }
 
-    function updateUI() {
-        const boardDiv = document.getElementById('board');
-        boardDiv.innerHTML = '';
-        board.forEach((val, i) => {
-            const cell = document.createElement('div');
-            cell.className = 'cell';
-            cell.innerText = val;
-            cell.onclick = () => playTurn(i);
-            boardDiv.appendChild(cell);
+    function draw() {
+        const grid = document.getElementById('main-board');
+        grid.innerHTML = '';
+        b.forEach((v, i) => {
+            const div = document.createElement('div');
+            div.className = 'cell';
+            div.innerText = v;
+            div.onclick = () => tap(i);
+            grid.appendChild(div);
         });
-        document.getElementById('coin-count').innerText = coins.toLocaleString();
-        renderLeaderboard();
+        document.getElementById('c-count').innerText = c.toLocaleString();
+        updateLB();
     }
 
-    function playTurn(i) {
-        if(board[i] === '' && gameActive) {
-            board[i] = 'X';
-            updateUI();
-            if(checkWin(board, 'X')) { endGame('X'); }
-            else if(board.every(s => s !== '')) { endGame('tie'); }
-            else { gameActive = false; setTimeout(aiMove, 500); }
+    function tap(i) {
+        if(b[i] === '' && active) {
+            b[i] = 'X'; draw();
+            if(win('X')) { finish('X'); }
+            else if(b.every(s => s !== '')) { finish('T'); }
+            else { active = false; setTimeout(ai, 500); }
         }
     }
 
-    function aiMove() {
-        const diff = document.getElementById('difficulty').value;
-        let move;
-        if(diff === 'hard' && Math.random() > 0.05) {
-            move = minimax(board, 'O').index;
-        } else {
-            let avail = board.map((v,i) => v==='' ? i : null).filter(v => v!==null);
-            move = avail[Math.floor(Math.random()*avail.length)];
+    function ai() {
+        let empty = b.map((v,i) => v==='' ? i : null).filter(v => v!==null);
+        if(empty.length > 0) {
+            let move = empty[Math.floor(Math.random() * empty.length)];
+            b[move] = 'O';
+            if(win('O')) finish('O');
+            else if(b.every(s => s !== '')) finish('T');
         }
-        if(move !== undefined) board[move] = 'O';
-        if(checkWin(board, 'O')) { endGame('O'); }
-        else if(board.every(s => s !== '')) { endGame('tie'); }
-        gameActive = true;
-        updateUI();
+        active = true; draw();
     }
 
-    function useItem(type) {
-        if(type === 'remove' && coins >= 100) {
-            let aiMoves = board.map((v,i) => v==='O' ? i : null).filter(v => v!==null);
-            if(aiMoves.length > 0) {
-                coins -= 100;
-                board[aiMoves[Math.floor(Math.random()*aiMoves.length)]] = '';
-                updateUI();
-            }
-        } else if(type === 'double' && coins >= 50) {
-            coins -= 50;
-            isDouble = true;
-            document.getElementById('double-btn').innerText = "✅ x2 ทำงาน";
-            document.getElementById('double-btn').disabled = true;
-            updateUI();
-        } else { alert("เหรียญไม่พอ!"); }
+    function buy(t) {
+        if(t === 'rem' && c >= 100) {
+            let o = b.map((v,i) => v==='O' ? i : null).filter(v => v!==null);
+            if(o.length > 0) { c -= 100; b[o[0]] = ''; draw(); }
+        } else if(t === 'x2' && c >= 50) {
+            c -= 50; isX2 = true;
+            document.getElementById('x2-btn').innerText = "✅ ACTIVE";
+            document.getElementById('x2-btn').disabled = true;
+            draw();
+        } else { alert("เงินไม่พอ!"); }
     }
 
-    function endGame(w) {
-        gameActive = false;
-        if(w === 'X') {
-            let prize = (document.getElementById('difficulty').value === 'hard') ? 100 : 30;
-            if(isDouble) prize *= 2;
-            coins += prize;
-            alert("คุณชนะ! รับ " + prize + " 🪙");
-        } else if(w === 'O') { alert("แพ้ AI!"); }
+    function finish(res) {
+        active = false;
+        if(res === 'X') {
+            let p = isX2 ? 100 : 50; c += p;
+            alert("คุณชนะ! +" + p + " 🪙");
+        } else if(res === 'O') { alert("AI ชนะ!"); }
         else { alert("เสมอ!"); }
-        isDouble = false;
-        document.getElementById('double-btn').innerText = "✖️ ชนะ x2 (50🪙)";
-        document.getElementById('double-btn').disabled = false;
-        localStorage.setItem('xo_coins', coins);
-        resetGame();
+        
+        isX2 = false;
+        document.getElementById('x2-btn').innerText = "✖️ ชนะ x2 (50🪙)";
+        document.getElementById('x2-btn').disabled = false;
+        localStorage.setItem('xo_c', c);
+        re();
     }
 
-    function checkWin(b, p) {
-        const winLines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-        return winLines.some(line => line.every(i => b[i] === p));
+    function win(p) {
+        const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        return lines.some(l => l.every(i => b[i] === p));
     }
 
-    function minimax(b, p) {
-        let avail = b.map((v,i) => v==='' ? i : null).filter(v => v!==null);
-        if(checkWin(b, 'X')) return {score: -10};
-        if(checkWin(b, 'O')) return {score: 10};
-        if(avail.length === 0) return {score: 0};
-        let moves = [];
-        for(let i=0; i<avail.length; i++) {
-            let move = {index: avail[i]};
-            b[avail[i]] = p;
-            move.score = minimax(b, p==='O'?'X':'O').score;
-            b[avail[i]] = '';
-            moves.push(move);
-        }
-        let bestMove;
-        if(p === 'O') {
-            let bestScore = -10000;
-            for(let i=0; i<moves.length; i++) {
-                if(moves[i].score > bestScore) { bestScore = moves[i].score; bestMove = i; }
-            }
-        } else {
-            let bestScore = 10000;
-            for(let i=0; i<moves.length; i++) {
-                if(moves[i].score < bestScore) { bestScore = moves[i].score; bestMove = i; }
-            }
-        }
-        return moves[bestMove];
+    function updateLB() {
+        let list = JSON.parse(localStorage.getItem('xo_lb')) || [];
+        let f = list.findIndex(x => x.n === u);
+        if(f > -1) list[f].c = c; else if(u) list.push({n: u, c: c});
+        list.sort((x,y) => y.c - x.c);
+        localStorage.setItem('xo_lb', JSON.stringify(list));
+        document.getElementById('lb-view').innerHTML = list.slice(0,3).map((p,i) => `<div>${i+1}. ${p.n}: ${p.c}</div>`).join('');
     }
 
-    function renderLeaderboard() {
-        let lb = JSON.parse(localStorage.getItem('xo_leaderboard')) || [];
-        let userIdx = lb.findIndex(x => x.name === userName);
-        if(userIdx > -1) lb[userIdx].coins = coins; else if(userName) lb.push({name: userName, coins: coins});
-        lb.sort((a,b) => b.coins - a.coins);
-        localStorage.setItem('xo_leaderboard', JSON.stringify(lb));
-        document.getElementById('lb-content').innerHTML = lb.slice(0,5).map((p,i) => `<div>${i+1}. ${p.name}: ${p.coins} 🪙</div>`).join('');
-    }
-
-    function resetGame() { board = Array(9).fill(''); gameActive = true; updateUI(); }
-    if(userName) startGame();
+    function re() { b = Array(9).fill(''); active = true; draw(); }
+    if(u) goPlay();
 </script>
 
-</body>
-</html>
-            <h1 style="color: var(--accent); font-size: 3rem;">XO SUPREME</h1>
-            <p>ก้าวเข้าสู่ตำนานและสะสมเหรียญทอง</p>
-            <input type="text" id="usernameInput" placeholder="ใส่ชื่อนักรบของคุณ"><br>
-            <button onclick="startGame()" class="play-btn">เข้าสู่เกม</button>
-        </div>
-
-        <div id="game-screen" style="display:none;">
-            <div class="header">
-                <div class="coin-display">🪙 <span id="coin-count">0</span></div>
-                <div style="color: var(--accent);">ผู้เล่น: <span id="user-name-tag"></span></div>
-                <div style="margin-top: 10px;">
-                    ระดับ: <select id="difficulty" onchange="resetGame()">
-                        <option value="hard">ยากนรก (AI 95%)</option>
-                        <option value="medium">ปกติ</option>
-                        <option value="easy">ง่ายมาก</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="shop-panel">
-                <button id="item-remove" class="item-btn btn-blue" onclick="buyItem('remove')">🧹 ลบตา AI<br>(100🪙)</button>
-                <button id="item-double" class="item-btn btn-purple" onclick="buyItem('double')">✖️ ชนะ x2<br>(50🪙)</button>
-            </div>
-
-            <div class="board" id="board"></div>
-            <button onclick="resetGame()" class="play-btn">เริ่มกระดานใหม่</button>
-
-            <div class="leaderboard">
-                <h3 style="margin: 0 0 10px 0; color: var(--gold);">🏆 GLOBAL RANKING</h3>
-                <div id="lb-list"></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let coins = parseInt(localStorage.getItem('xo_coins')) || 0;
-        let userName = localStorage.getItem('xo_username') || '';
-        let board = Array(9).fill('');
-        let gameActive = true;
-        let x2Active = false;
-
-        function startGame() {
-            const input = document.getElementById('usernameInput').value;
-            if (input) {
-                userName = input;
-                localStorage.setItem('xo_username', userName);
-                document.getElementById('setup-screen').style.display = 'none';
-                document.getElementById('game-screen').style.display = 'block';
-                document.getElementById('user-name-tag').innerText = userName;
-                renderBoard();
-            } else { alert("กรุณาใส่ชื่อ!"); }
-        }
-
-        function renderBoard() {
-            const container = document.getElementById('board');
-            container.innerHTML = '';
-            board.forEach((val, i) => {
-                const cell = document.createElement('div');
-                cell.className = `cell ${val.toLowerCase()}`;
-                cell.innerText = val;
-                cell.onclick = () => userMove(i);
-                container.appendChild(cell);
-            });
-            document.getElementById('coin-count').innerText = coins.toLocaleString();
-            updateLeaderboard();
-        }
-
-        function userMove(i) {
-            if (board[i] === '' && gameActive) {
-                board[i] = 'X';
-                if (checkWin(board, 'X')) endGame('X');
-                else if (board.every(s => s !== '')) endGame('tie');
-                else { gameActive = false; setTimeout(aiMove, 400); }
-                renderBoard();
-            }
-        }
-
-        function aiMove() {
-            const diff = document.getElementById('difficulty').value;
-            let move;
-            if (diff === 'hard' && Math.random() < 0.95) move = minimax(board, 'O').index;
-            else move = board.map((v, i) => v === '' ? i : null).filter(v => v !== null)[0];
-
-            if (move !== undefined) board[move] = 'O';
-            if (checkWin(board, 'O')) endGame('O');
-            else if (board.every(s => s !== '')) endGame('tie');
-            gameActive = true;
-            renderBoard();
-        }
-
-        function buyItem(type) {
-            if (type === 'remove' && coins >= 100) {
-                const aiPos = board.map((v, i) => v === 'O' ? i : null).filter(v => v !== null);
-                if (aiPos.length > 0) {
-                    coins -= 100;
-                    board[aiPos[Math.floor(Math.random() * aiPos.length)]] = '';
-                    renderBoard();
-                }
-            } else if (type === 'double' && coins >= 50) {
-                coins -= 50;
-                x2Active = true;
-                document.getElementById('item-double').innerText = "✅ ACTIVE";
-                document.getElementById('item-double').disabled = true;
-                renderBoard();
-            } else { alert("เหรียญไม่พอ!"); }
-        }
-
-        function checkWin(b, p) {
-            const winPaths = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            return winPaths.some(path => path.every(i => b[i] === p));
-        }
-
-        function minimax(newBoard, player) {
-            let avail = newBoard.map((v, i) => v === '' ? i : null).filter(v => v !== null);
-            if (checkWin(newBoard, 'X')) return { score: -10 };
-            if (checkWin(newBoard, 'O')) return { score: 10 };
-            if (avail.length === 0) return { score: 0 };
-
-            let moves = [];
-            for (let i = 0; i < avail.length; i++) {
-                let move = { index: avail[i] };
-                newBoard[avail[i]] = player;
-                move.score = minimax(newBoard, player === 'O' ? 'X' : 'O').score;
-                newBoard[avail[i]] = '';
-                moves.push(move);
-            }
-            return moves.reduce((best, m) => (player === 'O' ? m.score > best.score : m.score < best.score) ? m : best);
-        }
-
-        function endGame(winner) {
-            gameActive = false;
-            if (winner === 'X') {
-                let winPrize = 50;
-                if (x2Active) winPrize *= 2;
-                coins += winPrize;
-                alert(`นักรบ ${userName} ชนะ! รับเหรียญ: ${winPrize}`);
-            } else if (winner === 'O') { alert("ปราชัยแก่ AI..."); }
-            else { alert("เสมอ!"); }
-            
-            localStorage.setItem('xo_coins', coins);
-            resetGame();
-        }
-
-        function updateLeaderboard() {
-            let lb = JSON.parse(localStorage.getItem('xo_leaderboard')) || [
-                {name: "LordXO", coins: 5000}, {name: "AI_Slayer", coins: 2500}
-            ];
-            const myIdx = lb.findIndex(u => u.name === userName);
-            if (myIdx > -1) lb[myIdx].coins = coins; else if(userName) lb.push({name: userName, coins: coins});
-            lb.sort((a,b) => b.coins - a.coins);
-            localStorage.setItem('xo_leaderboard', JSON.stringify(lb));
-            document.getElementById('lb-list').innerHTML = lb.slice(0, 5).map((p, i) => `
-                <div class="lb-entry">
-                    <span>${i+1}. ${p.name} ${p.name === userName ? '⭐' : ''}</span>
-                    <span style="color:var(--gold)">🪙 ${p.coins}</span>
-                </div>
-            `).join('');
-        }
-
-        function resetGame() {
-            board = Array(9).fill('');
-            gameActive = true;
-            x2Active = false;
-            document.getElementById('item-double').innerText = "✖️ ชนะ x2 (50🪙)";
-            document.getElementById('item-double').disabled = false;
-            renderBoard();
-        }
-
-        if (userName) startGame();
-    </script>
-</body>
-</html>
-                else { gameActive=false; setTimeout(aiMove, 500); }
-                updateUI();
-            }
-        }
-
-        function aiMove() {
-            // ปรับแก้บัค AI เดินทับช่องเดิม
-            let move = minimax(board, 'O').index;
-            if(move !== undefined) {
-                board[move] = 'O';
-                if(checkWin(board, 'O')) handleGameOver('O');
-                else if(board.every(s=>s!=='')) handleGameOver('tie');
-            }
-            gameActive = true;
-            updateUI();
-        }
-
-        function handleGameOver(w) {
-            gameActive = false;
-            if(w === 'X') {
-                let prize = 100;
-                if(isDouble) prize *= 2;
-                coins += prize;
-                alert(`ชนะแล้ว! ได้รับ ${prize} 🪙`);
-            } else if(w === 'O') { alert("แพ้ AI!"); }
-            else { alert("เสมอ!"); }
-            
-            isDouble = false;
-            localStorage.setItem('xo_coins', coins);
-            resetGame();
-        }
-
-        function checkWin(b, p) {
-            return [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]].some(c=>c.every(i=>b[i]===p));
-        }
-
-        function minimax(b, p) {
-            let a = b.map((v,i)=>v===''?i:null).filter(v=>v!==null);
-            if(checkWin(b, 'X')) return {score:-10};
-            if(checkWin(b, 'O')) return {score:10};
-            if(a.length===0) return {score:0};
-            let moves = [];
-            for(let i=0; i<a.length; i++) {
-                let m = {index: a[i]}; b[a[i]] = p;
-                m.score = minimax(b, p==='O'?'X':'O').score;
-                b[a[i]] = ''; moves.push(m);
-            }
-            return moves.reduce((p_m, c_m) => (p==='O' ? c_m.score > p_m.score : c_m.score < p_m.score) ? c_m : p_m);
-        }
-
-        function updateLeaderboard() {
-            let lb = JSON.parse(localStorage.getItem('xo_leaderboard')) || [];
-            let idx = lb.findIndex(x => x.name === userName);
-            if(idx > -1) lb[idx].coins = coins; else lb.push({name:userName, coins:coins});
-            lb.sort((a,b) => b.coins - a.coins);
-            document.getElementById('lb-content').innerHTML = lb.slice(0,5).map((p,i) => `<div>${i+1}. ${p.name}: ${p.coins}</div>`).join('');
-            localStorage.setItem('xo_leaderboard', JSON.stringify(lb));
-        }
-
-        function resetGame() { board=Array(9).fill(''); gameActive=true; updateUI(); }
-        updateUI();
-    </script>
-</body>
-</html>
-        <h1>🛠️ ปิดปรับปรุงระบบ</h1>
-        
-        <div class="announcement">
-            ขออภัยในความไม่สะดวก ขณะนี้ทีมพัฒนาเกม XO Ultimate กำลังดำเนินการอัปเกรดระบบครั้งใหญ่ <br>
-            เพื่อเตรียมพร้อมสำหรับการยกระดับประสบการณ์การเล่นเกมของคุณให้ก้าวไปอีกขั้น <br>
-            โดยในเวอร์ชันถัดไปที่กำลังจะมาถึง เราจะทำการติดตั้งระบบฐานข้อมูลแบบ Global <br>
-            ที่จะช่วยให้คุณสามารถจัดอันดับ Rank และเปรียบเทียบเหรียญรางวัลกับผู้เล่นคนอื่นๆ ทั่วโลกได้จริง <br>
-            นอกจากนี้เรายังมีการปรับปรุง AI สมองกลในระดับยากนรกให้มีความซับซ้อนและท้าทายมากยิ่งขึ้น <br>
-            รวมไปถึงการเพิ่มไอเทมลับชุดใหม่ในร้านค้าที่จะช่วยให้การวางกลยุทธ์ของคุณสนุกกว่าที่เคย <br>
-            เราให้ความสำคัญกับความเสถียรของระบบและการป้องกันการโกงเหรียญเพื่อให้เกิดความยุติธรรมสูงสุด <br>
-            ดังนั้นจึงต้องใช้เวลาในการตรวจสอบความเรียบร้อยของโค้ดในทุกๆ บรรทัดอย่างละเอียด <br>
-            กำหนดการเปิดให้บริการอีกครั้งคาดว่าจะเสร็จสิ้นในเร็วๆ นี้ โปรดเตรียมตัวให้พร้อม <br>
-            สำหรับสนามรบ XO โฉมใหม่ที่จะทำให้คุณและเพื่อนๆ ต้องตื่นตาตื่นใจกับฟีเจอร์ที่เราตั้งใจสร้างสรรค์ <br>
-            ขอขอบคุณผู้เล่นทุกท่านที่ให้การสนับสนุนและติดตามการพัฒนาเกมเล็กๆ ของเราเสมอมา <br>
-            ทีมงานกำลังเร่งดำเนินการอย่างเต็มความสามารถเพื่อให้ระบบกลับมาพร้อมใช้งานโดยเร็วที่สุด <br>
-            ความปลอดภัยของข้อมูลผู้เล่นและเหรียญสะสมจะยังคงถูกรักษาไว้อย่างดีเยี่ยมในระหว่างการอัปเกรด <br>
-            หากมีข้อสงสัยเพิ่มเติม สามารถติดตามการอัปเดตได้ผ่านหน้า GitHub Repository ของเรา <br>
-            แล้วพบกันใหม่ในเวอร์ชันสมบูรณ์ที่พร้อมจะสร้างตำนานบทใหม่บนโลกของเกมกระดานดิจิทัล!
-        </div>
-    </div>
-
-</body>
-</html>
-        let coins = parseInt(localStorage.getItem('xo_coins')) || 0;
-        let userName = localStorage.getItem('xo_username') || '';
-        let history = JSON.parse(localStorage.getItem('xo_history')) || [];
-        let board = Array(9).fill('');
-        let gameActive = true;
-        let gameMode = 'ai';
-        let currentPlayer = 'X';
-
-        function saveName() {
-            const name = document.getElementById('usernameInput').value;
-            if(name) { userName = name; localStorage.setItem('xo_username', name); showGame(); }
-        }
-
-        function showGame() {
-            document.getElementById('setup-section').style.display='none';
-            document.getElementById('game-section').style.display='block';
-            updateUI();
-        }
-
-        function setMode(mode) {
-            gameMode = mode;
-            document.getElementById('btn-ai').className = mode === 'ai' ? 'mode-btn active' : 'mode-btn';
-            document.getElementById('btn-pvp').className = mode === 'pvp' ? 'mode-btn active' : 'mode-btn';
-            document.getElementById('ai-settings').style.display = mode === 'ai' ? 'block' : 'none';
-            resetGame();
-        }
-
-        function updateUI() {
-            const boardDiv = document.getElementById('board');
-            boardDiv.innerHTML = '';
-            board.forEach((cell, i) => {
-                const btn = document.createElement('button');
-                btn.className = 'cell'; btn.innerText = cell;
-                btn.onclick = () => playTurn(i);
-                boardDiv.appendChild(btn);
-            });
-            document.getElementById('coin-count').innerText = coins.toLocaleString();
-            renderHistory();
-        }
-
-        function playTurn(i) {
-            if(board[i] === '' && gameActive) {
-                board[i] = currentPlayer;
-                updateUI();
-                if(checkWin(board, currentPlayer)) {
-                    handleGameOver(currentPlayer);
-                } else if(board.every(s=>s!=='')) {
-                    handleGameOver('tie');
-                } else {
-                    if(gameMode === 'ai') {
-                        gameActive = false;
-                        setTimeout(aiMove, 500);
-                    } else {
-                        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-                    }
-                }
-            }
-        }
-
-        function aiMove() {
-            const diff = document.getElementById('difficulty').value;
-            let m;
-            if (diff === 'hard') {
-                m = (Math.random() < 0.05) ? randomMove() : minimax(board, 'O').index;
-            } else if (diff === 'medium') {
-                m = (Math.random() < 0.4) ? minimax(board, 'O').index : randomMove();
-            } else { m = randomMove(); }
-
-            board[m] = 'O'; gameActive = true;
-            if(checkWin(board, 'O')) handleGameOver('O');
-            else if(board.every(s=>s!=='')) handleGameOver('tie');
-            updateUI();
-        }
-
-        function handleGameOver(w) {
-            gameActive = false;
-            const bet = parseInt(document.getElementById('betAmount').value) || 0;
-            const diff = document.getElementById('difficulty').value;
-            let resultMsg = "";
-
-            if(gameMode === 'ai') {
-                if(w === 'X') {
-                    const prize = {easy:10, medium:30, hard:50}[diff] + bet;
-                    coins += prize; resultMsg = `ชนะ AI! รับ ${prize} 🪙`;
-                } else if(w === 'O') {
-                    coins -= bet; if(coins < 0) coins = 0;
-                    resultMsg = `แพ้ AI! เสีย ${bet} 🪙`;
-                } else { resultMsg = "เสมอ AI!"; }
-            } else {
-                if(w === 'tie') { resultMsg = "เสมอกับเพื่อน!"; }
-                else {
-                    if(w === 'X') { coins += bet; resultMsg = `คุณชนะเพื่อน! ยึดมา ${bet} 🪙`; }
-                    else { coins -= bet; if(coins < 0) coins = 0; resultMsg = `เพื่อนชนะ! คุณเสีย ${bet} 🪙`; }
-                }
-            }
-
-            history.unshift({ res: resultMsg, time: new Date().toLocaleTimeString() });
-            if(history.length > 5) history.pop();
-            localStorage.setItem('xo_history', JSON.stringify(history));
-            localStorage.setItem('xo_coins', coins);
-            setTimeout(() => { alert(resultMsg); updateUI(); }, 100);
-        }
-
-        function minimax(b, p) {
-            let a = b.map((v,i)=>v===''?i:null).filter(v=>v!==null);
-            if(checkWin(b, 'X')) return {score:-10};
-            if(checkWin(b, 'O')) return {score:10};
-            if(a.length===0) return {score:0};
-            let moves = [];
-            for(let i=0; i<a.length; i++) {
-                let m = {index: a[i]}; b[a[i]] = p;
-                m.score = minimax(b, p==='O'?'X':'O').score;
-                b[a[i]] = ''; moves.push(m);
-            }
-            return moves.reduce((p_m, c_m) => (p === 'O' ? c_m.score > p_m.score : c_m.score < p_m.score) ? c_m : p_m);
-        }
-
-        function checkWin(b, p) { return [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]].some(c=>c.every(i=>b[i]===p)); }
-        function randomMove() { let a=board.map((v,i)=>v===''?i:null).filter(v=>v!==null); return a[Math.floor(Math.random()*a.length)]; }
-        function renderHistory() { document.getElementById('battle-log').innerHTML = history.map(h => `<div style="border-bottom:1px solid #334155; padding:5px 0;"><span>${h.res}</span> <small style="float:right; opacity:0.5;">${h.time}</small></div>`).join(''); }
-        function redeemCode() { if(document.getElementById('promoInput').value==='GIFT2000'){ coins+=2000; localStorage.setItem('xo_coins', coins); updateUI(); alert("รวยทันที! +2000 🪙"); } }
-        function resetGame() { board=Array(9).fill(''); gameActive=true; currentPlayer='X'; updateUI(); }
-        if(userName) showGame();
-    </script>
-</body>
-</html>
-        let coins = parseInt(localStorage.getItem('xo_coins')) || 0;
-        let userName = localStorage.getItem('xo_username') || '';
-        let history = JSON.parse(localStorage.getItem('xo_history')) || [];
-        let board = Array(9).fill('');
-        let gameActive = true;
-        let gameMode = 'ai'; // 'ai' หรือ 'pvp'
-        let currentPlayer = 'X';
-
-        function saveName() {
-            const name = document.getElementById('usernameInput').value;
-            if(name) { userName = name; localStorage.setItem('xo_username', name); showGame(); }
-        }
-
-        function showGame() {
-            document.getElementById('setup-section').style.display='none';
-            document.getElementById('game-section').style.display='block';
-            updateUI();
-        }
-
-        function setMode(mode) {
-            gameMode = mode;
-            document.getElementById('btn-ai').className = mode === 'ai' ? 'mode-btn active' : 'mode-btn';
-            document.getElementById('btn-pvp').className = mode === 'pvp' ? 'mode-btn active' : 'mode-btn';
-            document.getElementById('difficulty').style.display = mode === 'ai' ? 'inline-block' : 'none';
-            resetGame();
-        }
-
-        function updateUI() {
-            const boardDiv = document.getElementById('board');
-            boardDiv.innerHTML = '';
-            board.forEach((cell, i) => {
-                const btn = document.createElement('button');
-                btn.className = 'cell'; btn.innerText = cell;
-                btn.onclick = () => playTurn(i);
-                boardDiv.appendChild(btn);
-            });
-            document.getElementById('coin-count').innerText = coins.toLocaleString();
-            updateRank();
-            renderHistory();
-        }
-
-        function updateRank() {
-            let r="BRONZE", c="#cd7f32";
-            if(coins>5000) { r="LEGEND"; c="#ef4444"; }
-            else if(coins>2000) { r="GOLD"; c="#fbbf24"; }
-            else if(coins>500) { r="SILVER"; c="#94a3b8"; }
-            const b = document.getElementById('rank-display');
-            b.innerText = `RANK: ${r}`; b.style.background = c;
-        }
-
-        function playTurn(i) {
-            if(board[i] === '' && gameActive) {
-                board[i] = currentPlayer;
-                updateUI();
-                
-                if(checkWin(board, currentPlayer)) {
-                    handleGameOver(currentPlayer);
-                } else if(board.every(s=>s!=='')) {
-                    handleGameOver('tie');
-                } else {
-                    if(gameMode === 'ai') {
-                        gameActive = false;
-                        setTimeout(aiMove, 500);
-                    } else {
-                        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-                        document.getElementById('turn-info').innerText = `ตาของฝ่าย: ${currentPlayer}`;
-                    }
-                }
-            }
-        }
-
-        function aiMove() {
-            const diff = document.getElementById('difficulty').value;
-            let m;
-            // ระดับยากนรก: มีโอกาส 5% ที่จะเดินมั่ว (ช่วยให้ผู้เล่นมีโอกาสชนะ 5%)
-            if (diff === 'hard') {
-                m = (Math.random() < 0.05) ? randomMove() : minimax(board, 'O').index;
-            } else if (diff === 'medium') {
-                m = (Math.random() < 0.4) ? minimax(board, 'O').index : randomMove();
-            } else {
-                m = randomMove();
-            }
-
-            board[m] = 'O';
-            gameActive = true;
-            if(checkWin(board, 'O')) handleGameOver('O');
-            else if(board.every(s=>s!=='')) handleGameOver('tie');
-            updateUI();
-        }
-
-        function handleGameOver(w) {
-            gameActive = false;
-            const bet = parseInt(document.getElementById('betAmount').value) || 0;
-            const diff = document.getElementById('difficulty').value;
-            let resultText = "";
-
-            if(gameMode === 'ai') {
-                if(w === 'X') {
-                    const prize = {easy:10, medium:30, hard:50}[diff] + bet;
-                    coins += prize;
-                    resultText = `ชนะ AI! รับ ${prize} 🪙`;
-                } else if(w === 'O') {
-                    coins -= bet; if(coins < 0) coins = 0;
-                    resultText = `แพ้ AI! เสีย ${bet} 🪙`;
-                } else {
-                    resultText = "เสมอ AI!";
-                }
-            } else {
-                // โหมดแข่งกับเพื่อน (PvP)
-                if(w === 'tie') {
-                    resultText = "เสมอกับเพื่อน!";
-                } else {
-                    // ผู้ชนะยึดเหรียญ (จำลองการเดิมพัน)
-                    if(w === 'X') {
-                        coins += bet;
-                        resultText = `ฝ่าย X ชนะเพื่อน! ยึดมาได้ ${bet} 🪙`;
-                    } else {
-                        coins -= bet; if(coins < 0) coins = 0;
-                        resultText = `ฝ่าย O ชนะคุณ! เสียไป ${bet} 🪙`;
-                    }
-                }
-            }
-
-            // บันทึกประวัติ
-            history.unshift({ res: resultText, time: new Date().toLocaleTimeString() });
-            if(history.length > 5) history.pop();
-            localStorage.setItem('xo_history', JSON.stringify(history));
-            localStorage.setItem('xo_coins', coins);
-            
-            setTimeout(() => { alert(resultText); updateUI(); }, 100);
-        }
-
-        function minimax(b, p) {
-            let a = b.map((v,i)=>v===''?i:null).filter(v=>v!==null);
-            if(checkWin(b, 'X')) return {score:-10};
-            if(checkWin(b, 'O')) return {score:10};
-            if(a.length===0) return {score:0};
-            let moves = [];
-            for(let i=0; i<a.length; i++) {
-                let m = {index: a[i]}; b[a[i]] = p;
-                m.score = minimax(b, p==='O'?'X':'O').score;
-                b[a[i]] = ''; moves.push(m);
-            }
-            return moves.reduce((p_m, c_m) => (p === 'O' ? c_m.score > p_m.score : c_m.score < p_m.score) ? c_m : p_m);
-        }
-
-        function checkWin(b, p) { return [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]].some(c=>c.every(i=>b[i]===p)); }
-        function randomMove() { let a=board.map((v,i)=>v===''?i:null).filter(v=>v!==null); return a[Math.floor(Math.random()*a.length)]; }
-        function renderHistory() { document.getElementById('battle-log').innerHTML = history.map(h => `<div class="log-entry"><span>${h.res}</span><span style="color:#94a3b8">${h.time}</span></div>`).join(''); }
-        function redeemCode() { if(document.getElementById('promoInput').value==='GIFT2000'){ coins+=2000; localStorage.setItem('xo_coins', coins); updateUI(); alert("รวย! รับ 2000 เหรียญ"); } }
-        function resetGame() { board=Array(9).fill(''); gameActive=true; currentPlayer='X'; document.getElementById('turn-info').innerText = gameMode==='ai'?'โหมด: แข่งกับ AI':'ตาของฝ่าย: X'; updateUI(); }
-        if(userName) showGame();
-    </script>
-</body>
-</html>
-            { name: 'X-O', sym: ['X', 'O'], price: 0 },
-            { name: 'Fire-Ice', sym: ['🔥', '❄️'], price: 500 },
-            { name: 'King-Skull', sym: ['👑', '💀'], price: 1000 },
-            { name: 'Cat-Dog', sym: ['🐱', '🐶'], price: 1500 },
-            { name: 'Alien-Robot', sym: ['👽', '🤖'], price: 2500 }
-        ];
-
-        let board = Array(9).fill('');
-        let gameActive = true;
-
-        function getSym() {
-            const s = skins.find(x => x.name === currentSkin);
-            return { hu: s.sym[0], ai: s.sym[1] };
-        }
-
-        function initUI() {
-            // Board
-            const boardDiv = document.getElementById('board');
-            boardDiv.innerHTML = '';
-            board.forEach((cell, i) => {
-                const btn = document.createElement('button');
-                btn.className = 'cell';
-                btn.innerText = cell;
-                btn.onclick = () => playTurn(i);
-                boardDiv.appendChild(btn);
-            });
-
-            // Stats
-            document.getElementById('coin-count').innerText = coins.toLocaleString();
-
-            // Shop
-            const shopDiv = document.getElementById('shop-items');
-            shopDiv.innerHTML = '';
-            skins.forEach(skin => {
-                const isOwned = ownedSkins.includes(skin.name);
-                const isEquipped = currentSkin === skin.name;
-                
-                shopDiv.innerHTML += `
-                    <div class="skin-item">
-                        <span>${skin.sym[0]} vs ${skin.sym[1]} (${skin.name})</span>
-                        ${isEquipped ? '<span class="owned">ใช้งานอยู่</span>' : 
-                          isOwned ? `<button class="btn-use" onclick="setSkin('${skin.name}')">เลือกใช้</button>` : 
-                          `<button class="btn-buy" onclick="buySkin('${skin.name}', ${skin.price})">💰 ${skin.price}</button>`}
-                    </div>
-                `;
-            });
-        }
-
-        function playTurn(index) {
-            const sym = getSym();
-            if (board[index] === '' && gameActive) {
-                board[index] = sym.hu;
-                if (!checkWin(board, sym.hu) && !checkTie()) {
-                    gameActive = false;
-                    setTimeout(aiMove, 500);
-                } else {
-                    handleGameOver(sym.hu);
-                }
-                initUI();
-            }
-        }
-
-        function aiMove() {
-            const sym = getSym();
-            const diff = document.getElementById('difficulty').value;
-            let move = (diff === 'hard') ? minimax(board, sym.ai).index : 
-                       (diff === 'medium' && Math.random() > 0.4) ? minimax(board, sym.ai).index : 
-                       randomMove();
-
-            board[move] = sym.ai;
-            gameActive = true;
-            if (checkWin(board, sym.ai)) handleGameOver(sym.ai);
-            else if (checkTie()) handleGameOver('tie');
-            initUI();
-        }
-
-        function minimax(newBoard, player) {
-            const sym = getSym();
-            let avail = newBoard.map((v, i) => v === '' ? i : null).filter(v => v !== null);
-            if (checkWin(newBoard, sym.hu)) return {score: -10};
-            if (checkWin(newBoard, sym.ai)) return {score: 10};
-            if (avail.length === 0) return {score: 0};
-
-            let moves = [];
-            for (let i = 0; i < avail.length; i++) {
-                let move = { index: avail[i] };
-                newBoard[avail[i]] = player;
-                move.score = minimax(newBoard, player === sym.ai ? sym.hu : sym.ai).score;
-                newBoard[avail[i]] = '';
-                moves.push(move);
-            }
-            return moves.reduce((prev, curr) => 
-                (player === sym.ai ? (curr.score > prev.score) : (curr.score < prev.score)) ? curr : prev
-            );
-        }
-
-        function checkWin(b, p) {
-            const win = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            return win.some(c => c.every(i => b[i] === p));
-        }
-        function checkTie() { return board.every(s => s !== ''); }
-        function randomMove() {
-            let avail = board.map((v, i) => v === '' ? i : null).filter(v => v !== null);
-            return avail[Math.floor(Math.random() * avail.length)];
-        }
-
-        function handleGameOver(winner) {
-            gameActive = false;
-            const sym = getSym();
-            if (winner === sym.hu) {
-                const rewards = { easy: 10, medium: 30, hard: 50 };
-                const prize = rewards[document.getElementById('difficulty').value];
-                coins += prize;
-                alert(`ชนะแล้ว! รับ ${prize} เหรียญ`);
-            } else if (winner === sym.ai) alert("AI ชนะ! ฝึกมาใหม่นะ");
-            else alert("เสมอ!");
-            saveData();
-        }
-
-        function buySkin(name, price) {
-            if (coins >= price) {
-                coins -= price;
-                ownedSkins.push(name);
-                saveData();
-                initUI();
-                alert(`ซื้อสกิน ${name} สำเร็จ!`);
-            } else {
-                alert("เหรียญไม่พอครับ ไปปั๊มเหรียญจาก AI ก่อนนะ!");
-            }
-        }
-
-        function setSkin(name) {
-            currentSkin = name;
-            saveData();
-            initUI();
-        }
-
-        function redeemCode() {
-            if (document.getElementById('promoInput').value === 'GIFT2000') {
-                coins += 2000;
-                saveData();
-                initUI();
-                alert("รับไปเลย 2000 เหรียญ!");
-            }
-        }
-
-        function saveData() {
-            localStorage.setItem('xo_coins', coins);
-            localStorage.setItem('xo_skins', JSON.stringify(ownedSkins));
-            localStorage.setItem('xo_current_skin', currentSkin);
-        }
-
-        function resetGame() {
-            board = Array(9).fill('');
-            gameActive = true;
-            initUI();
-        }
-
-        initUI();
-    </script>
 </body>
 </html>
