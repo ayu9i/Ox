@@ -3,66 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XO Ultimate - Battle & AI</title>
+    <title>SYSTEM UPDATE - XO ULTIMATE</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0f172a; --panel: #1e293b; --accent: #38bdf8; --text: #f8fafc; --gold: #fbbf24; }
-        body { font-family: 'Kanit', sans-serif; background: var(--bg); color: var(--text); text-align: center; margin: 0; padding: 10px; }
-        .header { background: var(--panel); padding: 15px; border-radius: 20px; display: inline-block; margin-bottom: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 95%; max-width: 400px; border: 1px solid #334155; }
-        .coin-display { font-size: 2rem; color: var(--gold); font-weight: bold; }
-        .board { display: grid; grid-template-columns: repeat(3, 95px); gap: 10px; justify-content: center; margin: 15px auto; }
-        .cell { width: 95px; height: 95px; background: var(--panel); border: 2px solid #334155; font-size: 2.5rem; cursor: pointer; color: white; border-radius: 15px; transition: 0.2s; }
-        .cell:hover { border-color: var(--accent); transform: translateY(-3px); }
-        .mode-btn { background: #475569; color: white; padding: 8px 15px; border-radius: 8px; border: none; cursor: pointer; margin: 5px; font-size: 0.9rem; }
-        .mode-btn.active { background: var(--accent); color: #000; font-weight: bold; }
-        button.main-btn { background: linear-gradient(45deg, #38bdf8, #818cf8); color: white; width: 100%; max-width: 280px; font-weight: bold; padding: 15px; border-radius: 12px; border: none; cursor: pointer; margin-top: 10px; font-size: 1.1rem; }
-        .history { margin-top: 20px; background: var(--panel); padding: 15px; border-radius: 15px; max-width: 400px; margin: 20px auto; text-align: left; font-size: 0.8rem; }
+        body { 
+            background: #020617; 
+            color: #f8fafc; 
+            font-family: 'Kanit', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            overflow: hidden;
+        }
+        .container { 
+            max-width: 600px; 
+            padding: 40px; 
+            background: rgba(30, 41, 59, 0.5); 
+            border: 1px solid #38bdf8; 
+            border-radius: 30px; 
+            box-shadow: 0 0 50px rgba(56, 189, 248, 0.2); 
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+        .loader {
+            border: 4px solid #1e293b;
+            border-top: 4px solid #38bdf8;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        h1 { color: #38bdf8; font-size: 2rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        .announcement { 
+            text-align: justify; 
+            line-height: 1.8; 
+            font-size: 0.95rem; 
+            color: #cbd5e1; 
+            border-left: 3px solid #38bdf8; 
+            padding-left: 20px;
+        }
+        .status-tag {
+            display: inline-block;
+            background: #0ea5e9;
+            color: #000;
+            padding: 2px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
 
-    <div id="setup-section">
-        <h1>🎮 XO ULTIMATE</h1>
-        <input type="text" id="usernameInput" placeholder="ใส่ชื่อของคุณ" style="padding:12px; border-radius:8px; border:none; width: 200px;"><br>
-        <button onclick="saveName()" class="main-btn">เข้าสู่สนามรบ</button>
-    </div>
-
-    <div id="game-section" style="display:none;">
-        <div class="header">
-            <div id="rank-display" style="font-size: 0.8rem; color: var(--accent);">RANK: BRONZE</div>
-            <div class="coin-display">🪙 <span id="coin-count">0</span></div>
-            <div style="margin: 10px 0;">
-                <button id="btn-ai" class="mode-btn active" onclick="setMode('ai')">แข่งกับ AI</button>
-                <button id="btn-pvp" class="mode-btn" onclick="setMode('pvp')">แข่งกับเพื่อน</button>
-            </div>
-            <div id="ai-settings">
-                ระดับ AI: 
-                <select id="difficulty" style="background:#0f172a; color:white; border-radius:5px; padding:5px;">
-                    <option value="easy">ง่าย (+10)</option>
-                    <option value="medium">ปานกลาง (+30)</option>
-                    <option value="hard">ยากนรก! (โอกาสชนะ 5%)</option>
-                </select>
-            </div>
-            <div style="font-size: 0.8rem; margin-top: 10px;">
-                เดิมพัน/ยึดเหรียญ: <input type="number" id="betAmount" style="width:60px; background:#0f172a; color:white; border:none; text-align:center;" value="0"> 🪙
-            </div>
-        </div>
-
-        <div class="board" id="board"></div>
-        <button onclick="resetGame()" class="main-btn">เริ่มเกมใหม่ / ล้างกระดาน</button>
-
-        <div class="history">
-            <h4 style="margin: 0 0 10px 0; color: var(--accent);">📜 บันทึกการต่อสู้</h4>
-            <div id="battle-log"></div>
-        </div>
-
-        <div style="margin-top:20px; opacity: 0.6; font-size: 0.7rem;">
-            โค้ดรับ 2000 เหรียญ: <input type="text" id="promoInput" style="width:80px;">
-            <button onclick="redeemCode()">ตกลง</button>
+    <div class="container">
+        <div class="loader"></div>
+        <div class="status-tag">MAINTENANCE IN PROGRESS</div>
+        <h1>🛠️ ปิดปรับปรุงระบบ</h1>
+        
+        <div class="announcement">
+            ขออภัยในความไม่สะดวก ขณะนี้ทีมพัฒนาเกม XO Ultimate กำลังดำเนินการอัปเกรดระบบครั้งใหญ่ <br>
+            เพื่อเตรียมพร้อมสำหรับการยกระดับประสบการณ์การเล่นเกมของคุณให้ก้าวไปอีกขั้น <br>
+            โดยในเวอร์ชันถัดไปที่กำลังจะมาถึง เราจะทำการติดตั้งระบบฐานข้อมูลแบบ Global <br>
+            ที่จะช่วยให้คุณสามารถจัดอันดับ Rank และเปรียบเทียบเหรียญรางวัลกับผู้เล่นคนอื่นๆ ทั่วโลกได้จริง <br>
+            นอกจากนี้เรายังมีการปรับปรุง AI สมองกลในระดับยากนรกให้มีความซับซ้อนและท้าทายมากยิ่งขึ้น <br>
+            รวมไปถึงการเพิ่มไอเทมลับชุดใหม่ในร้านค้าที่จะช่วยให้การวางกลยุทธ์ของคุณสนุกกว่าที่เคย <br>
+            เราให้ความสำคัญกับความเสถียรของระบบและการป้องกันการโกงเหรียญเพื่อให้เกิดความยุติธรรมสูงสุด <br>
+            ดังนั้นจึงต้องใช้เวลาในการตรวจสอบความเรียบร้อยของโค้ดในทุกๆ บรรทัดอย่างละเอียด <br>
+            กำหนดการเปิดให้บริการอีกครั้งคาดว่าจะเสร็จสิ้นในเร็วๆ นี้ โปรดเตรียมตัวให้พร้อม <br>
+            สำหรับสนามรบ XO โฉมใหม่ที่จะทำให้คุณและเพื่อนๆ ต้องตื่นตาตื่นใจกับฟีเจอร์ที่เราตั้งใจสร้างสรรค์ <br>
+            ขอขอบคุณผู้เล่นทุกท่านที่ให้การสนับสนุนและติดตามการพัฒนาเกมเล็กๆ ของเราเสมอมา <br>
+            ทีมงานกำลังเร่งดำเนินการอย่างเต็มความสามารถเพื่อให้ระบบกลับมาพร้อมใช้งานโดยเร็วที่สุด <br>
+            ความปลอดภัยของข้อมูลผู้เล่นและเหรียญสะสมจะยังคงถูกรักษาไว้อย่างดีเยี่ยมในระหว่างการอัปเกรด <br>
+            หากมีข้อสงสัยเพิ่มเติม สามารถติดตามการอัปเดตได้ผ่านหน้า GitHub Repository ของเรา <br>
+            แล้วพบกันใหม่ในเวอร์ชันสมบูรณ์ที่พร้อมจะสร้างตำนานบทใหม่บนโลกของเกมกระดานดิจิทัล!
         </div>
     </div>
 
-    <script>
+</body>
+</html>
         let coins = parseInt(localStorage.getItem('xo_coins')) || 0;
         let userName = localStorage.getItem('xo_username') || '';
         let history = JSON.parse(localStorage.getItem('xo_history')) || [];
