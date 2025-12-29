@@ -2,8 +2,8 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XO SUPREME: CONQUEROR EDITION</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>XO SUPREME: ETERNAL CONQUEROR</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
@@ -11,208 +11,219 @@
             --bg: #020617; --cyan: #22d3ee; --pink: #f43f5e; --gold: #fbbf24;
             --diamond: #b9f2ff; --conqueror: #ff3e3e;
         }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
             font-family: 'Kanit', sans-serif; background: var(--bg); color: white;
-            margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;
-            background: linear-gradient(135deg, #020617 0%, #1e1b4b 100%);
-            overflow: hidden;
+            margin: 0; padding: 10px; display: flex; justify-content: center;
+            min-height: 100vh; overflow-y: auto;
+            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #020617 100%);
         }
         .container {
-            width: 95%; max-width: 450px; background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(25px); border-radius: 45px; padding: 25px;
-            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 80px rgba(0,0,0,0.6);
-            text-align: center; position: relative; animation: fadeIn 0.8s ease;
+            width: 100%; max-width: 480px; background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(25px); border-radius: 40px; padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 60px rgba(0,0,0,0.7);
+            text-align: center; margin-bottom: 30px;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        h1 { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; letter-spacing: 4px; margin: 0; background: linear-gradient(90deg, #22d3ee, #f43f5e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        /* Tier Badge UI */
-        .rank-card { margin: 15px 0; padding: 10px; border-radius: 20px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); }
-        .tier-text { font-family: 'Orbitron'; font-weight: 900; font-size: 1.1rem; letter-spacing: 2px; }
-        .tier-conqueror { color: var(--conqueror); text-shadow: 0 0 15px var(--conqueror); }
-        .tier-diamond { color: var(--diamond); text-shadow: 0 0 10px var(--diamond); }
-        .tier-gold { color: var(--gold); }
 
-        .coin-box { font-size: 2.5rem; color: var(--gold); font-weight: bold; font-family: 'Orbitron'; margin: 5px 0; text-shadow: 0 0 20px rgba(251,191,36,0.5); }
-        
-        .board { display: grid; gap: 8px; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 25px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.1); }
+        /* Level & EXP Bar */
+        .level-section { margin-bottom: 15px; text-align: left; }
+        .level-info { display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.8rem; margin-bottom: 5px; color: var(--cyan); }
+        .exp-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .exp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), #818cf8); width: 0%; transition: 0.5s; }
+
+        .coin-box { font-size: 2.2rem; color: var(--gold); font-weight: bold; font-family: 'Orbitron'; margin: 10px 0; }
+
+        /* Chat System */
+        .chat-box { background: rgba(0,0,0,0.4); border-radius: 20px; height: 120px; overflow-y: auto; padding: 10px; margin: 15px 0; font-size: 0.75rem; text-align: left; border: 1px solid rgba(255,255,255,0.05); }
+        .chat-msg { margin-bottom: 5px; animation: slideIn 0.3s ease; }
+        .chat-user { color: var(--cyan); font-weight: bold; }
+        .chat-system { color: var(--gold); font-style: italic; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* General UI */
+        .board { display: grid; gap: 8px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); margin: 15px 0; }
         .board-3 { grid-template-columns: repeat(3, 1fr); }
         .board-5 { grid-template-columns: repeat(5, 1fr); }
-        .cell { aspect-ratio: 1/1; background: rgba(30, 41, 59, 0.5); border-radius: 18px; font-size: 2.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(255,255,255,0.05); }
-        .cell:hover { background: rgba(255,255,255,0.1); transform: scale(1.05); border-color: var(--cyan); }
-        .cell:active { transform: scale(0.9); }
+        .cell { aspect-ratio: 1/1; background: rgba(30, 41, 59, 0.6); border-radius: 15px; font-size: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
+        
+        .btn { font-family: 'Orbitron'; background: linear-gradient(90deg, #0ea5e9, #6366f1); color: white; border: none; padding: 12px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 0.8rem; }
+        .skin-tray { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
+        .skin-item { min-width: 60px; height: 60px; background: rgba(0,0,0,0.4); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid transparent; flex-shrink: 0; }
+        .skin-item.active { border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
 
-        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .btn { background: linear-gradient(90deg, #0ea5e9, #6366f1); color: white; border: none; padding: 12px; border-radius: 18px; font-weight: bold; font-family: 'Orbitron'; cursor: pointer; transition: 0.3s; font-size: 0.8rem; }
-        .btn-loot { background: linear-gradient(90deg, #8b5cf6, #ec4899); box-shadow: 0 0 15px rgba(139, 92, 246, 0.4); }
-        .btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
-
-        .shop-tray { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
-        .skin-icon { min-width: 60px; height: 60px; background: rgba(0,0,0,0.5); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid transparent; cursor: pointer; }
-        .skin-icon.active { border-color: var(--cyan); box-shadow: 0 0 15px var(--cyan); }
-
-        input { background: rgba(0,0,0,0.5); border: 1px solid #334155; color: white; padding: 15px; border-radius: 18px; width: 85%; text-align: center; margin-bottom: 20px; font-family: 'Kanit'; }
+        input { background: rgba(0,0,0,0.5); border: 1px solid #334155; color: white; padding: 10px; border-radius: 12px; width: 100%; margin-bottom: 8px; font-family: 'Kanit'; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="screen-start">
-        <h1 style="margin-bottom: 10px;">XO SUPREME</h1>
-        <p style="color: var(--cyan); font-size: 0.8rem; letter-spacing: 2px;">CONQUEROR EDITION</p>
-        <div style="margin: 30px 0;">
-            <input type="text" id="playerName" placeholder="ใส่ชื่อนักรบของคุณ">
-            <button class="btn" style="width: 90%; font-size: 1.1rem;" onclick="login()">ENTER LOBBY</button>
+    <div id="scr-start">
+        <h1 style="font-family:'Orbitron'; color:var(--cyan); letter-spacing:3px;">XO SUPREME</h1>
+        <p style="font-size:0.8rem; opacity:0.6;">ETERNAL CONQUEROR</p>
+        <div style="margin-top: 30px;">
+            <input type="text" id="inName" placeholder="ENTER PLAYER NAME">
+            <button class="btn" style="font-size:1rem;" onclick="login()">LOGIN TO SERVER</button>
         </div>
     </div>
 
-    <div id="screen-game" style="display:none">
-        <div class="rank-card">
-            <div id="tier-label" class="tier-text">BRONZE IV</div>
-            <div style="font-size: 0.7rem; opacity: 0.6; margin-top: 4px;">RANK PROGRESS</div>
+    <div id="scr-game" style="display:none">
+        <div class="level-section">
+            <div class="level-info">
+                <span id="lvl-txt">LEVEL 1 (Novice)</span>
+                <span id="exp-txt">0/100 EXP</span>
+            </div>
+            <div class="exp-bar-bg"><div id="exp-fill" class="exp-bar-fill"></div></div>
         </div>
 
-        <div class="coin-box">🪙 <span id="coin-val">0</span></div>
-        
-        <div class="action-btns">
-            <button class="btn btn-loot" onclick="openBox()">📦 สุ่มสกิน (300)</button>
-            <button class="btn" style="background: #1e293b;" onclick="luckySpin()">🎡 วงล้อฟรี</button>
+        <div class="coin-box">🪙 <span id="coin-txt">0</span></div>
+
+        <div class="chat-box" id="chat-content">
+            <div class="chat-msg"><span class="chat-system">[System]:</span> Welcome to the Global Server!</div>
+        </div>
+        <div style="display:flex; gap:5px;">
+            <input type="text" id="chat-input" placeholder="พิมพ์ข้อความแชท..." style="margin-bottom:0; font-size:0.8rem;">
+            <button class="btn" style="width:70px; margin-top:0;" onclick="sendChat()">ส่ง</button>
         </div>
 
-        <div class="shop-tray" id="skin-list"></div>
-
-        <div style="margin-bottom: 10px;">
-            <select id="mode-sel" onchange="initBoard()" style="background:#0f172a; color:white; border:1px solid #334155; padding:8px; border-radius:10px;">
-                <option value="3">CLASSIC 3X3</option>
-                <option value="5">ELITE 5X5</option>
-            </select>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top:10px;">
+            <button class="btn" style="background:linear-gradient(90deg, #f59e0b, #ea580c);" onclick="spin()">LUCKY SPIN</button>
+            <button class="btn" style="background:#8b5cf6;" onclick="buyLoot()">LOOT BOX</button>
         </div>
 
-        <div id="game-grid" class="board"></div>
+        <div class="skin-tray" id="tray"></div>
 
-        <button class="btn" style="background:transparent; border:1px solid #334155; width:100%" onclick="initBoard()">REMATCH</button>
-        
-        <div style="margin-top: 15px; font-size: 0.7rem; color: #94a3b8;">
-            <span id="display-n"></span> | <span style="color:var(--gold)">TOP: <span id="top-score">-</span></span>
+        <select id="size-mode" onchange="resetBoard()" style="background:#0f172a; color:white; border:1px solid #334155; padding:8px; border-radius:10px; width:100%;">
+            <option value="3">CLASSIC 3X3</option>
+            <option value="5">ELITE 5X5</option>
+        </select>
+
+        <div id="grid" class="board"></div>
+
+        <button class="btn" style="background:transparent; border:1px solid #334155;" onclick="resetBoard()">REMATCH</button>
+
+        <div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:20px; margin-top:15px;">
+            <div style="font-size:0.7rem; color:var(--cyan); margin-bottom:5px;">REDEEM CODE</div>
+            <input type="text" id="codeIn" placeholder="Enter Secret Code" style="font-size:0.8rem; text-align:center;">
+            <button class="btn" style="background:#10b981; margin-top:0;" onclick="redeem()">REDEEM</button>
         </div>
     </div>
 </div>
 
 <script>
-    let coins = parseInt(localStorage.getItem('xo_c')) || 0;
-    let user = localStorage.getItem('xo_u') || '';
+    let coins = parseInt(localStorage.getItem('xo_v4_coins')) || 0;
+    let exp = parseInt(localStorage.getItem('xo_v4_exp')) || 0;
+    let lvl = parseInt(localStorage.getItem('xo_v4_lvl')) || 1;
+    let user = localStorage.getItem('xo_v4_user') || '';
     let board = [];
-    let isActive = true;
-    let currentSkin = 'Classic';
-    const allSkins = [
-        {id:'Classic', s:['X','O'], rarity:'Common'},
-        {id:'Neon', s:['💎','💠'], rarity:'Rare'},
-        {id:'Fire', s:['🔥','❄️'], rarity:'Epic'},
-        {id:'God', s:['👑','💀'], rarity:'Legendary'},
-        {id:'Space', s:['🚀','👾'], rarity:'Legendary'}
+    let isPlaying = true;
+    let skin = 'Default';
+    const skinsData = [
+        {id:'Default', s:['X','O']}, {id:'Neon', s:['💠','💎']}, 
+        {id:'Fire', s:['🔥','❄️']}, {id:'God', s:['👑','💀']}
     ];
-    let inventory = JSON.parse(localStorage.getItem('xo_inv')) || ['Classic'];
+    let owned = JSON.parse(localStorage.getItem('xo_v4_owned')) || ['Default'];
 
-    const sfx = (f, t, d=0.1) => {
-        const c=new(window.AudioContext||window.webkitAudioContext)();
-        const o=c.createOscillator(); const g=c.createGain();
-        o.type=t; o.frequency.setValueAtTime(f, c.currentTime);
-        g.gain.setValueAtTime(0.1, c.currentTime);
-        o.connect(g); g.connect(c.destination);
-        o.start(); o.stop(c.currentTime+d);
-    };
-
+    // Login
     function login() {
-        let n = document.getElementById('playerName').value || user;
+        let n = document.getElementById('inName').value || user;
         if(n) {
-            user = n; localStorage.setItem('xo_u', user);
-            document.getElementById('screen-start').style.display = 'none';
-            document.getElementById('screen-game').style.display = 'block';
-            document.getElementById('display-n').innerText = user.toUpperCase();
-            initBoard();
+            user = n; localStorage.setItem('xo_v4_user', user);
+            document.getElementById('scr-start').style.display='none';
+            document.getElementById('scr-game').style.display='block';
+            resetBoard();
+            setInterval(randomChat, 5000); // Start random chat
         }
     }
 
-    function initBoard() {
-        let s = parseInt(document.getElementById('mode-sel').value);
-        board = Array(s * s).fill('');
-        isActive = true;
-        document.getElementById('game-grid').className = `board board-${s}`;
-        render();
+    // EXP & Level System
+    function addExp(amt) {
+        exp += amt;
+        let nextLvl = lvl * 200;
+        if(exp >= nextLvl) {
+            exp -= nextLvl;
+            lvl++;
+            coins += 500;
+            addChatMessage("System", `Congratulations! Level Up to ${lvl}! (+500 🪙)`, true);
+            confetti({ particleCount: 100 });
+        }
+        updateUI();
     }
 
-    function render() {
-        const g = document.getElementById('game-grid'); g.innerHTML = '';
+    function resetBoard() {
+        let s = parseInt(document.getElementById('size-mode').value);
+        board = Array(s*s).fill('');
+        isPlaying = true;
+        document.getElementById('grid').className = `board board-${s}`;
+        updateUI();
+    }
+
+    function updateUI() {
+        const g = document.getElementById('grid'); g.innerHTML = '';
         board.forEach((v, i) => {
             const c = document.createElement('div');
             c.className = 'cell'; c.innerText = v;
-            if(v) {
-                const colors = skins().s;
-                c.style.color = (v === colors[0]) ? 'var(--cyan)' : 'var(--pink)';
-                if(v === colors[0]) c.style.textShadow = '0 0 15px var(--cyan)';
-            }
-            c.onclick = () => play(i);
+            const icons = skinsData.find(x=>x.id===skin).s;
+            if(v) c.style.color = (v === icons[0]) ? 'var(--cyan)' : 'var(--pink)';
+            c.onclick = () => tap(i);
             g.appendChild(c);
         });
-        document.getElementById('coin-val').innerText = coins.toLocaleString();
         
-        // Tier System
-        let t = "BRONZE", cl = "tier-gold";
-        if(coins >= 10000) { t="CONQUEROR"; cl="tier-conqueror"; }
-        else if(coins >= 5000) { t="DIAMOND"; cl="tier-diamond"; }
-        else if(coins >= 2000) { t="PLATINUM"; cl="tier-gold"; }
-        else if(coins >= 1000) { t="GOLD"; cl="tier-gold"; }
-        else if(coins >= 500) { t="SILVER"; cl=""; }
-        const lbl = document.getElementById('tier-label');
-        lbl.innerText = t + " I"; lbl.className = "tier-text " + cl;
+        document.getElementById('coin-txt').innerText = coins.toLocaleString();
+        document.getElementById('lvl-txt').innerText = `LEVEL ${lvl} (${getRankName(lvl)})`;
+        document.getElementById('exp-txt').innerText = `${exp}/${lvl*200} EXP`;
+        document.getElementById('exp-fill').style.width = `${(exp/(lvl*200))*100}%`;
 
-        // Inventory
-        const inv = document.getElementById('skin-list'); inv.innerHTML = '';
-        allSkins.filter(s => inventory.includes(s.id)).forEach(sk => {
+        const tray = document.getElementById('tray'); tray.innerHTML = '';
+        skinsData.filter(s=>owned.includes(s.id)).forEach(sk => {
             const d = document.createElement('div');
-            d.className = `skin-icon ${currentSkin===sk.id?'active':''}`;
+            d.className = `skin-item ${skin===sk.id?'active':''}`;
             d.innerHTML = sk.s[0];
-            d.onclick = () => { currentSkin = sk.id; sfx(800, 'sine'); render(); };
-            inv.appendChild(d);
+            d.onclick = () => { skin = sk.id; updateUI(); };
+            tray.appendChild(d);
         });
-        updateRank();
+        save();
     }
 
-    const skins = () => allSkins.find(x => x.id === currentSkin);
+    function getRankName(l) {
+        if(l >= 20) return "Grandmaster";
+        if(l >= 10) return "Legend";
+        if(l >= 5) return "Veteran";
+        return "Novice";
+    }
 
-    function play(i) {
-        if(board[i] === '' && isActive) {
-            board[i] = skins().s[0]; sfx(600, 'sine');
-            if(checkWin(skins().s[0])) end('W');
-            else if(board.every(x=>x!=='')) end('T');
-            else { isActive = false; setTimeout(bot, 400); }
-            render();
+    // Gameplay
+    function tap(i) {
+        if(board[i]==='' && isPlaying) {
+            let icons = skinsData.find(x=>x.id===skin).s;
+            board[i] = icons[0];
+            if(check(icons[0])) win();
+            else if(board.every(x=>x!=='')) resetBoard();
+            else { isPlaying = false; setTimeout(bot, 400); }
+            updateUI();
         }
     }
 
     function bot() {
+        let icons = skinsData.find(x=>x.id===skin).s;
         let e = board.map((v,i)=>v===''?i:null).filter(v=>v!==null);
         if(e.length > 0) {
-            board[e[Math.floor(Math.random()*e.length)]] = skins().s[1];
-            sfx(400, 'square');
-            if(checkWin(skins().s[1])) end('L');
-            else if(board.every(x=>x!=='')) end('T');
+            board[e[Math.floor(Math.random()*e.length)]] = icons[1];
+            if(check(icons[1])) { alert("Defeat!"); resetBoard(); }
         }
-        isActive = true; render();
+        isPlaying = true; updateUI();
     }
 
-    function checkWin(p) {
-        let sz = parseInt(document.getElementById('mode-sel').value);
-        let goal = sz === 3 ? 3 : 4;
+    function check(p) {
+        let sz = parseInt(document.getElementById('size-mode').value);
+        let win = sz === 3 ? 3 : 4;
         for(let i=0; i<sz*sz; i++) {
             if(board[i]===p) {
-                if(i%sz<=sz-goal) {
-                    let w=true; for(let j=0; j<goal; j++) if(board[i+j]!==p) w=false;
+                if(i%sz<=sz-win) {
+                    let w=true; for(let j=0; j<win; j++) if(board[i+j]!==p) w=false;
                     if(w) return true;
                 }
-                if(i<sz*(sz-goal+1)) {
-                    let w=true; for(let j=0; j<goal; j++) if(board[i+j*sz]!==p) w=false;
+                if(i<sz*(sz-win+1)) {
+                    let w=true; for(let j=0; j<win; j++) if(board[i+j*sz]!==p) w=false;
                     if(w) return true;
                 }
             }
@@ -220,50 +231,65 @@
         return false;
     }
 
-    function end(res) {
-        isActive = false;
-        if(res === 'W') {
-            coins += 150; sfx(1200, 'sine', 0.3);
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            alert("🏆 ชัยชนะ! รับ 150 เหรียญ");
-        } else if(res === 'L') { sfx(150, 'sawtooth', 0.5); alert("💀 ปราชัย..."); }
-        else { alert("⚖️ เสมอ"); }
-        save(); initBoard();
+    function win() {
+        coins += 100; addExp(50);
+        confetti({ particleCount: 150, spread: 70 });
+        alert("Victory! +100 Coins +50 EXP");
+        resetBoard();
     }
 
-    function openBox() {
+    // Chat System
+    function addChatMessage(sender, msg, isSystem = false) {
+        const content = document.getElementById('chat-content');
+        const div = document.createElement('div');
+        div.className = 'chat-msg';
+        div.innerHTML = isSystem ? `<span class="chat-system">[${sender}]: ${msg}</span>` : `<span class="chat-user">${sender}:</span> ${msg}`;
+        content.appendChild(div);
+        content.scrollTop = content.scrollHeight;
+    }
+
+    function sendChat() {
+        const inp = document.getElementById('chat-input');
+        if(inp.value) {
+            addChatMessage(user, inp.value);
+            inp.value = '';
+        }
+    }
+
+    function randomChat() {
+        const users = ["Zoro_TH", "SkinHunter", "GG_Ez", "ProPlayer99"];
+        const msgs = ["มีคนแจกโค้ดมั้ยครับ?", "สุ่มสกินยากจัง", "พึ่งเลเวลอัปเลย!", "บอทโหดจัง 5x5"];
+        addChatMessage(users[Math.floor(Math.random()*users.length)], msgs[Math.floor(Math.random()*msgs.length)]);
+    }
+
+    // Other Systems
+    function spin() { coins += 50; addExp(10); alert("Got 50 Coins!"); updateUI(); }
+    function buyLoot() {
         if(coins >= 300) {
-            coins -= 300; sfx(900, 'sine', 0.5);
-            let unowned = allSkins.filter(s => !inventory.includes(s.id));
-            if(unowned.length > 0) {
-                let got = unowned[Math.floor(Math.random()*unowned.length)];
-                inventory.push(got.id);
-                alert(`🎊 ยินดีด้วย! คุณได้รับสกินระดับ ${got.rarity}: ${got.id}`);
-            } else {
-                coins += 150; alert("คุณมีสกินครบแล้ว! รับเงินคืน 150 เหรียญ");
+            coins -= 300; addExp(30);
+            let locked = skinsData.filter(s=>!owned.includes(s.id));
+            if(locked.length > 0) {
+                let s = locked[0]; owned.push(s.id);
+                addChatMessage("System", `${user} unlocked skin: ${s.id}!`, true);
             }
-            save(); render();
-        } else { alert("เหรียญไม่พอ!"); }
+            updateUI();
+        }
     }
 
-    function luckySpin() {
-        let r = [50, 100, 200, 500][Math.floor(Math.random()*4)];
-        coins += r; sfx(1000, 'sine'); alert(`🎡 วงล้อหยุดที่... ${r} 🪙`);
-        save(); render();
+    function redeem() {
+        let c = document.getElementById('codeIn').value.toUpperCase();
+        if(c === 'WELCOME2025') { coins += 1000; alert("Success!"); }
+        else if(c === 'GODMODE') { if(!owned.includes('God')) owned.push('God'); alert("Skin God Unlocked!"); }
+        else { alert("Invalid Code"); }
+        document.getElementById('codeIn').value = '';
+        updateUI();
     }
 
     function save() {
-        localStorage.setItem('xo_c', coins);
-        localStorage.setItem('xo_inv', JSON.stringify(inventory));
-    }
-
-    function updateRank() {
-        let lb = JSON.parse(localStorage.getItem('xo_lb_final')) || [];
-        let f = lb.findIndex(x=>x.n===user);
-        if(f>-1) lb[f].c=coins; else if(user) lb.push({n:user, c:coins});
-        lb.sort((a,b)=>b.c-a.c);
-        localStorage.setItem('xo_lb_final', JSON.stringify(lb));
-        if(lb.length > 0) document.getElementById('top-score').innerText = lb[0].n + " (" + lb[0].c + ")";
+        localStorage.setItem('xo_v4_coins', coins);
+        localStorage.setItem('xo_v4_exp', exp);
+        localStorage.setItem('xo_v4_lvl', lvl);
+        localStorage.setItem('xo_v4_owned', JSON.stringify(owned));
     }
 
     if(user) login();
