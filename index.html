@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XO Pro - Skin Shop Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #0f172a; --panel: #1e293b; --accent: #38bdf8; --text: #f8fafc; }
+        body { font-family: 'Kanit', sans-serif; background: var(--bg); color: var(--text); text-align: center; margin: 0; padding: 20px; }
+        
+        .header { background: var(--panel); padding: 20px; border-radius: 15px; display: inline-block; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .coin-display { font-size: 1.8rem; color: #fbbf24; font-weight: bold; }
+        
+        .board { display: grid; grid-template-columns: repeat(3, 100px); gap: 12px; justify-content: center; margin: 20px auto; }
+        .cell { width: 100px; height: 100px; background: var(--panel); border: 2px solid #334155; font-size: 2.5rem; cursor: pointer; color: white; border-radius: 12px; transition: 0.2s; }
+        .cell:hover { border-color: var(--accent); transform: scale(1.05); }
+
+        .shop { margin-top: 40px; background: var(--panel); padding: 20px; border-radius: 15px; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .skin-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #334155; }
+        
+        button { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-play { background: var(--accent); color: #000; }
+        .btn-buy { background: #10b981; color: white; }
+        .btn-use { background: #6366f1; color: white; }
+        .owned { color: #94a3b8; font-style: italic; }
+
+        .promo-section { margin-top: 20px; font-size: 0.9rem; }
+        input { padding: 8px; border-radius: 5px; border: 1px solid #334155; background: #0f172a; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="coin-display">🪙 <span id="coin-count">0</span></div>
+        <div style="margin-top:10px;">
+            ระดับความยาก: 
+            <select id="difficulty" style="padding:5px; border-radius:5px;">
+                <option value="easy">ง่าย (+10)</option>
+                <option value="medium">ปานกลาง (+30)</option>
+                <option value="hard">ยากนรก! (+50)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="board" id="board"></div>
+    <button onclick="resetGame()" class="btn-play">เริ่มเกมใหม่</button>
+
+    <div class="shop">
+        <h3>🛒 ร้านค้าสกิน (Skin Shop)</h3>
+        <div id="shop-items">
+            </div>
+    </div>
+
+    <div class="promo-section">
+        <input type="text" id="promoInput" placeholder="โค้ดรับ 2000 เหรียญ">
+        <button onclick="redeemCode()" style="background:#475569; color:white;">ใช้โค้ด</button>
+    </div>
+
+    <script>
+        let coins = parseInt(localStorage.getItem('xo_coins')) || 0;
+        let ownedSkins = JSON.parse(localStorage.getItem('xo_skins')) || ['X-O'];
+        let currentSkin = localStorage.getItem('xo_current_skin') || 'X-O';
+        
+        const skins = [
+            { name: 'X-O', sym: ['X', 'O'], price: 0 },
+            { name: 'Fire-Ice', sym: ['🔥', '❄️'], price: 500 },
+            { name: 'King-Skull', sym: ['👑', '💀'], price: 1000 },
+            { name: 'Cat-Dog', sym: ['🐱', '🐶'], price: 1500 },
+            { name: 'Alien-Robot', sym: ['👽', '🤖'], price: 2500 }
+        ];
+
+        let board = Array(9).fill('');
+        let gameActive = true;
+
+        function getSym() {
+            const s = skins.find(x => x.name === currentSkin);
+            return { hu: s.sym[0], ai: s.sym[1] };
+        }
+
+        function initUI() {
+            // Board
+            const boardDiv = document.getElementById('board');
+            boardDiv.innerHTML = '';
+            board.forEach((cell, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'cell';
+                btn.innerText = cell;
+                btn.onclick = () => playTurn(i);
+                boardDiv.appendChild(btn);
+            });
+
+            // Stats
+            document.getElementById('coin-count').innerText = coins.toLocaleString();
+
+            // Shop
+            const shopDiv = document.getElementById('shop-items');
+            shopDiv.innerHTML = '';
+            skins.forEach(skin => {
+                const isOwned = ownedSkins.includes(skin.name);
+                const isEquipped = currentSkin === skin.name;
+                
+                shopDiv.innerHTML += `
+                    <div class="skin-item">
+                        <span>${skin.sym[0]} vs ${skin.sym[1]} (${skin.name})</span>
+                        ${isEquipped ? '<span class="owned">ใช้งานอยู่</span>' : 
+                          isOwned ? `<button class="btn-use" onclick="setSkin('${skin.name}')">เลือกใช้</button>` : 
+                          `<button class="btn-buy" onclick="buySkin('${skin.name}', ${skin.price})">💰 ${skin.price}</button>`}
+                    </div>
+                `;
+            });
+        }
+
+        function playTurn(index) {
+            const sym = getSym();
+            if (board[index] === '' && gameActive) {
+                board[index] = sym.hu;
+                if (!checkWin(board, sym.hu) && !checkTie()) {
+                    gameActive = false;
+                    setTimeout(aiMove, 500);
+                } else {
+                    handleGameOver(sym.hu);
+                }
+                initUI();
+            }
+        }
+
+        function aiMove() {
+            const sym = getSym();
+            const diff = document.getElementById('difficulty').value;
+            let move = (diff === 'hard') ? minimax(board, sym.ai).index : 
+                       (diff === 'medium' && Math.random() > 0.4) ? minimax(board, sym.ai).index : 
+                       randomMove();
+
+            board[move] = sym.ai;
+            gameActive = true;
+            if (checkWin(board, sym.ai)) handleGameOver(sym.ai);
+            else if (checkTie()) handleGameOver('tie');
+            initUI();
+        }
+
+        function minimax(newBoard, player) {
+            const sym = getSym();
+            let avail = newBoard.map((v, i) => v === '' ? i : null).filter(v => v !== null);
+            if (checkWin(newBoard, sym.hu)) return {score: -10};
+            if (checkWin(newBoard, sym.ai)) return {score: 10};
+            if (avail.length === 0) return {score: 0};
+
+            let moves = [];
+            for (let i = 0; i < avail.length; i++) {
+                let move = { index: avail[i] };
+                newBoard[avail[i]] = player;
+                move.score = minimax(newBoard, player === sym.ai ? sym.hu : sym.ai).score;
+                newBoard[avail[i]] = '';
+                moves.push(move);
+            }
+            return moves.reduce((prev, curr) => 
+                (player === sym.ai ? (curr.score > prev.score) : (curr.score < prev.score)) ? curr : prev
+            );
+        }
+
+        function checkWin(b, p) {
+            const win = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            return win.some(c => c.every(i => b[i] === p));
+        }
+        function checkTie() { return board.every(s => s !== ''); }
+        function randomMove() {
+            let avail = board.map((v, i) => v === '' ? i : null).filter(v => v !== null);
+            return avail[Math.floor(Math.random() * avail.length)];
+        }
+
+        function handleGameOver(winner) {
+            gameActive = false;
+            const sym = getSym();
+            if (winner === sym.hu) {
+                const rewards = { easy: 10, medium: 30, hard: 50 };
+                const prize = rewards[document.getElementById('difficulty').value];
+                coins += prize;
+                alert(`ชนะแล้ว! รับ ${prize} เหรียญ`);
+            } else if (winner === sym.ai) alert("AI ชนะ! ฝึกมาใหม่นะ");
+            else alert("เสมอ!");
+            saveData();
+        }
+
+        function buySkin(name, price) {
+            if (coins >= price) {
+                coins -= price;
+                ownedSkins.push(name);
+                saveData();
+                initUI();
+                alert(`ซื้อสกิน ${name} สำเร็จ!`);
+            } else {
+                alert("เหรียญไม่พอครับ ไปปั๊มเหรียญจาก AI ก่อนนะ!");
+            }
+        }
+
+        function setSkin(name) {
+            currentSkin = name;
+            saveData();
+            initUI();
+        }
+
+        function redeemCode() {
+            if (document.getElementById('promoInput').value === 'GIFT2000') {
+                coins += 2000;
+                saveData();
+                initUI();
+                alert("รับไปเลย 2000 เหรียญ!");
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('xo_coins', coins);
+            localStorage.setItem('xo_skins', JSON.stringify(ownedSkins));
+            localStorage.setItem('xo_current_skin', currentSkin);
+        }
+
+        function resetGame() {
+            board = Array(9).fill('');
+            gameActive = true;
+            initUI();
+        }
+
+        initUI();
+    </script>
+</body>
+</html>
