@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AYU GAME ZONE</title>
+    <title>AYU GAME ZONE: ULTIMATE</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
@@ -16,378 +16,295 @@
             background: var(--bg); color: white; margin: 0; padding: 10px;
             display: flex; justify-content: center; min-height: 100vh;
             background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #020617 100%);
-            overflow-x: hidden;
         }
         .container {
             width: 100%; max-width: 480px; background: var(--glass);
             backdrop-filter: blur(20px); border-radius: 30px; padding: 20px;
             border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 50px rgba(0,0,0,0.8);
-            position: relative;
         }
 
-        /* --- UI Components --- */
+        /* Stats Panel */
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-family: 'Orbitron'; font-size: 0.7rem; }
-        .ping-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; box-shadow: 0 0 5px var(--green); }
-        
         .stats-panel { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 20px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); }
         .level-row { display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.8rem; color: var(--cyan); margin-bottom: 5px; }
         .exp-track { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
         .exp-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), #818cf8); width: 0%; transition: 0.5s; }
-        
         .coin-box { font-size: 2.2rem; color: var(--gold); font-weight: bold; font-family: 'Orbitron'; text-align: center; margin: 10px 0; text-shadow: 0 0 10px rgba(251,191,36,0.3); }
 
-        /* --- Leaderboard --- */
-        .leaderboard { background: rgba(251, 191, 36, 0.05); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 15px; padding: 10px; margin-bottom: 15px; }
-        .lb-title { font-family: 'Orbitron'; color: var(--gold); font-size: 0.8rem; text-align: center; margin-bottom: 8px; border-bottom: 1px solid rgba(251,191,36,0.2); padding-bottom: 5px; }
-        .lb-item { display: flex; justify-content: space-between; font-size: 0.75rem; padding: 3px 5px; background: rgba(0,0,0,0.2); margin-bottom: 3px; border-radius: 5px; }
-        .lb-rank { color: var(--cyan); font-weight: bold; width: 20px; }
+        /* Redeem Code UI */
+        .redeem-section { background: rgba(251, 191, 36, 0.1); padding: 10px; border-radius: 15px; border: 1px dashed var(--gold); margin-bottom: 15px; }
+        .redeem-row { display: flex; gap: 8px; }
 
-        /* --- Shop Section --- */
-        .shop-container { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; margin-bottom: 10px; scrollbar-width: none; }
-        .skin-card { 
-            min-width: 80px; background: rgba(255,255,255,0.05); border-radius: 15px; 
-            padding: 10px; text-align: center; border: 1px solid transparent; cursor: pointer;
-        }
+        /* Skin Shop */
+        .shop-container { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; margin-bottom: 15px; scrollbar-width: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .skin-card { min-width: 85px; background: rgba(255,255,255,0.05); border-radius: 15px; padding: 10px; text-align: center; border: 1px solid transparent; cursor: pointer; transition: 0.3s; }
         .skin-card.active { border-color: var(--cyan); background: rgba(34, 211, 238, 0.1); }
         .skin-icon { font-size: 1.5rem; display: block; margin-bottom: 5px; }
-        .skin-price { font-size: 0.7rem; color: var(--gold); font-family: 'Orbitron'; }
+        .skin-price { font-size: 0.65rem; color: var(--gold); font-family: 'Orbitron'; }
 
-        /* --- Board --- */
+        /* Leaderboard & Chat */
+        .leaderboard { background: rgba(0,0,0,0.2); border-radius: 15px; padding: 10px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .lb-title { font-family: 'Orbitron'; color: var(--gold); font-size: 0.75rem; text-align: center; margin-bottom: 8px; }
+        .lb-item { display: flex; justify-content: space-between; font-size: 0.75rem; padding: 4px 8px; background: rgba(0,0,0,0.2); margin-bottom: 4px; border-radius: 6px; }
+
+        .chat-box { background: rgba(0,0,0,0.4); border-radius: 12px; height: 100px; overflow-y: auto; padding: 10px; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; }
+        
+        /* Game Board */
         .board { display: grid; gap: 8px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 20px; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); }
-        .board-3 { grid-template-columns: repeat(3, 1fr); }
-        .board-5 { grid-template-columns: repeat(5, 1fr); }
-        .cell { aspect-ratio: 1/1; background: rgba(30, 41, 59, 0.7); border-radius: 12px; font-size: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.03); }
+        .cell { aspect-ratio: 1/1; background: rgba(30, 41, 59, 0.7); border-radius: 12px; font-size: 2.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.03); }
+        .cell:active { transform: scale(0.95); }
 
-        /* --- Buttons & Inputs --- */
-        .btn { font-family: 'Orbitron'; background: linear-gradient(90deg, #0ea5e9, #6366f1); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 0.9rem; }
+        /* Controls */
+        .btn { font-family: 'Orbitron'; background: linear-gradient(90deg, #0ea5e9, #6366f1); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 5px; }
         .btn-red { background: linear-gradient(90deg, #f43f5e, #be123c); }
-        input, select { background: rgba(0,0,0,0.5); border: 1px solid #334155; color: white; padding: 12px; border-radius: 12px; width: 100%; margin-bottom: 10px; }
+        input, select { background: rgba(0,0,0,0.5); border: 1px solid #334155; color: white; padding: 12px; border-radius: 12px; width: 100%; margin-bottom: 8px; }
 
-        /* --- Login Overlay Fix --- */
-        #login-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: var(--bg); z-index: 9999; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; text-align: center; }
     </style>
 </head>
 <body>
 
 <div id="login-overlay">
-    <h1 style="font-family:'Orbitron'; color:var(--cyan); margin-bottom: 0; font-size: 2.2rem; text-align: center;">AYU GAME ZONE</h1>
-    <p style="opacity: 0.5; font-size: 0.7rem; letter-spacing: 3px; margin-bottom: 40px;">THE ULTIMATE XO EXPERIENCE</p>
-    <div style="width: 100%; max-width: 300px;">
-        <input type="text" id="playerNameInput" placeholder="กรอกชื่อของคุณที่นี่...">
-        <button class="btn" onclick="handleLogin()">เข้าสู่ระบบ / CONNECT</button>
+    <h1 style="font-family:'Orbitron'; color:var(--cyan); margin-bottom: 0; font-size: 2.2rem;">AYU GAME ZONE</h1>
+    <p style="opacity:0.5; font-size:0.7rem; margin-bottom:40px; letter-spacing:3px;">THE ULTIMATE VERSION</p>
+    <div style="width: 100%; max-width: 320px;">
+        <input type="text" id="pNameInput" placeholder="กรอกชื่อผู้เล่นของคุณ...">
+        <button class="btn" onclick="startApp()">เข้าสู่เกม (CONNECT)</button>
     </div>
 </div>
 
 <div class="container">
-    <div id="game-content" style="display:none">
+    <div id="game-ui" style="display:none">
         <div class="top-bar">
-            <div><div id="ping-dot" class="ping-dot"></div> <span id="ping-val">24</span>ms</div>
-            <div style="font-family:'Orbitron'; color:var(--cyan);" id="display-name">PLAYER</div>
+            <div><span id="ping-val">24</span>ms <div style="width:8px; height:8px; border-radius:50%; background:var(--green); display:inline-block;"></div></div>
+            <div id="display-name" style="color:var(--cyan)">PLAYER</div>
         </div>
 
         <div class="stats-panel">
-            <div class="level-row"><span id="lvl-txt">LVL 1</span><span id="exp-txt">0/200</span></div>
+            <div class="level-row"><span id="lvl-txt">LVL 1</span><span id="exp-txt">0/500</span></div>
             <div class="exp-track"><div id="exp-fill" class="exp-fill"></div></div>
         </div>
 
         <div class="coin-box">🪙 <span id="coin-txt">0</span></div>
 
-        <div class="shop-container" id="skin-shop">
+        <div class="redeem-section">
+            <div style="font-size: 0.7rem; color: var(--gold); margin-bottom: 5px; font-weight: bold;">REDEEM CODE (20 CODES AVAILABLE)</div>
+            <div class="redeem-row">
+                <input type="text" id="code-input" placeholder="ใส่โค้ดที่นี่..." style="margin:0; padding:8px;">
+                <button class="btn" style="width:80px; margin:0; padding:0; font-size:0.7rem;" onclick="redeemCode()">ยืนยัน</button>
             </div>
+        </div>
+
+        <div class="shop-container" id="skin-shop"></div>
 
         <div class="leaderboard">
-            <div class="lb-title">GOD TIER RANKING (IMPOSSIBLE ONLY)</div>
+            <div class="lb-title">GOD TIER RANKING</div>
             <div id="lb-content"></div>
         </div>
 
-        <select id="diff-selector" onchange="checkDiffReward()">
-            <option value="easy">ยาก: ง่าย (0 🪙)</option>
-            <option value="normal">ยาก: ปกติ (0 🪙)</option>
-            <option value="hard" selected>ยาก: พระเจ้า (🏆 200 🪙)</option>
+        <div class="chat-box" id="chat-content"></div>
+        <div style="display:flex; gap:5px; margin-bottom:15px;">
+            <input type="text" id="chat-input" placeholder="พิมพ์ข้อความ..." style="margin:0; padding:10px;">
+            <button class="btn" style="width:60px; margin:0; padding:0;" onclick="sendChat()">➤</button>
+        </div>
+
+        <select id="diff-mode" onchange="addChatSys('เปลี่ยนระดับความยากแล้ว')">
+            <option value="easy">ง่าย (0 🪙)</option>
+            <option value="normal">ปกติ (0 🪙)</option>
+            <option value="hard" selected>พระเจ้า (200 🪙)</option>
         </select>
         
-        <select id="size-selector" onchange="initNewBoard()">
-            <option value="3">โหมด: คลาสสิก 3X3</option>
-            <option value="5">โหมด: ขั้นสูง 5X5</option>
+        <select id="size-mode" onchange="initBoard()">
+            <option value="3">3X3 คลาสสิก</option>
+            <option value="5">5X5 ขั้นสูง</option>
         </select>
 
-        <div id="grid-box" class="board"></div>
-
-        <button class="btn btn-red" onclick="matchmaking()">ค้นหาคู่แข่ง (MATCHMAKING)</button>
+        <div id="grid" class="board"></div>
+        <button class="btn btn-red" onclick="matchmake()">ค้นหาคู่แข่งใหม่</button>
     </div>
 </div>
 
 <script>
-    /* --- Game State --- */
-    let player = {
-        name: localStorage.getItem('ayu_name') || '',
-        coins: parseInt(localStorage.getItem('ayu_coins')) || 0,
-        exp: parseInt(localStorage.getItem('ayu_exp')) || 0,
-        lvl: parseInt(localStorage.getItem('ayu_lvl')) || 1,
-        wins: parseInt(localStorage.getItem('ayu_wins')) || 0,
-        ownedSkins: JSON.parse(localStorage.getItem('ayu_skins')) || ['Default'],
-        activeSkin: localStorage.getItem('ayu_active_skin') || 'Default'
+    /* --- ข้อมูลผู้เล่นและโค้ด --- */
+    let player = JSON.parse(localStorage.getItem('ayu_final_db')) || {
+        name: '', coins: 0, exp: 0, lvl: 1, wins: 0,
+        skins: ['Default'], activeSkin: 'Default', usedCodes: []
+    };
+
+    // ระบบ 20 โค้ดรางวัล
+    const secretCodes = {
+        'AYU666': 666, 'FREECOIN': 100, 'GODMODE': 1000, 'WELCOME': 500, 'LUCKY7': 777,
+        'KINGXO': 300, 'OPPONENT': 200, 'NEONLIGHT': 450, 'AYUZONE': 888, 'RICHMAN': 2000,
+        'DEVAYU': 999, 'XOMASTER': 150, 'LEGEND': 1200, 'SUPREME': 600, 'GIFT4U': 400,
+        'COIN99': 99, 'ELITE': 350, 'CHAMPION': 700, 'MYCODE': 500, 'HACKER': 1
     };
 
     const skins = [
-        { id: 'Default', name: 'Original', icon: '❌', price: 0 },
-        { id: 'Neon', name: 'Neon Blue', icon: '💎', price: 500 },
-        { id: 'Fire', name: 'Phoenix', icon: '🔥', price: 1500 },
-        { id: 'God', name: 'God Aura', icon: '👑', price: 5000 }
+        { id: 'Default', icon: '❌', price: 0 },
+        { id: 'Neon', icon: '💎', price: 500 },
+        { id: 'Fire', icon: '🔥', price: 1500 },
+        { id: 'God', icon: '👑', price: 5000 }
     ];
 
     let board = [];
     let gameActive = false;
 
-    /* --- Core Logic --- */
-    function handleLogin() {
-        const input = document.getElementById('playerNameInput').value.trim();
-        if (input) {
-            player.name = input;
-            saveData();
-            document.getElementById('login-overlay').style.display = 'none';
-            document.getElementById('game-content').style.display = 'block';
-            document.getElementById('display-name').innerText = player.name.toUpperCase();
-            updateUI();
-            initNewBoard();
+    function startApp() {
+        let name = document.getElementById('pNameInput').value.trim();
+        if(!name) return alert("กรุณาใส่ชื่อ!");
+        player.name = name;
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('game-ui').style.display = 'block';
+        document.getElementById('display-name').innerText = name.toUpperCase();
+        save(); updateUI(); initBoard();
+        addChatSys("เชื่อมต่อสำเร็จ! ยินดีต้อนรับคุณ " + name);
+    }
+
+    function redeemCode() {
+        let code = document.getElementById('code-input').value.trim().toUpperCase();
+        if(!code) return;
+        if(player.usedCodes.includes(code)) return alert("คุณใช้โค้ดนี้ไปแล้ว!");
+        if(secretCodes[code]) {
+            let gift = secretCodes[code];
+            player.coins += gift;
+            player.usedCodes.push(code);
+            confetti();
+            alert("สำเร็จ! ได้รับ " + gift + " 🪙");
+            document.getElementById('code-input').value = '';
+            updateUI(); save();
         } else {
-            alert("กรุณาใส่ชื่อของคุณก่อนครับ!");
+            alert("โค้ดไม่ถูกต้อง");
         }
     }
 
-    function matchmaking() {
-        const btn = event.target;
-        const originalText = btn.innerText;
-        btn.disabled = true;
-        btn.innerText = "กำลังค้นหาคู่แข่ง...";
-        
-        setTimeout(() => {
-            btn.disabled = false;
-            btn.innerText = originalText;
-            gameActive = true;
-            initNewBoard();
-            alert("เจอคู่แข่งแล้ว! เริ่มเกมได้");
-        }, 1500);
-    }
-
-    function initNewBoard() {
-        const size = parseInt(document.getElementById('size-selector').value);
-        board = Array(size * size).fill('');
-        const grid = document.getElementById('grid-box');
-        grid.className = `board board-${size}`;
+    function initBoard() {
+        let s = parseInt(document.getElementById('size-mode').value);
+        board = Array(s*s).fill('');
+        document.getElementById('grid').style.gridTemplateColumns = `repeat(${s}, 1fr)`;
         render();
     }
 
     function render() {
-        const grid = document.getElementById('grid-box');
-        grid.innerHTML = '';
-        const currentSkinIcon = skins.find(s => s.id === player.activeSkin).icon;
-        
-        board.forEach((val, i) => {
+        const grid = document.getElementById('grid'); grid.innerHTML = '';
+        const skinIcon = skins.find(s => s.id === player.activeSkin).icon;
+        board.forEach((v, i) => {
             const cell = document.createElement('div');
             cell.className = 'cell';
-            if (val === 'X') {
-                cell.innerText = currentSkinIcon;
-                cell.style.color = 'var(--cyan)';
-            } else if (val === 'O') {
-                cell.innerText = '⭕';
-                cell.style.color = 'var(--pink)';
-            }
-            cell.onclick = () => makeMove(i);
+            if(v==='X') { cell.innerText = skinIcon; cell.style.color = 'var(--cyan)'; }
+            else if(v==='O') { cell.innerText = '⭕'; cell.style.color = 'var(--pink)'; }
+            cell.onclick = () => tap(i);
             grid.appendChild(cell);
         });
     }
 
-    function makeMove(i) {
-        if (!gameActive || board[i] !== '') return;
-        
-        board[i] = 'X';
-        render();
-        
-        if (checkWinner('X')) {
-            endGame('win');
-        } else if (board.every(c => c !== '')) {
-            endGame('draw');
-        } else {
-            gameActive = false; // Pause for bot
-            setTimeout(botMove, 600);
-        }
+    function tap(i) {
+        if(!gameActive || board[i]!=='') return;
+        board[i] = 'X'; render();
+        if(checkWin('X')) return end('win');
+        if(board.every(b => b!=='')) return end('draw');
+        gameActive = false; setTimeout(bot, 600);
     }
 
-    function botMove() {
-        let empty = board.map((v,i) => v === '' ? i : null).filter(v => v !== null);
-        if (empty.length === 0) return;
-
-        // Simple Smart AI (Hard Mode Logic)
-        let diff = document.getElementById('diff-selector').value;
+    function bot() {
+        let empty = board.map((v,i)=>v===''?i:null).filter(v=>v!==null);
+        let diff = document.getElementById('diff-mode').value;
         let move;
+        if(diff==='hard') move = find('O') || find('X') || empty[0];
+        else move = empty[Math.floor(Math.random()*empty.length)];
         
-        if (diff === 'hard') {
-            move = findBestSpot('O') || findBestSpot('X') || empty[Math.floor(Math.random()*empty.length)];
-        } else {
-            move = empty[Math.floor(Math.random()*empty.length)];
-        }
-
-        board[move] = 'O';
-        render();
-        
-        if (checkWinner('O')) {
-            endGame('lose');
-        } else if (board.every(c => c !== '')) {
-            endGame('draw');
-        } else {
-            gameActive = true;
-        }
+        board[move] = 'O'; render();
+        if(checkWin('O')) return end('lose');
+        if(board.every(b => b!=='')) return end('draw');
+        gameActive = true;
     }
 
-    function findBestSpot(symbol) {
-        let empty = board.map((v,i) => v === '' ? i : null).filter(v => v !== null);
-        for(let pos of empty) {
-            board[pos] = symbol;
-            if(checkWinner(symbol)) {
-                board[pos] = '';
-                return pos;
+    function find(p) {
+        for(let i=0; i<board.length; i++) {
+            if(board[i]==='') { board[i]=p; if(checkWin(p)) { board[i]=''; return i; } board[i]=''; }
+        } return null;
+    }
+
+    function checkWin(p) {
+        let s = parseInt(document.getElementById('size-mode').value);
+        let winN = s === 3 ? 3 : 4;
+        for(let i=0; i<board.length; i++) {
+            if(board[i]===p) {
+                if(line(i,1,winN,p,s)||line(i,s,winN,p,s)||line(i,s+1,winN,p,s)||line(i,s-1,winN,p,s)) return true;
             }
-            board[pos] = '';
-        }
-        return null;
+        } return false;
     }
 
-    function checkWinner(p) {
-        const sz = parseInt(document.getElementById('size-selector').value);
-        const winN = sz === 3 ? 3 : 4;
-        for (let i = 0; i < sz * sz; i++) {
-            if (board[i] === p) {
-                if (checkDir(i, 1, winN, p, sz) || checkDir(i, sz, winN, p, sz) ||
-                    checkDir(i, sz+1, winN, p, sz) || checkDir(i, sz-1, winN, p, sz)) return true;
-            }
-        }
-        return false;
+    function line(idx, step, target, p, s) {
+        for(let k=0; k<target; k++) {
+            let n = idx + k*step;
+            if(n<0 || n>=board.length || board[n]!==p) return false;
+            if(step===1 && Math.floor(n/s) !== Math.floor(idx/s)) return false;
+        } return true;
     }
 
-    function checkDir(idx, step, target, p, sz) {
-        for (let k = 0; k < target; k++) {
-            let n = idx + k * step;
-            if (n < 0 || n >= sz * sz || board[n] !== p) return false;
-            if (step === 1 && Math.floor(n/sz) !== Math.floor(idx/sz)) return false;
-        }
-        return true;
-    }
-
-    /* --- Systems --- */
-    function endGame(result) {
+    function end(res) {
         gameActive = false;
-        const diff = document.getElementById('diff-selector').value;
+        let d = document.getElementById('diff-mode').value;
+        if(res === 'win') {
+            let reward = d==='hard' ? 200 : 0;
+            if(d==='hard') player.wins++;
+            player.coins += reward; player.exp += 100;
+            confetti(); alert("ชนะแล้ว! ได้รับ " + reward + " 🪙");
+        } else alert(res==='lose' ? "คุณแพ้!" : "เสมอ!");
         
-        if (result === 'win') {
-            let reward = (diff === 'hard') ? 200 : 0;
-            if (diff === 'hard') player.wins++;
-            player.coins += reward;
-            player.exp += 100;
-            confetti({ particleCount: 150, spread: 70 });
-            alert(`คุณชนะ! ได้รับ ${reward} 🪙 และ 100 EXP`);
-        } else if (result === 'lose') {
-            alert("คุณแพ้! พยายามใหม่นะ");
-            player.exp += 20;
-        } else {
-            alert("เสมอ!");
-            player.exp += 40;
-        }
-        
-        if (player.exp >= player.lvl * 500) {
-            player.lvl++;
-            player.exp = 0;
-            player.coins += 1000;
-            alert("LEVEL UP! คุณเลเวล " + player.lvl + " รับโบนัส 1000 🪙");
-        }
-        
-        updateUI();
-        saveData();
+        if(player.exp >= player.lvl*500) { player.lvl++; player.exp=0; player.coins+=500; addChatSys("LEVEL UP! LVL "+player.lvl); }
+        updateUI(); save();
     }
 
     function updateUI() {
         document.getElementById('coin-txt').innerText = player.coins.toLocaleString();
         document.getElementById('lvl-txt').innerText = "LVL " + player.lvl;
-        document.getElementById('exp-txt').innerText = `${player.exp}/${player.lvl * 500}`;
-        document.getElementById('exp-fill').style.width = (player.exp / (player.lvl * 500) * 100) + "%";
+        document.getElementById('exp-txt').innerText = player.exp + "/500";
+        document.getElementById('exp-fill').style.width = (player.exp/5) + "%";
         
-        // Shop Update
-        const shop = document.getElementById('skin-shop');
-        shop.innerHTML = '';
+        const shop = document.getElementById('skin-shop'); shop.innerHTML = '';
         skins.forEach(s => {
-            const isOwned = player.ownedSkins.includes(s.id);
-            const card = document.createElement('div');
-            card.className = `skin-card ${player.activeSkin === s.id ? 'active' : ''}`;
-            card.innerHTML = `
+            let owned = player.skins.includes(s.id);
+            shop.innerHTML += `<div class="skin-card ${player.activeSkin===s.id?'active':''}" onclick="buy('${s.id}',${s.price})">
                 <span class="skin-icon">${s.icon}</span>
-                <span class="skin-price">${isOwned ? 'OWNED' : s.price + ' 🪙'}</span>
-            `;
-            card.onclick = () => handleSkin(s);
-            shop.appendChild(card);
+                <span class="skin-price">${owned?'OWNED':s.price+'🪙'}</span>
+            </div>`;
         });
 
-        // Leaderboard Update
-        const lb = [{n: player.name, w: player.wins}, {n: "BOT_GOD", w: 99}, {n: "AYU_MASTER", w: 50}].sort((a,b)=>b.w-a.w);
-        document.getElementById('lb-content').innerHTML = lb.map((p,i) => `
-            <div class="lb-item">
-                <span class="lb-rank">${i+1}</span>
-                <span>${p.n}</span>
-                <span style="color:var(--gold)">${p.w} WINS</span>
-            </div>
-        `).join('');
+        const lb = [{n:player.name, w:player.wins}, {n:'BOT_GOD', w:99}, {n:'AYU_PRO', w:45}].sort((a,b)=>b.w-a.w);
+        document.getElementById('lb-content').innerHTML = lb.map((p,i)=>`<div class="lb-item"><span>${i+1}. ${p.n}</span><span>${p.w} WINS</span></div>`).join('');
     }
 
-    function handleSkin(s) {
-        if (player.ownedSkins.includes(s.id)) {
-            player.activeSkin = s.id;
-        } else {
-            if (player.coins >= s.price) {
-                if (confirm(`ซื้อสกิน ${s.name} ในราคา ${s.price} 🪙 ใช่หรือไม่?`)) {
-                    player.coins -= s.price;
-                    player.ownedSkins.push(s.id);
-                    player.activeSkin = s.id;
-                }
-            } else {
-                alert("เหรียญไม่พอครับ! ไปชนะโหมดพระเจ้าก่อนนะ");
-            }
+    function buy(id, p) {
+        if(player.skins.includes(id)) player.activeSkin = id;
+        else if(player.coins >= p) { player.coins -= p; player.skins.push(id); player.activeSkin = id; }
+        else alert("เหรียญไม่พอ!");
+        updateUI(); save(); render();
+    }
+
+    function sendChat() {
+        let i = document.getElementById('chat-input');
+        if(i.value) {
+            document.getElementById('chat-content').innerHTML += `<div><b>${player.name}:</b> ${i.value}</div>`;
+            i.value = ''; document.getElementById('chat-content').scrollTop = 999;
         }
-        updateUI();
-        saveData();
-        render();
     }
 
-    function saveData() {
-        localStorage.setItem('ayu_name', player.name);
-        localStorage.setItem('ayu_coins', player.coins);
-        localStorage.setItem('ayu_exp', player.exp);
-        localStorage.setItem('ayu_lvl', player.lvl);
-        localStorage.setItem('ayu_wins', player.wins);
-        localStorage.setItem('ayu_skins', JSON.stringify(player.ownedSkins));
-        localStorage.setItem('ayu_active_skin', player.activeSkin);
+    function addChatSys(m) {
+        document.getElementById('chat-content').innerHTML += `<div style="color:var(--gold)">[SYSTEM] ${m}</div>`;
+        document.getElementById('chat-content').scrollTop = 999;
     }
 
-    function checkDiffReward() {
-        const d = document.getElementById('diff-selector').value;
-        if (d !== 'hard') alert("คำเตือน: โหมดนี้จะไม่ได้รับเหรียญรางวัล!");
+    function matchmake() {
+        addChatSys("กำลังค้นหาคู่แข่ง...");
+        setTimeout(() => { gameActive = true; initBoard(); addChatSys("เจอคู่แข่งแล้ว! เริ่มได้"); }, 1000);
     }
 
-    // Ping Simulator
-    setInterval(() => {
-        document.getElementById('ping-val').innerText = Math.floor(Math.random()*25)+15;
-    }, 2000);
-
-    // Initial Check
-    if (player.name) {
-        document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('game-content').style.display = 'block';
-        document.getElementById('display-name').innerText = player.name.toUpperCase();
-        updateUI();
-        initNewBoard();
+    function save() { localStorage.setItem('ayu_final_db', JSON.stringify(player)); }
+    setInterval(() => { document.getElementById('ping-val').innerText = Math.floor(Math.random()*15)+15; }, 2000);
+    
+    if(player.name) {
+        document.getElementById('pNameInput').value = player.name;
     }
 </script>
 </body>
