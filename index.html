@@ -3,37 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XO SUPREME: THE ULTIMATE RETURN</title>
+    <title>XO SUPREME - BUG FIXED</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #020617; --panel: #1e293b; --accent: #38bdf8; --text: #f8fafc; --gold: #fbbf24; --red: #ef4444; }
+        :root { --bg: #020617; --panel: #1e293b; --accent: #38bdf8; --text: #f8fafc; --gold: #fbbf24; }
         body { font-family: 'Kanit', sans-serif; background: var(--bg); color: var(--text); text-align: center; margin: 0; padding: 10px; }
         .container { max-width: 450px; margin: 0 auto; }
-        .header { background: var(--panel); padding: 20px; border-radius: 25px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #334155; }
-        .coin-display { font-size: 2.5rem; color: var(--gold); font-weight: bold; text-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
-        
-        .board { display: grid; grid-template-columns: repeat(3, 100px); gap: 12px; justify-content: center; margin: 20px auto; }
-        .cell { width: 100px; height: 100px; background: var(--panel); border: 2px solid #334155; font-size: 2.8rem; cursor: pointer; color: white; border-radius: 18px; transition: 0.2s; box-shadow: inset 0 0 15px rgba(0,0,0,0.2); }
-        .cell:hover { border-color: var(--accent); transform: scale(1.05); }
-        .cell.x { color: var(--accent); }
-        .cell.o { color: var(--red); }
-
-        .shop-panel { background: #0f172a; padding: 15px; border-radius: 20px; display: flex; gap: 10px; margin-bottom: 20px; border: 1px dashed #334155; }
-        .item-btn { flex: 1; padding: 10px; border-radius: 12px; border: none; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.2s; color: white; }
+        .header { background: var(--panel); padding: 20px; border-radius: 25px; margin-bottom: 15px; border: 1px solid #334155; }
+        .coin-display { font-size: 2.2rem; color: var(--gold); font-weight: bold; }
+        .board { display: grid; grid-template-columns: repeat(3, 100px); gap: 10px; justify-content: center; margin: 20px auto; }
+        .cell { width: 100px; height: 100px; background: var(--panel); border: 2px solid #334155; font-size: 2.5rem; cursor: pointer; color: white; border-radius: 18px; display: flex; align-items: center; justify-content: center; }
+        .cell:hover { border-color: var(--accent); }
+        .shop { background: #0f172a; padding: 15px; border-radius: 20px; display: flex; gap: 10px; margin-bottom: 20px; }
+        .item-btn { flex: 1; padding: 10px; border-radius: 12px; border: none; cursor: pointer; color: white; font-weight: bold; font-size: 0.8rem; }
         .btn-blue { background: #3b82f6; } .btn-purple { background: #8b5cf6; }
-        .item-btn:disabled { background: #475569; opacity: 0.6; cursor: not-allowed; }
-
-        .leaderboard { background: var(--panel); padding: 20px; border-radius: 20px; text-align: left; border: 1px solid var(--gold); margin-top: 20px; }
-        .lb-entry { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #334155; }
-        
-        button.play-btn { background: linear-gradient(45deg, #0ea5e9, #6366f1); color: white; width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 700; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
-        select, input { background: #0f172a; color: white; border: 1px solid #334155; padding: 10px; border-radius: 10px; width: 80%; margin-bottom: 10px; }
+        .main-btn { background: linear-gradient(45deg, #0ea5e9, #6366f1); color: white; width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; }
+        .leaderboard { background: var(--panel); padding: 15px; border-radius: 20px; text-align: left; border: 1px solid var(--gold); font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div id="setup-screen">
+<div class="container">
+    <div id="setup-screen">
+        <h1 style="color: var(--accent);">XO SUPREME</h1>
+        <input type="text" id="usernameInput" placeholder="ใส่ชื่อของคุณ" style="padding:10px; border-radius:8px; border:none; width:80%; margin-bottom:10px;"><br>
+        <button onclick="startGame()" class="main-btn">เข้าสู่เกม</button>
+    </div>
+
+    <div id="game-screen" style="display:none;">
+        <div class="header">
+            <div class="coin-display">🪙 <span id="coin-count">0</span></div>
+            <div id="user-display" style="color: var(--accent);"></div>
+            <select id="difficulty" style="background:#0f172a; color:white; border:none; padding:5px; margin-top:10px;">
+                <option value="hard">ยากนรก (5% Win)</option>
+                <option value="easy">ง่าย</option>
+            </select>
+        </div>
+
+        <div class="shop">
+            <button class="item-btn btn-blue" onclick="useItem('remove')">🧹 ลบตา AI (100🪙)</button>
+            <button class="item-btn btn-purple" id="double-btn" onclick="useItem('double')">✖️ ชนะ x2 (50🪙)</button>
+        </div>
+
+        <div class="board" id="board"></div>
+        <button onclick="resetGame()" class="main-btn">เริ่มใหม่</button>
+
+        <div class="leaderboard" style="margin-top:20px;">
+            <h3 style="margin:0 0 10px 0; color:var(--gold);">🏆 อันดับสูงสุด</h3>
+            <div id="lb-content"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let coins = parseInt(localStorage.getItem('xo_coins')) || 0;
+    let userName = localStorage.getItem('xo_username') || '';
+    let board = Array(9).fill('');
+    let gameActive = true;
+    let isDouble = false;
+
+    function startGame() {
+        const input = document.getElementById('usernameInput').value || userName;
+        if(input) {
+            userName = input;
+            localStorage.setItem('xo_username', userName);
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'block';
+            document.getElementById('user-display').innerText = "นักรบ: " + userName;
+            updateUI();
+        }
+    }
+
+    function updateUI() {
+        const boardDiv = document.getElementById('board');
+        boardDiv.innerHTML = '';
+        board.forEach((val, i) => {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.innerText = val;
+            cell.onclick = () => playTurn(i);
+            boardDiv.appendChild(cell);
+        });
+        document.getElementById('coin-count').innerText = coins.toLocaleString();
+        renderLeaderboard();
+    }
+
+    function playTurn(i) {
+        if(board[i] === '' && gameActive) {
+            board[i] = 'X';
+            updateUI();
+            if(checkWin(board, 'X')) { endGame('X'); }
+            else if(board.every(s => s !== '')) { endGame('tie'); }
+            else { gameActive = false; setTimeout(aiMove, 500); }
+        }
+    }
+
+    function aiMove() {
+        const diff = document.getElementById('difficulty').value;
+        let move;
+        if(diff === 'hard' && Math.random() > 0.05) {
+            move = minimax(board, 'O').index;
+        } else {
+            let avail = board.map((v,i) => v==='' ? i : null).filter(v => v!==null);
+            move = avail[Math.floor(Math.random()*avail.length)];
+        }
+        if(move !== undefined) board[move] = 'O';
+        if(checkWin(board, 'O')) { endGame('O'); }
+        else if(board.every(s => s !== '')) { endGame('tie'); }
+        gameActive = true;
+        updateUI();
+    }
+
+    function useItem(type) {
+        if(type === 'remove' && coins >= 100) {
+            let aiMoves = board.map((v,i) => v==='O' ? i : null).filter(v => v!==null);
+            if(aiMoves.length > 0) {
+                coins -= 100;
+                board[aiMoves[Math.floor(Math.random()*aiMoves.length)]] = '';
+                updateUI();
+            }
+        } else if(type === 'double' && coins >= 50) {
+            coins -= 50;
+            isDouble = true;
+            document.getElementById('double-btn').innerText = "✅ x2 ทำงาน";
+            document.getElementById('double-btn').disabled = true;
+            updateUI();
+        } else { alert("เหรียญไม่พอ!"); }
+    }
+
+    function endGame(w) {
+        gameActive = false;
+        if(w === 'X') {
+            let prize = (document.getElementById('difficulty').value === 'hard') ? 100 : 30;
+            if(isDouble) prize *= 2;
+            coins += prize;
+            alert("คุณชนะ! รับ " + prize + " 🪙");
+        } else if(w === 'O') { alert("แพ้ AI!"); }
+        else { alert("เสมอ!"); }
+        isDouble = false;
+        document.getElementById('double-btn').innerText = "✖️ ชนะ x2 (50🪙)";
+        document.getElementById('double-btn').disabled = false;
+        localStorage.setItem('xo_coins', coins);
+        resetGame();
+    }
+
+    function checkWin(b, p) {
+        const winLines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        return winLines.some(line => line.every(i => b[i] === p));
+    }
+
+    function minimax(b, p) {
+        let avail = b.map((v,i) => v==='' ? i : null).filter(v => v!==null);
+        if(checkWin(b, 'X')) return {score: -10};
+        if(checkWin(b, 'O')) return {score: 10};
+        if(avail.length === 0) return {score: 0};
+        let moves = [];
+        for(let i=0; i<avail.length; i++) {
+            let move = {index: avail[i]};
+            b[avail[i]] = p;
+            move.score = minimax(b, p==='O'?'X':'O').score;
+            b[avail[i]] = '';
+            moves.push(move);
+        }
+        let bestMove;
+        if(p === 'O') {
+            let bestScore = -10000;
+            for(let i=0; i<moves.length; i++) {
+                if(moves[i].score > bestScore) { bestScore = moves[i].score; bestMove = i; }
+            }
+        } else {
+            let bestScore = 10000;
+            for(let i=0; i<moves.length; i++) {
+                if(moves[i].score < bestScore) { bestScore = moves[i].score; bestMove = i; }
+            }
+        }
+        return moves[bestMove];
+    }
+
+    function renderLeaderboard() {
+        let lb = JSON.parse(localStorage.getItem('xo_leaderboard')) || [];
+        let userIdx = lb.findIndex(x => x.name === userName);
+        if(userIdx > -1) lb[userIdx].coins = coins; else if(userName) lb.push({name: userName, coins: coins});
+        lb.sort((a,b) => b.coins - a.coins);
+        localStorage.setItem('xo_leaderboard', JSON.stringify(lb));
+        document.getElementById('lb-content').innerHTML = lb.slice(0,5).map((p,i) => `<div>${i+1}. ${p.name}: ${p.coins} 🪙</div>`).join('');
+    }
+
+    function resetGame() { board = Array(9).fill(''); gameActive = true; updateUI(); }
+    if(userName) startGame();
+</script>
+
+</body>
+</html>
             <h1 style="color: var(--accent); font-size: 3rem;">XO SUPREME</h1>
             <p>ก้าวเข้าสู่ตำนานและสะสมเหรียญทอง</p>
             <input type="text" id="usernameInput" placeholder="ใส่ชื่อนักรบของคุณ"><br>
