@@ -3,81 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AYU GAME ZONE: ULTIMATE</title>
+    <title>AYU GAME ZONE: ADMIN & GOD AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --bg: #020617; --cyan: #22d3ee; --pink: #f43f5e; --gold: #fbbf24;
-            --green: #10b981; --red: #ef4444; --glass: rgba(15, 23, 42, 0.9);
+            --green: #10b981; --red: #ef4444; --admin: #a855f7; --glass: rgba(15, 23, 42, 0.9);
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Kanit', sans-serif; }
-        body {
-            background: var(--bg); color: white; margin: 0; padding: 10px;
-            display: flex; justify-content: center; min-height: 100vh;
-            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #020617 100%);
-        }
-        .container {
-            width: 100%; max-width: 480px; background: var(--glass);
-            backdrop-filter: blur(20px); border-radius: 30px; padding: 20px;
-            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 50px rgba(0,0,0,0.8);
-        }
+        body { background: var(--bg); color: white; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #020617 100%); }
+        .container { width: 100%; max-width: 480px; background: var(--glass); backdrop-filter: blur(20px); border-radius: 30px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 50px rgba(0,0,0,0.8); }
 
-        /* Stats Panel */
+        /* Admin UI */
+        .admin-badge { background: var(--admin); color: white; padding: 2px 8px; border-radius: 5px; font-weight: bold; font-family: 'Orbitron'; font-size: 0.7rem; margin-right: 5px; border: 1px solid #d8b4fe; box-shadow: 0 0 10px var(--admin); }
+        #admin-panel { display: none; background: rgba(168, 85, 247, 0.1); border: 1px solid var(--admin); border-radius: 20px; padding: 15px; margin-bottom: 15px; }
+
+        /* Layout & Components */
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-family: 'Orbitron'; font-size: 0.7rem; }
         .stats-panel { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 20px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); }
         .level-row { display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.8rem; color: var(--cyan); margin-bottom: 5px; }
         .exp-track { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
         .exp-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), #818cf8); width: 0%; transition: 0.5s; }
-        .coin-box { font-size: 2.2rem; color: var(--gold); font-weight: bold; font-family: 'Orbitron'; text-align: center; margin: 10px 0; text-shadow: 0 0 10px rgba(251,191,36,0.3); }
+        .coin-box { font-size: 2.2rem; color: var(--gold); font-weight: bold; font-family: 'Orbitron'; text-align: center; margin: 5px 0; }
 
-        /* Redeem Code UI */
         .redeem-section { background: rgba(251, 191, 36, 0.1); padding: 10px; border-radius: 15px; border: 1px dashed var(--gold); margin-bottom: 15px; }
-        .redeem-row { display: flex; gap: 8px; }
-
-        /* Skin Shop */
-        .shop-container { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; margin-bottom: 15px; scrollbar-width: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .skin-card { min-width: 85px; background: rgba(255,255,255,0.05); border-radius: 15px; padding: 10px; text-align: center; border: 1px solid transparent; cursor: pointer; transition: 0.3s; }
-        .skin-card.active { border-color: var(--cyan); background: rgba(34, 211, 238, 0.1); }
-        .skin-icon { font-size: 1.5rem; display: block; margin-bottom: 5px; }
-        .skin-price { font-size: 0.65rem; color: var(--gold); font-family: 'Orbitron'; }
-
-        /* Leaderboard & Chat */
-        .leaderboard { background: rgba(0,0,0,0.2); border-radius: 15px; padding: 10px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .lb-title { font-family: 'Orbitron'; color: var(--gold); font-size: 0.75rem; text-align: center; margin-bottom: 8px; }
-        .lb-item { display: flex; justify-content: space-between; font-size: 0.75rem; padding: 4px 8px; background: rgba(0,0,0,0.2); margin-bottom: 4px; border-radius: 6px; }
-
-        .chat-box { background: rgba(0,0,0,0.4); border-radius: 12px; height: 100px; overflow-y: auto; padding: 10px; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; }
-        
-        /* Game Board */
         .board { display: grid; gap: 8px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 20px; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); }
         .cell { aspect-ratio: 1/1; background: rgba(30, 41, 59, 0.7); border-radius: 12px; font-size: 2.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.03); }
-        .cell:active { transform: scale(0.95); }
-
-        /* Controls */
+        
+        .chat-box { background: rgba(0,0,0,0.4); border-radius: 12px; height: 100px; overflow-y: auto; padding: 10px; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; }
         .btn { font-family: 'Orbitron'; background: linear-gradient(90deg, #0ea5e9, #6366f1); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        .btn-red { background: linear-gradient(90deg, #f43f5e, #be123c); }
+        .btn-admin { background: var(--admin); font-size: 0.7rem; padding: 8px; margin-bottom: 5px; }
         input, select { background: rgba(0,0,0,0.5); border: 1px solid #334155; color: white; padding: 12px; border-radius: 12px; width: 100%; margin-bottom: 8px; }
-
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; text-align: center; }
+        
+        #banned-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; color: red; z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-family: 'Orbitron'; }
     </style>
 </head>
 <body>
 
-<div id="login-overlay">
-    <h1 style="font-family:'Orbitron'; color:var(--cyan); margin-bottom: 0; font-size: 2.2rem;">AYU GAME ZONE</h1>
-    <p style="opacity:0.5; font-size:0.7rem; margin-bottom:40px; letter-spacing:3px;">THE ULTIMATE VERSION</p>
-    <div style="width: 100%; max-width: 320px;">
-        <input type="text" id="pNameInput" placeholder="กรอกชื่อผู้เล่นของคุณ...">
-        <button class="btn" onclick="startApp()">เข้าสู่เกม (CONNECT)</button>
-    </div>
+<div id="banned-screen">
+    <h1 style="font-size: 4rem;">ACCESS DENIED</h1>
+    <p style="font-size: 1.5rem;">YOUR ACCOUNT HAS BEEN BANNED</p>
+    <p style="opacity: 0.5;">REASON: VIOLATING SYSTEM POLICY</p>
 </div>
 
-<div class="container">
-    <div id="game-ui" style="display:none">
+<div class="container" id="main-container">
+    <div id="ui">
         <div class="top-bar">
-            <div><span id="ping-val">24</span>ms <div style="width:8px; height:8px; border-radius:50%; background:var(--green); display:inline-block;"></div></div>
-            <div id="display-name" style="color:var(--cyan)">PLAYER</div>
+            <div><span id="ping">24</span>ms <div style="width:8px; height:8px; border-radius:50%; background:var(--green); display:inline-block;"></div></div>
+            <div id="p-tag"><span id="admin-badge-ui"></span> <span id="p-name">PLAYER</span></div>
+        </div>
+
+        <div id="admin-panel">
+            <div style="font-family:'Orbitron'; font-size:0.8rem; color:var(--admin); margin-bottom:10px;">★ ADMIN COMMAND CENTER ★</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
+                <button class="btn btn-admin" onclick="adminMaxLevel()">MAX LEVEL (99)</button>
+                <button class="btn btn-admin" onclick="adminMaxWins()">GOD RANK (999)</button>
+                <button class="btn btn-admin" onclick="adminAddCoins()">ADD 1M COINS</button>
+                <button class="btn btn-admin" style="background:var(--red);" onclick="adminBanSelf()">TEST BAN SYSTEM</button>
+            </div>
         </div>
 
         <div class="stats-panel">
@@ -88,224 +72,195 @@
         <div class="coin-box">🪙 <span id="coin-txt">0</span></div>
 
         <div class="redeem-section">
-            <div style="font-size: 0.7rem; color: var(--gold); margin-bottom: 5px; font-weight: bold;">REDEEM CODE (20 CODES AVAILABLE)</div>
-            <div class="redeem-row">
-                <input type="text" id="code-input" placeholder="ใส่โค้ดที่นี่..." style="margin:0; padding:8px;">
-                <button class="btn" style="width:80px; margin:0; padding:0; font-size:0.7rem;" onclick="redeemCode()">ยืนยัน</button>
+            <div class="level-row" style="color:var(--gold); font-size:0.7rem;">SYSTEM CODES</div>
+            <div style="display:flex; gap:5px;">
+                <input type="text" id="code-in" placeholder="ใส่โค้ดที่นี่..." style="margin:0; padding:8px;">
+                <button class="btn" style="width:80px; margin:0; padding:0; font-size:0.7rem;" onclick="redeem()">REDEEM</button>
             </div>
         </div>
 
-        <div class="shop-container" id="skin-shop"></div>
-
-        <div class="leaderboard">
-            <div class="lb-title">GOD TIER RANKING</div>
-            <div id="lb-content"></div>
-        </div>
-
-        <div class="chat-box" id="chat-content"></div>
+        <div class="chat-box" id="chat"></div>
         <div style="display:flex; gap:5px; margin-bottom:15px;">
-            <input type="text" id="chat-input" placeholder="พิมพ์ข้อความ..." style="margin:0; padding:10px;">
-            <button class="btn" style="width:60px; margin:0; padding:0;" onclick="sendChat()">➤</button>
+            <input type="text" id="chat-in" placeholder="คุยกับผู้เล่นอื่น..." style="margin:0;">
+            <button class="btn" style="width:50px; margin:0; padding:0;" onclick="sendChat()">➤</button>
         </div>
 
-        <select id="diff-mode" onchange="addChatSys('เปลี่ยนระดับความยากแล้ว')">
-            <option value="easy">ง่าย (0 🪙)</option>
-            <option value="normal">ปกติ (0 🪙)</option>
-            <option value="hard" selected>พระเจ้า (200 🪙)</option>
-        </select>
-        
-        <select id="size-mode" onchange="initBoard()">
-            <option value="3">3X3 คลาสสิก</option>
-            <option value="5">5X5 ขั้นสูง</option>
+        <select id="diff" onchange="addMsg('System','โหมดพระเจ้าจะไม่มีทางชนะได้ง่ายๆ')">
+            <option value="easy">ง่าย (บอทอ่อนหัด)</option>
+            <option value="hard" selected>โหมดพระเจ้า (เอาชนะแทบไม่ได้)</option>
         </select>
 
         <div id="grid" class="board"></div>
-        <button class="btn btn-red" onclick="matchmake()">ค้นหาคู่แข่งใหม่</button>
+        <button class="btn btn-red" onclick="startMatch()">ค้นหาคู่แข่งใหม่ (RANKED)</button>
     </div>
 </div>
 
 <script>
-    /* --- ข้อมูลผู้เล่นและโค้ด --- */
-    let player = JSON.parse(localStorage.getItem('ayu_final_db')) || {
-        name: '', coins: 0, exp: 0, lvl: 1, wins: 0,
-        skins: ['Default'], activeSkin: 'Default', usedCodes: []
+    let player = JSON.parse(localStorage.getItem('ayu_god_v1')) || {
+        name: 'Guest', coins: 0, exp: 0, lvl: 1, wins: 0,
+        skins: ['Default'], activeSkin: 'Default', usedCodes: [], isAdmin: false, isBanned: false
     };
 
-    // ระบบ 20 โค้ดรางวัล
-    const secretCodes = {
-        'AYU666': 666, 'FREECOIN': 100, 'GODMODE': 1000, 'WELCOME': 500, 'LUCKY7': 777,
-        'KINGXO': 300, 'OPPONENT': 200, 'NEONLIGHT': 450, 'AYUZONE': 888, 'RICHMAN': 2000,
-        'DEVAYU': 999, 'XOMASTER': 150, 'LEGEND': 1200, 'SUPREME': 600, 'GIFT4U': 400,
-        'COIN99': 99, 'ELITE': 350, 'CHAMPION': 700, 'MYCODE': 500, 'HACKER': 1
-    };
+    const adminCode = 'ADMIN_AYU_2024';
 
-    const skins = [
-        { id: 'Default', icon: '❌', price: 0 },
-        { id: 'Neon', icon: '💎', price: 500 },
-        { id: 'Fire', icon: '🔥', price: 1500 },
-        { id: 'God', icon: '👑', price: 5000 }
-    ];
-
-    let board = [];
-    let gameActive = false;
-
-    function startApp() {
-        let name = document.getElementById('pNameInput').value.trim();
-        if(!name) return alert("กรุณาใส่ชื่อ!");
-        player.name = name;
-        document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('game-ui').style.display = 'block';
-        document.getElementById('display-name').innerText = name.toUpperCase();
-        save(); updateUI(); initBoard();
-        addChatSys("เชื่อมต่อสำเร็จ! ยินดีต้อนรับคุณ " + name);
-    }
-
-    function redeemCode() {
-        let code = document.getElementById('code-input').value.trim().toUpperCase();
-        if(!code) return;
-        if(player.usedCodes.includes(code)) return alert("คุณใช้โค้ดนี้ไปแล้ว!");
-        if(secretCodes[code]) {
-            let gift = secretCodes[code];
-            player.coins += gift;
-            player.usedCodes.push(code);
+    function redeem() {
+        let val = document.getElementById('code-in').value.trim();
+        if(val === adminCode) {
+            player.isAdmin = true;
             confetti();
-            alert("สำเร็จ! ได้รับ " + gift + " 🪙");
-            document.getElementById('code-input').value = '';
+            alert("ADMIN ACCESS GRANTED: ยินดีต้อนรับแอดมิน!");
+            updateUI(); save();
+        } else if(val === 'FREE') {
+            player.coins += 1000; alert("ได้รับ 1000 🪙");
             updateUI(); save();
         } else {
-            alert("โค้ดไม่ถูกต้อง");
+            alert("โค้ดผิดพลาด");
+        }
+        document.getElementById('code-in').value = '';
+    }
+
+    /* --- ระบบ AI ระดับพระเจ้า (Minimax Algorithm) --- */
+    function minimax(tempBoard, depth, isMaximizing) {
+        if (checkWinSim(tempBoard, 'O')) return 10 - depth;
+        if (checkWinSim(tempBoard, 'X')) return depth - 10;
+        if (tempBoard.every(b => b !== '')) return 0;
+
+        if (isMaximizing) {
+            let bestScore = -Infinity;
+            for (let i = 0; i < 9; i++) {
+                if (tempBoard[i] === '') {
+                    tempBoard[i] = 'O';
+                    let score = minimax(tempBoard, depth + 1, false);
+                    tempBoard[i] = '';
+                    bestScore = Math.max(score, bestScore);
+                }
+            }
+            return bestScore;
+        } else {
+            let bestScore = Infinity;
+            for (let i = 0; i < 9; i++) {
+                if (tempBoard[i] === '') {
+                    tempBoard[i] = 'X';
+                    let score = minimax(tempBoard, depth + 1, true);
+                    tempBoard[i] = '';
+                    bestScore = Math.min(score, bestScore);
+                }
+            }
+            return bestScore;
         }
     }
 
+    function botMove() {
+        let bestScore = -Infinity;
+        let move;
+        let diff = document.getElementById('diff').value;
+
+        if(diff === 'hard') {
+            // AI พระเจ้า คำนวณทุกความเป็นไปได้
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'O';
+                    let score = minimax(board, 0, false);
+                    board[i] = '';
+                    if (score > bestScore) {
+                        bestScore = score;
+                        move = i;
+                    }
+                }
+            }
+        } else {
+            let empty = board.map((v,i)=>v===''?i:null).filter(v=>v!==null);
+            move = empty[Math.floor(Math.random()*empty.length)];
+        }
+
+        board[move] = 'O';
+        render();
+        if(checkWin('O')) return end('lose');
+        if(board.every(b=>b!=='')) return end('draw');
+        isPlaying = true;
+    }
+
+    /* --- Admin Functions --- */
+    function adminMaxLevel() { player.lvl = 99; player.exp = 0; updateUI(); save(); addMsg('Admin','ปรับเลเวลสูงสุดแล้ว'); }
+    function adminMaxWins() { player.wins = 999; updateUI(); save(); addMsg('Admin','ปรับอันดับสูงสุดแล้ว'); }
+    function adminAddCoins() { player.coins += 1000000; updateUI(); save(); addMsg('Admin','เพิ่มเหรียญ 1,000,000 🪙'); }
+    function adminBanSelf() { player.isBanned = true; save(); checkBan(); }
+
+    function checkBan() {
+        if(player.isBanned) {
+            document.getElementById('main-container').style.display = 'none';
+            document.getElementById('banned-screen').style.display = 'flex';
+        }
+    }
+
+    /* --- Game Core --- */
+    let board = Array(9).fill('');
+    let isPlaying = false;
+
     function initBoard() {
-        let s = parseInt(document.getElementById('size-mode').value);
-        board = Array(s*s).fill('');
-        document.getElementById('grid').style.gridTemplateColumns = `repeat(${s}, 1fr)`;
+        board = Array(9).fill('');
+        document.getElementById('grid').style.gridTemplateColumns = 'repeat(3, 1fr)';
         render();
     }
 
     function render() {
-        const grid = document.getElementById('grid'); grid.innerHTML = '';
-        const skinIcon = skins.find(s => s.id === player.activeSkin).icon;
-        board.forEach((v, i) => {
-            const cell = document.createElement('div');
-            cell.className = 'cell';
-            if(v==='X') { cell.innerText = skinIcon; cell.style.color = 'var(--cyan)'; }
-            else if(v==='O') { cell.innerText = '⭕'; cell.style.color = 'var(--pink)'; }
-            cell.onclick = () => tap(i);
-            grid.appendChild(cell);
+        const g = document.getElementById('grid'); g.innerHTML = '';
+        const icon = player.isAdmin ? '👑' : '❌';
+        board.forEach((v,i) => {
+            const c = document.createElement('div');
+            c.className = 'cell';
+            if(v==='X') { c.innerText = icon; c.style.color = 'var(--cyan)'; }
+            else if(v==='O') { c.innerText = '⭕'; c.style.color = 'var(--pink)'; }
+            c.onclick = () => { if(isPlaying && board[i]==='') { board[i]='X'; render(); if(!checkWin('X') && !board.every(b=>b!=='')) { isPlaying=false; setTimeout(botMove, 500); } else if(checkWin('X')) end('win'); else end('draw'); } };
+            g.appendChild(c);
         });
     }
 
-    function tap(i) {
-        if(!gameActive || board[i]!=='') return;
-        board[i] = 'X'; render();
-        if(checkWin('X')) return end('win');
-        if(board.every(b => b!=='')) return end('draw');
-        gameActive = false; setTimeout(bot, 600);
-    }
-
-    function bot() {
-        let empty = board.map((v,i)=>v===''?i:null).filter(v=>v!==null);
-        let diff = document.getElementById('diff-mode').value;
-        let move;
-        if(diff==='hard') move = find('O') || find('X') || empty[0];
-        else move = empty[Math.floor(Math.random()*empty.length)];
-        
-        board[move] = 'O'; render();
-        if(checkWin('O')) return end('lose');
-        if(board.every(b => b!=='')) return end('draw');
-        gameActive = true;
-    }
-
-    function find(p) {
-        for(let i=0; i<board.length; i++) {
-            if(board[i]==='') { board[i]=p; if(checkWin(p)) { board[i]=''; return i; } board[i]=''; }
-        } return null;
-    }
-
     function checkWin(p) {
-        let s = parseInt(document.getElementById('size-mode').value);
-        let winN = s === 3 ? 3 : 4;
-        for(let i=0; i<board.length; i++) {
-            if(board[i]===p) {
-                if(line(i,1,winN,p,s)||line(i,s,winN,p,s)||line(i,s+1,winN,p,s)||line(i,s-1,winN,p,s)) return true;
-            }
-        } return false;
+        const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        return wins.some(w => w.every(i => board[i]===p));
     }
-
-    function line(idx, step, target, p, s) {
-        for(let k=0; k<target; k++) {
-            let n = idx + k*step;
-            if(n<0 || n>=board.length || board[n]!==p) return false;
-            if(step===1 && Math.floor(n/s) !== Math.floor(idx/s)) return false;
-        } return true;
+    
+    function checkWinSim(b, p) {
+        const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        return wins.some(w => w.every(i => b[i]===p));
     }
 
     function end(res) {
-        gameActive = false;
-        let d = document.getElementById('diff-mode').value;
-        if(res === 'win') {
-            let reward = d==='hard' ? 200 : 0;
-            if(d==='hard') player.wins++;
-            player.coins += reward; player.exp += 100;
-            confetti(); alert("ชนะแล้ว! ได้รับ " + reward + " 🪙");
-        } else alert(res==='lose' ? "คุณแพ้!" : "เสมอ!");
-        
-        if(player.exp >= player.lvl*500) { player.lvl++; player.exp=0; player.coins+=500; addChatSys("LEVEL UP! LVL "+player.lvl); }
+        isPlaying = false;
+        if(res === 'win') { confetti(); player.coins += 200; player.exp += 100; player.wins++; alert("ชนะแล้ว!"); }
+        else if(res === 'lose') alert("คุณแพ้ให้กับโหมดพระเจ้า!");
+        else alert("เสมอ!");
+        if(player.exp >= 500) { player.lvl++; player.exp = 0; }
         updateUI(); save();
     }
 
     function updateUI() {
+        document.getElementById('p-name').innerText = player.name;
         document.getElementById('coin-txt').innerText = player.coins.toLocaleString();
         document.getElementById('lvl-txt').innerText = "LVL " + player.lvl;
-        document.getElementById('exp-txt').innerText = player.exp + "/500";
-        document.getElementById('exp-fill').style.width = (player.exp/5) + "%";
-        
-        const shop = document.getElementById('skin-shop'); shop.innerHTML = '';
-        skins.forEach(s => {
-            let owned = player.skins.includes(s.id);
-            shop.innerHTML += `<div class="skin-card ${player.activeSkin===s.id?'active':''}" onclick="buy('${s.id}',${s.price})">
-                <span class="skin-icon">${s.icon}</span>
-                <span class="skin-price">${owned?'OWNED':s.price+'🪙'}</span>
-            </div>`;
-        });
-
-        const lb = [{n:player.name, w:player.wins}, {n:'BOT_GOD', w:99}, {n:'AYU_PRO', w:45}].sort((a,b)=>b.w-a.w);
-        document.getElementById('lb-content').innerHTML = lb.map((p,i)=>`<div class="lb-item"><span>${i+1}. ${p.n}</span><span>${p.w} WINS</span></div>`).join('');
-    }
-
-    function buy(id, p) {
-        if(player.skins.includes(id)) player.activeSkin = id;
-        else if(player.coins >= p) { player.coins -= p; player.skins.push(id); player.activeSkin = id; }
-        else alert("เหรียญไม่พอ!");
-        updateUI(); save(); render();
+        document.getElementById('exp-fill').style.width = (player.exp / 5) + "%";
+        document.getElementById('admin-badge-ui').innerHTML = player.isAdmin ? '<span class="admin-badge">A</span>' : '';
+        document.getElementById('admin-panel').style.display = player.isAdmin ? 'block' : 'none';
     }
 
     function sendChat() {
-        let i = document.getElementById('chat-input');
-        if(i.value) {
-            document.getElementById('chat-content').innerHTML += `<div><b>${player.name}:</b> ${i.value}</div>`;
-            i.value = ''; document.getElementById('chat-content').scrollTop = 999;
-        }
+        let i = document.getElementById('chat-in');
+        if(i.value) { addMsg(player.isAdmin ? ' แอดมิน ' + player.name : player.name, i.value); i.value = ''; }
     }
 
-    function addChatSys(m) {
-        document.getElementById('chat-content').innerHTML += `<div style="color:var(--gold)">[SYSTEM] ${m}</div>`;
-        document.getElementById('chat-content').scrollTop = 999;
+    function addMsg(u, m) {
+        const c = document.getElementById('chat');
+        c.innerHTML += `<div><b style="color:${u.includes('Admin')?'var(--admin)':'var(--cyan)'}">${u}:</b> ${m}</div>`;
+        c.scrollTop = 999;
     }
 
-    function matchmake() {
-        addChatSys("กำลังค้นหาคู่แข่ง...");
-        setTimeout(() => { gameActive = true; initBoard(); addChatSys("เจอคู่แข่งแล้ว! เริ่มได้"); }, 1000);
-    }
-
-    function save() { localStorage.setItem('ayu_final_db', JSON.stringify(player)); }
-    setInterval(() => { document.getElementById('ping-val').innerText = Math.floor(Math.random()*15)+15; }, 2000);
+    function startMatch() { addMsg('System','กำลังค้นหาผู้เล่นระดับพระเจ้า...'); setTimeout(()=>{ isPlaying=true; initBoard(); addMsg('System','เริ่มเกมได้!'); }, 1000); }
+    function save() { localStorage.setItem('ayu_god_v1', JSON.stringify(player)); }
     
-    if(player.name) {
-        document.getElementById('pNameInput').value = player.name;
-    }
+    checkBan();
+    updateUI();
+    setInterval(() => document.getElementById('ping').innerText = Math.floor(Math.random()*10)+10, 2000);
 </script>
 </body>
 </html>
