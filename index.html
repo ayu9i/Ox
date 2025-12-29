@@ -3,66 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XO Ultimate - PvP & AI 5% Edition</title>
+    <title>XO Ultimate - Battle & AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0f172a; --panel: #1e293b; --accent: #38bdf8; --text: #f8fafc; --gold: #fbbf24; --win: #10b981; --loss: #ef4444; }
+        :root { --bg: #0f172a; --panel: #1e293b; --accent: #38bdf8; --text: #f8fafc; --gold: #fbbf24; }
         body { font-family: 'Kanit', sans-serif; background: var(--bg); color: var(--text); text-align: center; margin: 0; padding: 10px; }
-        .header { background: var(--panel); padding: 15px; border-radius: 20px; display: inline-block; margin-bottom: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 90%; max-width: 400px; border: 1px solid #334155; }
-        .rank-badge { font-size: 0.8rem; background: var(--accent); color: #000; padding: 2px 12px; border-radius: 20px; font-weight: bold; margin-bottom: 5px; display: inline-block; }
-        .coin-display { font-size: 1.8rem; color: var(--gold); font-weight: bold; }
-        .board { display: grid; grid-template-columns: repeat(3, 90px); gap: 10px; justify-content: center; margin: 15px auto; }
-        .cell { width: 90px; height: 90px; background: var(--panel); border: 2px solid #334155; font-size: 2.2rem; cursor: pointer; color: white; border-radius: 15px; transition: 0.2s; }
-        .cell:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .header { background: var(--panel); padding: 15px; border-radius: 20px; display: inline-block; margin-bottom: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 95%; max-width: 400px; border: 1px solid #334155; }
+        .coin-display { font-size: 2rem; color: var(--gold); font-weight: bold; }
+        .board { display: grid; grid-template-columns: repeat(3, 95px); gap: 10px; justify-content: center; margin: 15px auto; }
+        .cell { width: 95px; height: 95px; background: var(--panel); border: 2px solid #334155; font-size: 2.5rem; cursor: pointer; color: white; border-radius: 15px; transition: 0.2s; }
+        .cell:hover { border-color: var(--accent); transform: translateY(-3px); }
         .mode-btn { background: #475569; color: white; padding: 8px 15px; border-radius: 8px; border: none; cursor: pointer; margin: 5px; font-size: 0.9rem; }
         .mode-btn.active { background: var(--accent); color: #000; font-weight: bold; }
-        .history-panel { margin-top: 15px; background: var(--panel); padding: 15px; border-radius: 20px; max-width: 400px; margin-left: auto; margin-right: auto; text-align: left; }
-        .log-entry { display: flex; justify-content: space-between; font-size: 0.8rem; border-bottom: 1px solid #334155; padding: 5px 0; }
-        button.main { background: linear-gradient(45deg, #38bdf8, #818cf8); color: white; width: 100%; max-width: 250px; font-weight: bold; padding: 12px; border-radius: 12px; border: none; cursor: pointer; margin-top: 10px; }
+        button.main-btn { background: linear-gradient(45deg, #38bdf8, #818cf8); color: white; width: 100%; max-width: 280px; font-weight: bold; padding: 15px; border-radius: 12px; border: none; cursor: pointer; margin-top: 10px; font-size: 1.1rem; }
+        .history { margin-top: 20px; background: var(--panel); padding: 15px; border-radius: 15px; max-width: 400px; margin: 20px auto; text-align: left; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
     <div id="setup-section">
-        <h1 style="color: var(--accent);">XO ULTIMATE</h1>
-        <input type="text" id="usernameInput" placeholder="ใส่ชื่อของคุณ" style="padding:10px; border-radius:8px; border:none;"><br>
-        <button onclick="saveName()" class="main">สร้างตำนานของคุณ</button>
+        <h1>🎮 XO ULTIMATE</h1>
+        <input type="text" id="usernameInput" placeholder="ใส่ชื่อของคุณ" style="padding:12px; border-radius:8px; border:none; width: 200px;"><br>
+        <button onclick="saveName()" class="main-btn">เข้าสู่สนามรบ</button>
     </div>
 
     <div id="game-section" style="display:none;">
         <div class="header">
-            <div id="rank-display" class="rank-badge">RANK: BRONZE</div>
+            <div id="rank-display" style="font-size: 0.8rem; color: var(--accent);">RANK: BRONZE</div>
             <div class="coin-display">🪙 <span id="coin-count">0</span></div>
-            <div id="turn-info" style="font-size: 0.9rem; color: var(--accent); margin: 5px 0;">โหมด: แข่งกับ AI</div>
-            <div>
+            <div style="margin: 10px 0;">
                 <button id="btn-ai" class="mode-btn active" onclick="setMode('ai')">แข่งกับ AI</button>
                 <button id="btn-pvp" class="mode-btn" onclick="setMode('pvp')">แข่งกับเพื่อน</button>
             </div>
-            <div id="bet-area" style="font-size: 0.8rem; margin-top: 5px;">
-                เดิมพัน/ยึดเหรียญ: <input type="number" id="betAmount" style="width:50px; background:#0f172a; color:white; border:none; text-align:center;" value="0"> 🪙
+            <div id="ai-settings">
+                ระดับ AI: 
+                <select id="difficulty" style="background:#0f172a; color:white; border-radius:5px; padding:5px;">
+                    <option value="easy">ง่าย (+10)</option>
+                    <option value="medium">ปานกลาง (+30)</option>
+                    <option value="hard">ยากนรก! (โอกาสชนะ 5%)</option>
+                </select>
             </div>
-            <select id="difficulty" style="background:#0f172a; color:white; border-radius:5px; margin-top:5px; font-size: 0.8rem;">
-                <option value="easy">ง่าย (+10)</option>
-                <option value="medium">ปานกลาง (+30)</option>
-                <option value="hard">ยากนรก! (โอกาสชนะ 5%)</option>
-            </select>
+            <div style="font-size: 0.8rem; margin-top: 10px;">
+                เดิมพัน/ยึดเหรียญ: <input type="number" id="betAmount" style="width:60px; background:#0f172a; color:white; border:none; text-align:center;" value="0"> 🪙
+            </div>
         </div>
 
         <div class="board" id="board"></div>
-        <button onclick="resetGame()" class="main">ล้างกระดาน / เริ่มใหม่</button>
+        <button onclick="resetGame()" class="main-btn">เริ่มเกมใหม่ / ล้างกระดาน</button>
 
-        <div class="history-panel">
-            <h4 style="margin:0; color:var(--accent);">📜 บันทึกการต่อสู้ล่าสุด</h4>
+        <div class="history">
+            <h4 style="margin: 0 0 10px 0; color: var(--accent);">📜 บันทึกการต่อสู้</h4>
             <div id="battle-log"></div>
         </div>
 
-        <div style="margin-top:15px; font-size: 0.7rem; color: #94a3b8;">
-            โค้ดแจกเหรียญ 2,000: <input type="text" id="promoInput" style="width:70px; background:#1e293b; color:white; border:1px solid #334155;">
-            <button onclick="redeemCode()" style="background:#475569; color:white; border:none; padding:2px 5px; border-radius:3px;">ตกลง</button>
+        <div style="margin-top:20px; opacity: 0.6; font-size: 0.7rem;">
+            โค้ดรับ 2000 เหรียญ: <input type="text" id="promoInput" style="width:80px;">
+            <button onclick="redeemCode()">ตกลง</button>
         </div>
     </div>
 
     <script>
+        let coins = parseInt(localStorage.getItem('xo_coins')) || 0;
+        let userName = localStorage.getItem('xo_username') || '';
+        let history = JSON.parse(localStorage.getItem('xo_history')) || [];
+        let board = Array(9).fill('');
+        let gameActive = true;
+        let gameMode = 'ai';
+        let currentPlayer = 'X';
+
+        function saveName() {
+            const name = document.getElementById('usernameInput').value;
+            if(name) { userName = name; localStorage.setItem('xo_username', name); showGame(); }
+        }
+
+        function showGame() {
+            document.getElementById('setup-section').style.display='none';
+            document.getElementById('game-section').style.display='block';
+            updateUI();
+        }
+
+        function setMode(mode) {
+            gameMode = mode;
+            document.getElementById('btn-ai').className = mode === 'ai' ? 'mode-btn active' : 'mode-btn';
+            document.getElementById('btn-pvp').className = mode === 'pvp' ? 'mode-btn active' : 'mode-btn';
+            document.getElementById('ai-settings').style.display = mode === 'ai' ? 'block' : 'none';
+            resetGame();
+        }
+
+        function updateUI() {
+            const boardDiv = document.getElementById('board');
+            boardDiv.innerHTML = '';
+            board.forEach((cell, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'cell'; btn.innerText = cell;
+                btn.onclick = () => playTurn(i);
+                boardDiv.appendChild(btn);
+            });
+            document.getElementById('coin-count').innerText = coins.toLocaleString();
+            renderHistory();
+        }
+
+        function playTurn(i) {
+            if(board[i] === '' && gameActive) {
+                board[i] = currentPlayer;
+                updateUI();
+                if(checkWin(board, currentPlayer)) {
+                    handleGameOver(currentPlayer);
+                } else if(board.every(s=>s!=='')) {
+                    handleGameOver('tie');
+                } else {
+                    if(gameMode === 'ai') {
+                        gameActive = false;
+                        setTimeout(aiMove, 500);
+                    } else {
+                        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                    }
+                }
+            }
+        }
+
+        function aiMove() {
+            const diff = document.getElementById('difficulty').value;
+            let m;
+            if (diff === 'hard') {
+                m = (Math.random() < 0.05) ? randomMove() : minimax(board, 'O').index;
+            } else if (diff === 'medium') {
+                m = (Math.random() < 0.4) ? minimax(board, 'O').index : randomMove();
+            } else { m = randomMove(); }
+
+            board[m] = 'O'; gameActive = true;
+            if(checkWin(board, 'O')) handleGameOver('O');
+            else if(board.every(s=>s!=='')) handleGameOver('tie');
+            updateUI();
+        }
+
+        function handleGameOver(w) {
+            gameActive = false;
+            const bet = parseInt(document.getElementById('betAmount').value) || 0;
+            const diff = document.getElementById('difficulty').value;
+            let resultMsg = "";
+
+            if(gameMode === 'ai') {
+                if(w === 'X') {
+                    const prize = {easy:10, medium:30, hard:50}[diff] + bet;
+                    coins += prize; resultMsg = `ชนะ AI! รับ ${prize} 🪙`;
+                } else if(w === 'O') {
+                    coins -= bet; if(coins < 0) coins = 0;
+                    resultMsg = `แพ้ AI! เสีย ${bet} 🪙`;
+                } else { resultMsg = "เสมอ AI!"; }
+            } else {
+                if(w === 'tie') { resultMsg = "เสมอกับเพื่อน!"; }
+                else {
+                    if(w === 'X') { coins += bet; resultMsg = `คุณชนะเพื่อน! ยึดมา ${bet} 🪙`; }
+                    else { coins -= bet; if(coins < 0) coins = 0; resultMsg = `เพื่อนชนะ! คุณเสีย ${bet} 🪙`; }
+                }
+            }
+
+            history.unshift({ res: resultMsg, time: new Date().toLocaleTimeString() });
+            if(history.length > 5) history.pop();
+            localStorage.setItem('xo_history', JSON.stringify(history));
+            localStorage.setItem('xo_coins', coins);
+            setTimeout(() => { alert(resultMsg); updateUI(); }, 100);
+        }
+
+        function minimax(b, p) {
+            let a = b.map((v,i)=>v===''?i:null).filter(v=>v!==null);
+            if(checkWin(b, 'X')) return {score:-10};
+            if(checkWin(b, 'O')) return {score:10};
+            if(a.length===0) return {score:0};
+            let moves = [];
+            for(let i=0; i<a.length; i++) {
+                let m = {index: a[i]}; b[a[i]] = p;
+                m.score = minimax(b, p==='O'?'X':'O').score;
+                b[a[i]] = ''; moves.push(m);
+            }
+            return moves.reduce((p_m, c_m) => (p === 'O' ? c_m.score > p_m.score : c_m.score < p_m.score) ? c_m : p_m);
+        }
+
+        function checkWin(b, p) { return [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]].some(c=>c.every(i=>b[i]===p)); }
+        function randomMove() { let a=board.map((v,i)=>v===''?i:null).filter(v=>v!==null); return a[Math.floor(Math.random()*a.length)]; }
+        function renderHistory() { document.getElementById('battle-log').innerHTML = history.map(h => `<div style="border-bottom:1px solid #334155; padding:5px 0;"><span>${h.res}</span> <small style="float:right; opacity:0.5;">${h.time}</small></div>`).join(''); }
+        function redeemCode() { if(document.getElementById('promoInput').value==='GIFT2000'){ coins+=2000; localStorage.setItem('xo_coins', coins); updateUI(); alert("รวยทันที! +2000 🪙"); } }
+        function resetGame() { board=Array(9).fill(''); gameActive=true; currentPlayer='X'; updateUI(); }
+        if(userName) showGame();
+    </script>
+</body>
+</html>
         let coins = parseInt(localStorage.getItem('xo_coins')) || 0;
         let userName = localStorage.getItem('xo_username') || '';
         let history = JSON.parse(localStorage.getItem('xo_history')) || [];
