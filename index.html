@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>XO SUPREME: ETERNAL CONQUEROR</title>
+    <title>XO SUPREME: OMNI-GOD EDITION</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --bg: #020617; --cyan: #22d3ee; --pink: #f43f5e; --gold: #fbbf24;
-            --diamond: #b9f2ff; --conqueror: #ff3e3e;
+            --green: #10b981; --red: #ef4444; --glass: rgba(15, 23, 42, 0.85);
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
@@ -19,280 +19,482 @@
             background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #020617 100%);
         }
         .container {
-            width: 100%; max-width: 480px; background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(25px); border-radius: 40px; padding: 20px;
-            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 60px rgba(0,0,0,0.7);
-            text-align: center; margin-bottom: 30px;
+            width: 100%; max-width: 480px; background: var(--glass);
+            backdrop-filter: blur(20px); border-radius: 35px; padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1); position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            margin-bottom: 50px;
         }
 
-        /* Level & EXP Bar */
-        .level-section { margin-bottom: 15px; text-align: left; }
-        .level-info { display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.8rem; margin-bottom: 5px; color: var(--cyan); }
-        .exp-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
-        .exp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), #818cf8); width: 0%; transition: 0.5s; }
+        /* Top Bar */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-family: 'Orbitron'; font-size: 0.75rem; }
+        .net-status { display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.4); padding: 5px 10px; border-radius: 20px; }
+        .ping-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 5px var(--green); }
+        .lang-btn { background: linear-gradient(90deg, #3b82f6, #2563eb); border: none; color: white; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
-        .coin-box { font-size: 2.2rem; color: var(--gold); font-weight: bold; font-family: 'Orbitron'; margin: 10px 0; }
+        /* Level & Quest */
+        .stats-panel { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 15px; margin-bottom: 15px; }
+        .level-row { display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.8rem; margin-bottom: 5px; color: var(--cyan); }
+        .exp-track { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .exp-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), #818cf8); width: 0%; transition: 0.5s; }
+        
+        .quest-box { margin-top: 8px; font-size: 0.75rem; color: #cbd5e1; display: flex; align-items: center; gap: 5px; }
+        .quest-check { color: var(--gold); }
 
-        /* Chat System */
-        .chat-box { background: rgba(0,0,0,0.4); border-radius: 20px; height: 120px; overflow-y: auto; padding: 10px; margin: 15px 0; font-size: 0.75rem; text-align: left; border: 1px solid rgba(255,255,255,0.05); }
-        .chat-msg { margin-bottom: 5px; animation: slideIn 0.3s ease; }
-        .chat-user { color: var(--cyan); font-weight: bold; }
-        .chat-system { color: var(--gold); font-style: italic; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+        .coin-box { font-size: 2.2rem; color: var(--gold); font-weight: bold; font-family: 'Orbitron'; text-shadow: 0 0 15px rgba(251, 191, 36, 0.3); margin: 10px 0; }
 
-        /* General UI */
+        /* Matchmaking Overlay */
+        #match-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.95); z-index: 100; border-radius: 35px;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .loader { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.1); border-top: 5px solid var(--cyan); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .vs-text { font-family: 'Orbitron'; font-size: 2rem; color: var(--red); font-weight: 900; animation: pulse 0.8s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        /* Chat */
+        .chat-box { background: rgba(0,0,0,0.4); border-radius: 15px; height: 120px; overflow-y: auto; padding: 10px; margin: 10px 0; font-size: 0.75rem; text-align: left; border: 1px solid rgba(255,255,255,0.05); }
+        .chat-msg { margin-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 2px; }
+        .chat-user { color: var(--cyan); font-weight: bold; font-family: 'Orbitron'; }
+        .chat-sys { color: var(--gold); font-style: italic; }
+
+        /* Game Board */
         .board { display: grid; gap: 8px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); margin: 15px 0; }
         .board-3 { grid-template-columns: repeat(3, 1fr); }
         .board-5 { grid-template-columns: repeat(5, 1fr); }
-        .cell { aspect-ratio: 1/1; background: rgba(30, 41, 59, 0.6); border-radius: 15px; font-size: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
-        
-        .btn { font-family: 'Orbitron'; background: linear-gradient(90deg, #0ea5e9, #6366f1); color: white; border: none; padding: 12px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 0.8rem; }
-        .skin-tray { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
-        .skin-item { min-width: 60px; height: 60px; background: rgba(0,0,0,0.4); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid transparent; flex-shrink: 0; }
-        .skin-item.active { border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+        .cell { aspect-ratio: 1/1; background: rgba(30, 41, 59, 0.6); border-radius: 12px; font-size: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); transition: transform 0.1s; }
+        .cell:active { transform: scale(0.9); }
 
-        input { background: rgba(0,0,0,0.5); border: 1px solid #334155; color: white; padding: 10px; border-radius: 12px; width: 100%; margin-bottom: 8px; font-family: 'Kanit'; }
+        /* Controls */
+        .btn { font-family: 'Orbitron'; background: linear-gradient(90deg, #0ea5e9, #6366f1); color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 5px; font-size: 0.85rem; transition: 0.3s; }
+        .btn:hover { filter: brightness(1.2); }
+        .btn-gold { background: linear-gradient(90deg, #f59e0b, #ea580c); }
+        .btn-red { background: linear-gradient(90deg, #ef4444, #b91c1c); }
+
+        .skin-tray { display: flex; gap: 10px; overflow-x: auto; padding: 10px 5px; scrollbar-width: none; }
+        .skin-item { min-width: 60px; height: 60px; background: rgba(0,0,0,0.4); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; border: 2px solid transparent; flex-shrink: 0; position: relative; }
+        .skin-item.active { border-color: var(--cyan); box-shadow: 0 0 15px var(--cyan) inset; }
+        .lock-icon { position: absolute; font-size: 0.8rem; bottom: 2px; right: 2px; }
+
+        input, select { background: rgba(0,0,0,0.5); border: 1px solid #334155; color: white; padding: 10px; border-radius: 12px; width: 100%; margin-bottom: 8px; font-family: 'Kanit'; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <div id="match-overlay">
+        <div class="loader"></div>
+        <h2 id="match-status" style="font-family: 'Orbitron'; letter-spacing: 2px;">SEARCHING...</h2>
+        <div id="match-vs" style="display:none; text-align:center;">
+            <p>OPPONENT FOUND</p>
+            <div class="vs-text" id="opp-name">BOT_01</div>
+            <p style="color:var(--cyan); font-size:0.8rem;">RANK: GOLD III</p>
+        </div>
+    </div>
+
+    <div class="top-bar">
+        <div class="net-status">
+            <div id="ping-dot" class="ping-dot"></div>
+            <span><span id="ping-val">24</span> ms</span>
+        </div>
+        <button class="lang-btn" onclick="toggleLang()" id="lang-btn">EN</button>
+    </div>
+
     <div id="scr-start">
-        <h1 style="font-family:'Orbitron'; color:var(--cyan); letter-spacing:3px;">XO SUPREME</h1>
-        <p style="font-size:0.8rem; opacity:0.6;">ETERNAL CONQUEROR</p>
-        <div style="margin-top: 30px;">
-            <input type="text" id="inName" placeholder="ENTER PLAYER NAME">
-            <button class="btn" style="font-size:1rem;" onclick="login()">LOGIN TO SERVER</button>
+        <h1 id="t-title" style="margin-bottom:5px; font-size:2rem; background:linear-gradient(90deg, #22d3ee, #f43f5e); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">XO SUPREME</h1>
+        <p style="font-size:0.7rem; opacity:0.8; letter-spacing:3px; margin-top:0;">OMNI-GOD EDITION</p>
+        <div style="margin-top: 40px;">
+            <input type="text" id="inName" placeholder="ENTER AGENT NAME">
+            <button class="btn" onclick="login()" id="t-login">CONNECT</button>
         </div>
     </div>
 
     <div id="scr-game" style="display:none">
-        <div class="level-section">
-            <div class="level-info">
-                <span id="lvl-txt">LEVEL 1 (Novice)</span>
-                <span id="exp-txt">0/100 EXP</span>
+        
+        <div class="stats-panel">
+            <div class="level-row">
+                <span id="lvl-txt">LVL 1</span>
+                <span id="exp-txt">0/200</span>
             </div>
-            <div class="exp-bar-bg"><div id="exp-fill" class="exp-bar-fill"></div></div>
+            <div class="exp-track"><div id="exp-fill" class="exp-fill"></div></div>
+            <div class="quest-box">
+                📜 <span id="quest-txt">Quest: Win 3 Games</span> <span id="quest-prog">(0/3)</span>
+            </div>
         </div>
 
         <div class="coin-box">🪙 <span id="coin-txt">0</span></div>
 
-        <div class="chat-box" id="chat-content">
-            <div class="chat-msg"><span class="chat-system">[System]:</span> Welcome to the Global Server!</div>
-        </div>
-        <div style="display:flex; gap:5px;">
-            <input type="text" id="chat-input" placeholder="พิมพ์ข้อความแชท..." style="margin-bottom:0; font-size:0.8rem;">
-            <button class="btn" style="width:70px; margin-top:0;" onclick="sendChat()">ส่ง</button>
+        <div class="chat-box" id="chat-content"></div>
+        <div style="display:flex; gap:5px; margin-bottom:10px;">
+            <input type="text" id="chat-input" placeholder="..." style="margin-bottom:0;">
+            <button class="btn" style="width:60px; margin-top:0;" onclick="sendChat()" id="t-send">➤</button>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top:10px;">
-            <button class="btn" style="background:linear-gradient(90deg, #f59e0b, #ea580c);" onclick="spin()">LUCKY SPIN</button>
-            <button class="btn" style="background:#8b5cf6;" onclick="buyLoot()">LOOT BOX</button>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <button class="btn btn-gold" onclick="spin()" id="t-spin">SPIN</button>
+            <button class="btn" style="background:#8b5cf6;" onclick="buyLoot()" id="t-loot">LOOT (300)</button>
         </div>
 
         <div class="skin-tray" id="tray"></div>
 
-        <select id="size-mode" onchange="resetBoard()" style="background:#0f172a; color:white; border:1px solid #334155; padding:8px; border-radius:10px; width:100%;">
-            <option value="3">CLASSIC 3X3</option>
-            <option value="5">ELITE 5X5</option>
-        </select>
+        <div style="background:rgba(0,0,0,0.2); padding:10px; border-radius:15px; margin-top:10px;">
+            <select id="size-mode" onchange="initGame(false)">
+                <option value="3">CLASSIC (3x3)</option>
+                <option value="5">ELITE (5x5)</option>
+            </select>
+            <div id="grid" class="board"></div>
+            <button class="btn btn-red" onclick="startMatchmaking()" id="t-play">FIND MATCH</button>
+        </div>
 
-        <div id="grid" class="board"></div>
-
-        <button class="btn" style="background:transparent; border:1px solid #334155;" onclick="resetBoard()">REMATCH</button>
-
-        <div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:20px; margin-top:15px;">
-            <div style="font-size:0.7rem; color:var(--cyan); margin-bottom:5px;">REDEEM CODE</div>
-            <input type="text" id="codeIn" placeholder="Enter Secret Code" style="font-size:0.8rem; text-align:center;">
-            <button class="btn" style="background:#10b981; margin-top:0;" onclick="redeem()">REDEEM</button>
+        <div style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px;">
+            <div style="display:flex; gap:5px;">
+                <input type="text" id="codeIn" placeholder="SECRET CODE" style="margin-bottom:0;">
+                <button class="btn" style="width:80px; background:#10b981; margin-top:0;" onclick="redeem()" id="t-redeem">USE</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    let coins = parseInt(localStorage.getItem('xo_v4_coins')) || 0;
-    let exp = parseInt(localStorage.getItem('xo_v4_exp')) || 0;
-    let lvl = parseInt(localStorage.getItem('xo_v4_lvl')) || 1;
-    let user = localStorage.getItem('xo_v4_user') || '';
+    // --- Data & Config ---
+    let lang = 'TH';
+    let user = localStorage.getItem('xo_god_user') || '';
+    let coins = parseInt(localStorage.getItem('xo_god_coins')) || 0;
+    let exp = parseInt(localStorage.getItem('xo_god_exp')) || 0;
+    let lvl = parseInt(localStorage.getItem('xo_god_lvl')) || 1;
+    let owned = JSON.parse(localStorage.getItem('xo_god_skins')) || ['Default'];
+    let quest = JSON.parse(localStorage.getItem('xo_god_quest')) || { target: 3, current: 0, done: false };
+    
+    // Game State
     let board = [];
-    let isPlaying = true;
+    let isPlaying = false; // Must matchmake first
     let skin = 'Default';
+    let currentPing = 30;
+    let opponentName = "AI-BOT";
+    
+    // Assets
     const skinsData = [
-        {id:'Default', s:['X','O']}, {id:'Neon', s:['💠','💎']}, 
-        {id:'Fire', s:['🔥','❄️']}, {id:'God', s:['👑','💀']}
+        {id:'Default', s:['X','O'], r:'Common'}, 
+        {id:'Neon', s:['💠','💎'], r:'Rare'}, 
+        {id:'Fire', s:['🔥','❄️'], r:'Epic'}, 
+        {id:'God', s:['👑','💀'], r:'Legendary'},
+        {id:'Space', s:['🚀','👾'], r:'Legendary'}
     ];
-    let owned = JSON.parse(localStorage.getItem('xo_v4_owned')) || ['Default'];
+    
+    const i18n = {
+        TH: { 
+            login:"เชื่อมต่อ", play:"ค้นหาห้อง", spin:"วงล้อ", loot:"สุ่มของ", 
+            redeem:"ยืนยัน", send:"ส่ง", title:"XO ซูพรีม", 
+            quest:"ภารกิจ: ชนะ 3 เกม", search:"กำลังค้นหา...", found:"เจอคู่แข่ง!",
+            win:"ชนะ!", lose:"แพ้!", draw:"เสมอ", unlock:"ปลดล็อค"
+        },
+        EN: { 
+            login:"CONNECT", play:"FIND MATCH", spin:"SPIN", loot:"LOOT BOX", 
+            redeem:"REDEEM", send:"SEND", title:"XO SUPREME", 
+            quest:"Quest: Win 3 Games", search:"SEARCHING...", found:"OPPONENT FOUND",
+            win:"VICTORY!", lose:"DEFEAT!", draw:"DRAW", unlock:"UNLOCKED"
+        }
+    };
 
-    // Login
+    // --- Core System ---
+    function init() {
+        if(user) login();
+        updatePing();
+        setInterval(randomChat, 8000);
+    }
+
+    function toggleLang() {
+        lang = lang === 'TH' ? 'EN' : 'TH';
+        document.getElementById('lang-btn').innerText = lang;
+        updateUI();
+    }
+
+    function updatePing() {
+        setInterval(() => {
+            currentPing = Math.floor(Math.random() * 60) + 20;
+            if(Math.random() > 0.9) currentPing += 150; // Lag spike
+            const d = document.getElementById('ping-dot');
+            const v = document.getElementById('ping-val');
+            v.innerText = currentPing;
+            d.style.background = currentPing < 100 ? '#10b981' : '#ef4444';
+            d.style.boxShadow = `0 0 5px ${d.style.background}`;
+        }, 1500);
+    }
+
     function login() {
         let n = document.getElementById('inName').value || user;
         if(n) {
-            user = n; localStorage.setItem('xo_v4_user', user);
-            document.getElementById('scr-start').style.display='none';
-            document.getElementById('scr-game').style.display='block';
-            resetBoard();
-            setInterval(randomChat, 5000); // Start random chat
+            user = n; localStorage.setItem('xo_god_user', user);
+            document.getElementById('scr-start').style.display = 'none';
+            document.getElementById('scr-game').style.display = 'block';
+            updateUI(); initGame(false);
         }
     }
 
-    // EXP & Level System
-    function addExp(amt) {
-        exp += amt;
-        let nextLvl = lvl * 200;
-        if(exp >= nextLvl) {
-            exp -= nextLvl;
-            lvl++;
-            coins += 500;
-            addChatMessage("System", `Congratulations! Level Up to ${lvl}! (+500 🪙)`, true);
-            confetti({ particleCount: 100 });
-        }
-        updateUI();
+    // --- Matchmaking System ---
+    function startMatchmaking() {
+        if(isPlaying) { if(!confirm("Reset current game?")) return; }
+        
+        const overlay = document.getElementById('match-overlay');
+        const status = document.getElementById('match-status');
+        const vs = document.getElementById('match-vs');
+        const playBtn = document.getElementById('t-play');
+        
+        overlay.style.display = 'flex';
+        status.innerText = i18n[lang].search;
+        status.style.display = 'block';
+        vs.style.display = 'none';
+
+        // Fake Delay 2-4 seconds
+        setTimeout(() => {
+            const botNames = ["Killer_Z", "NoobMaster", "ProPlayer99", "Agent_X", "Somsak_TH", "AI_Prime"];
+            opponentName = botNames[Math.floor(Math.random() * botNames.length)];
+            
+            status.style.display = 'none';
+            vs.style.display = 'block';
+            document.getElementById('opp-name').innerText = opponentName;
+            
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                initGame(true); // Start actual game
+                playBtn.innerText = "RESET / SURRENDER";
+                addChatSys(`Match started: ${user} VS ${opponentName}`);
+            }, 2000);
+        }, 2000 + Math.random()*2000);
     }
 
-    function resetBoard() {
+    // --- Game Logic ---
+    function initGame(active) {
         let s = parseInt(document.getElementById('size-mode').value);
         board = Array(s*s).fill('');
-        isPlaying = true;
-        document.getElementById('grid').className = `board board-${s}`;
-        updateUI();
+        isPlaying = active;
+        const g = document.getElementById('grid');
+        g.className = `board board-${s}`;
+        g.style.opacity = active ? "1" : "0.5"; // Dim if not playing
+        renderBoard();
     }
 
-    function updateUI() {
+    function renderBoard() {
         const g = document.getElementById('grid'); g.innerHTML = '';
         board.forEach((v, i) => {
             const c = document.createElement('div');
             c.className = 'cell'; c.innerText = v;
-            const icons = skinsData.find(x=>x.id===skin).s;
-            if(v) c.style.color = (v === icons[0]) ? 'var(--cyan)' : 'var(--pink)';
+            const icons = getIcons();
+            if(v) {
+                c.style.color = (v === icons[0]) ? 'var(--cyan)' : 'var(--pink)';
+                c.style.textShadow = `0 0 10px ${c.style.color}`;
+            }
             c.onclick = () => tap(i);
             g.appendChild(c);
         });
-        
-        document.getElementById('coin-txt').innerText = coins.toLocaleString();
-        document.getElementById('lvl-txt').innerText = `LEVEL ${lvl} (${getRankName(lvl)})`;
-        document.getElementById('exp-txt').innerText = `${exp}/${lvl*200} EXP`;
-        document.getElementById('exp-fill').style.width = `${(exp/(lvl*200))*100}%`;
-
-        const tray = document.getElementById('tray'); tray.innerHTML = '';
-        skinsData.filter(s=>owned.includes(s.id)).forEach(sk => {
-            const d = document.createElement('div');
-            d.className = `skin-item ${skin===sk.id?'active':''}`;
-            d.innerHTML = sk.s[0];
-            d.onclick = () => { skin = sk.id; updateUI(); };
-            tray.appendChild(d);
-        });
-        save();
     }
 
-    function getRankName(l) {
-        if(l >= 20) return "Grandmaster";
-        if(l >= 10) return "Legend";
-        if(l >= 5) return "Veteran";
-        return "Novice";
-    }
-
-    // Gameplay
     function tap(i) {
-        if(board[i]==='' && isPlaying) {
-            let icons = skinsData.find(x=>x.id===skin).s;
-            board[i] = icons[0];
-            if(check(icons[0])) win();
-            else if(board.every(x=>x!=='')) resetBoard();
-            else { isPlaying = false; setTimeout(bot, 400); }
-            updateUI();
+        if(!isPlaying) { alert("Please press FIND MATCH first!"); return; }
+        if(board[i] === '') {
+            // Network Lag Simulation
+            setTimeout(() => {
+                let icons = getIcons();
+                board[i] = icons[0];
+                renderBoard();
+                if(checkWin(icons[0])) endGame('win');
+                else if(board.every(x=>x!=='')) endGame('draw');
+                else {
+                    // Bot Turn
+                    setTimeout(botMove, 500); 
+                }
+            }, currentPing/2); // Input delay
         }
     }
 
-    function bot() {
-        let icons = skinsData.find(x=>x.id===skin).s;
-        let e = board.map((v,i)=>v===''?i:null).filter(v=>v!==null);
-        if(e.length > 0) {
-            board[e[Math.floor(Math.random()*e.length)]] = icons[1];
-            if(check(icons[1])) { alert("Defeat!"); resetBoard(); }
+    function botMove() {
+        if(!isPlaying) return;
+        let empty = board.map((v,i)=>v===''?i:null).filter(v=>v!==null);
+        if(empty.length > 0) {
+            let icons = getIcons();
+            let move = empty[Math.floor(Math.random()*empty.length)];
+            board[move] = icons[1];
+            renderBoard();
+            if(checkWin(icons[1])) endGame('lose');
+            else if(board.every(x=>x!=='')) endGame('draw');
         }
-        isPlaying = true; updateUI();
     }
 
-    function check(p) {
+    function checkWin(p) {
         let sz = parseInt(document.getElementById('size-mode').value);
         let win = sz === 3 ? 3 : 4;
         for(let i=0; i<sz*sz; i++) {
             if(board[i]===p) {
-                if(i%sz<=sz-win) {
-                    let w=true; for(let j=0; j<win; j++) if(board[i+j]!==p) w=false;
-                    if(w) return true;
-                }
-                if(i<sz*(sz-win+1)) {
-                    let w=true; for(let j=0; j<win; j++) if(board[i+j*sz]!==p) w=false;
-                    if(w) return true;
-                }
+                // Horizontal & Vertical checks omitted for brevity (same logic)
+                // Using simplified logic for brevity but ensuring 3x3/5x5 works
+                if(checkLine(i, 1, win, p, sz)) return true; // Horiz
+                if(checkLine(i, sz, win, p, sz)) return true; // Vert
+                if(checkLine(i, sz+1, win, p, sz)) return true; // Diag \
+                if(checkLine(i, sz-1, win, p, sz)) return true; // Diag /
             }
         }
         return false;
     }
-
-    function win() {
-        coins += 100; addExp(50);
-        confetti({ particleCount: 150, spread: 70 });
-        alert("Victory! +100 Coins +50 EXP");
-        resetBoard();
-    }
-
-    // Chat System
-    function addChatMessage(sender, msg, isSystem = false) {
-        const content = document.getElementById('chat-content');
-        const div = document.createElement('div');
-        div.className = 'chat-msg';
-        div.innerHTML = isSystem ? `<span class="chat-system">[${sender}]: ${msg}</span>` : `<span class="chat-user">${sender}:</span> ${msg}`;
-        content.appendChild(div);
-        content.scrollTop = content.scrollHeight;
-    }
-
-    function sendChat() {
-        const inp = document.getElementById('chat-input');
-        if(inp.value) {
-            addChatMessage(user, inp.value);
-            inp.value = '';
+    function checkLine(idx, step, target, p, sz) {
+        // Simple bounds check logic required here
+        let count = 0;
+        for(let k=0; k<target; k++) {
+            let next = idx + k*step;
+            if(next >= sz*sz) return false;
+            // Row wrap checks
+            if(step===1 && Math.floor(idx/sz) !== Math.floor(next/sz)) return false; 
+            if(step===sz-1 && Math.floor(next/sz) !== Math.floor(idx/sz)+k) return false;
+            if(step===sz+1 && Math.floor(next/sz) !== Math.floor(idx/sz)+k) return false;
+            if(board[next] === p) count++;
         }
+        return count === target;
     }
 
-    function randomChat() {
-        const users = ["Zoro_TH", "SkinHunter", "GG_Ez", "ProPlayer99"];
-        const msgs = ["มีคนแจกโค้ดมั้ยครับ?", "สุ่มสกินยากจัง", "พึ่งเลเวลอัปเลย!", "บอทโหดจัง 5x5"];
-        addChatMessage(users[Math.floor(Math.random()*users.length)], msgs[Math.floor(Math.random()*msgs.length)]);
-    }
-
-    // Other Systems
-    function spin() { coins += 50; addExp(10); alert("Got 50 Coins!"); updateUI(); }
-    function buyLoot() {
-        if(coins >= 300) {
-            coins -= 300; addExp(30);
-            let locked = skinsData.filter(s=>!owned.includes(s.id));
-            if(locked.length > 0) {
-                let s = locked[0]; owned.push(s.id);
-                addChatMessage("System", `${user} unlocked skin: ${s.id}!`, true);
-            }
-            updateUI();
+    function endGame(result) {
+        isPlaying = false;
+        document.getElementById('t-play').innerText = i18n[lang].play;
+        
+        if(result === 'win') {
+            coins += 100; addExp(50);
+            updateQuest();
+            confetti({particleCount:150});
+            alert(i18n[lang].win + " +100 Coins");
+        } else if(result === 'lose') {
+            addExp(10); alert(i18n[lang].lose);
+        } else {
+            addExp(20); alert(i18n[lang].draw);
         }
-    }
-
-    function redeem() {
-        let c = document.getElementById('codeIn').value.toUpperCase();
-        if(c === 'WELCOME2025') { coins += 1000; alert("Success!"); }
-        else if(c === 'GODMODE') { if(!owned.includes('God')) owned.push('God'); alert("Skin God Unlocked!"); }
-        else { alert("Invalid Code"); }
-        document.getElementById('codeIn').value = '';
         updateUI();
     }
 
-    function save() {
-        localStorage.setItem('xo_v4_coins', coins);
-        localStorage.setItem('xo_v4_exp', exp);
-        localStorage.setItem('xo_v4_lvl', lvl);
-        localStorage.setItem('xo_v4_owned', JSON.stringify(owned));
+    // --- Progression ---
+    function addExp(amt) {
+        exp += amt;
+        if(exp >= lvl * 200) {
+            exp -= lvl * 200; lvl++; coins += 500;
+            addChatSys(`LEVEL UP! You are now LVL ${lvl}`);
+        }
+        save();
     }
 
-    if(user) login();
+    function updateQuest() {
+        if(!quest.done) {
+            quest.current++;
+            if(quest.current >= quest.target) {
+                quest.done = true; coins += 300;
+                addChatSys("Daily Quest Completed! +300 Coins");
+            }
+            save();
+        }
+    }
+
+    // --- UI & Store ---
+    function updateUI() {
+        // Text Updates
+        const t = i18n[lang];
+        document.getElementById('t-login').innerText = t.login;
+        document.getElementById('t-play').innerText = isPlaying ? "RESET" : t.play;
+        document.getElementById('t-spin').innerText = t.spin;
+        document.getElementById('t-loot').innerText = t.loot;
+        document.getElementById('t-redeem').innerText = t.redeem;
+        document.getElementById('t-title').innerText = t.title;
+
+        // Stats
+        document.getElementById('coin-txt').innerText = coins.toLocaleString();
+        document.getElementById('lvl-txt').innerText = `LVL ${lvl}`;
+        document.getElementById('exp-txt').innerText = `${exp}/${lvl*200}`;
+        document.getElementById('exp-fill').style.width = `${(exp/(lvl*200))*100}%`;
+        
+        // Quest
+        document.getElementById('quest-txt').innerText = t.quest;
+        document.getElementById('quest-prog').innerText = quest.done ? "✅" : `(${quest.current}/${quest.target})`;
+        
+        // Skins
+        const tray = document.getElementById('tray'); tray.innerHTML = '';
+        skinsData.forEach(sk => {
+            const isOwned = owned.includes(sk.id);
+            if(isOwned) {
+                const d = document.createElement('div');
+                d.className = `skin-item ${skin===sk.id?'active':''}`;
+                d.innerHTML = sk.s[0];
+                d.onclick = () => { skin = sk.id; renderBoard(); updateUI(); };
+                tray.appendChild(d);
+            }
+        });
+        save();
+    }
+
+    function getIcons() { return skinsData.find(x=>x.id===skin).s; }
+
+    function spin() { 
+        coins += 50; addExp(5); 
+        alert(`Lucky Spin: +50 Coins`); updateUI(); 
+    }
+    
+    function buyLoot() {
+        if(coins < 300) { alert("Need 300 Coins!"); return; }
+        coins -= 300;
+        const unowned = skinsData.filter(s => !owned.includes(s.id));
+        if(unowned.length > 0) {
+            const got = unowned[Math.floor(Math.random()*unowned.length)];
+            owned.push(got.id);
+            alert(`${i18n[lang].unlock}: ${got.id} (${got.r})`);
+        } else {
+            coins += 150; alert("Duplicate! +150 Coins back.");
+        }
+        updateUI();
+    }
+
+    function redeem() {
+        const c = document.getElementById('codeIn').value.toUpperCase();
+        // 10 Codes
+        const codes = {
+            'WELCOME2025':1000, 'DIAMOND777':7777, 'FREEFIRE':500,
+            'ROVGRAND':2000, 'LUCKYDAY':300, 'CONQUEROR':5000,
+            'GEMINI':1500, 'LASTSURVIVOR':888, 'NEWYEAR':2025, 'RICHMAN':999
+        };
+        
+        if(codes[c]) { coins += codes[c]; alert("Code Redeem Success!"); }
+        else if(c === 'SKINFREE' && !owned.includes('Neon')) { owned.push('Neon'); alert("Skin Neon Unlocked!"); }
+        else if(c === 'GODMODE' && !owned.includes('God')) { owned.push('God'); alert("Skin God Unlocked!"); }
+        else { alert("Invalid or Expired Code"); }
+        document.getElementById('codeIn').value = ''; updateUI();
+    }
+
+    // --- Chat ---
+    function sendChat() {
+        const inp = document.getElementById('chat-input');
+        if(inp.value) {
+            addMsg(user, inp.value);
+            inp.value = '';
+        }
+    }
+    function addChatSys(msg) {
+        const b = document.getElementById('chat-content');
+        b.innerHTML += `<div class="chat-msg chat-sys">[SYS] ${msg}</div>`;
+        b.scrollTop = b.scrollHeight;
+    }
+    function addMsg(u, m) {
+        const b = document.getElementById('chat-content');
+        b.innerHTML += `<div class="chat-msg"><span class="chat-user">${u}:</span> ${m}</div>`;
+        b.scrollTop = b.scrollHeight;
+    }
+    function randomChat() {
+        const msgs = ["Who wants to 1v1?", "Got God Skin finally!", "Lagging?", "Anyone active?", "Hi server!"];
+        const usrs = ["Player1", "Sniper_X", "CatLover", "MobaGod"];
+        addMsg(usrs[Math.floor(Math.random()*usrs.length)], msgs[Math.floor(Math.random()*msgs.length)]);
+    }
+
+    function save() {
+        localStorage.setItem('xo_god_coins', coins);
+        localStorage.setItem('xo_god_exp', exp);
+        localStorage.setItem('xo_god_lvl', lvl);
+        localStorage.setItem('xo_god_skins', JSON.stringify(owned));
+        localStorage.setItem('xo_god_quest', JSON.stringify(quest));
+    }
+
+    init();
 </script>
 </body>
 </html>
