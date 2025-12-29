@@ -3,151 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XO SUPREME FINAL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>XO SUPREME: CONQUEROR EDITION</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --bg: #020617; --panel: #1e293b; --accent: #38bdf8; --text: #f8fafc; --gold: #fbbf24; }
-        body { font-family: 'Kanit', sans-serif; background: var(--bg); color: var(--text); text-align: center; margin: 0; padding: 10px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { width: 100%; max-width: 400px; background: var(--panel); padding: 25px; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid #334155; }
-        .coin-box { font-size: 2.5rem; color: var(--gold); font-weight: bold; margin-bottom: 15px; }
-        .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
-        .cell { aspect-ratio: 1/1; background: #0f172a; border: 2px solid #334155; border-radius: 15px; font-size: 2.5rem; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .cell:hover { border-color: var(--accent); background: #1e293b; }
-        .btn { background: linear-gradient(45deg, #0ea5e9, #6366f1); color: white; border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
-        .shop { display: flex; gap: 10px; margin-bottom: 15px; }
-        .shop-item { flex: 1; background: #334155; border: none; color: white; padding: 10px; border-radius: 10px; font-size: 0.75rem; cursor: pointer; }
-        .shop-item:disabled { opacity: 0.5; cursor: not-allowed; }
-        input { width: 90%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; background: #0f172a; color: white; text-align: center; }
-        .leaderboard { text-align: left; margin-top: 20px; padding: 15px; background: #0f172a; border-radius: 15px; font-size: 0.85rem; border: 1px solid #334155; }
+        :root {
+            --bg: #020617; --cyan: #22d3ee; --pink: #f43f5e; --gold: #fbbf24;
+            --diamond: #b9f2ff; --conqueror: #ff3e3e;
+        }
+        body {
+            font-family: 'Kanit', sans-serif; background: var(--bg); color: white;
+            margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            background: linear-gradient(135deg, #020617 0%, #1e1b4b 100%);
+            overflow: hidden;
+        }
+        .container {
+            width: 95%; max-width: 450px; background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(25px); border-radius: 45px; padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 80px rgba(0,0,0,0.6);
+            text-align: center; position: relative; animation: fadeIn 0.8s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; letter-spacing: 4px; margin: 0; background: linear-gradient(90deg, #22d3ee, #f43f5e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* Tier Badge UI */
+        .rank-card { margin: 15px 0; padding: 10px; border-radius: 20px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); }
+        .tier-text { font-family: 'Orbitron'; font-weight: 900; font-size: 1.1rem; letter-spacing: 2px; }
+        .tier-conqueror { color: var(--conqueror); text-shadow: 0 0 15px var(--conqueror); }
+        .tier-diamond { color: var(--diamond); text-shadow: 0 0 10px var(--diamond); }
+        .tier-gold { color: var(--gold); }
+
+        .coin-box { font-size: 2.5rem; color: var(--gold); font-weight: bold; font-family: 'Orbitron'; margin: 5px 0; text-shadow: 0 0 20px rgba(251,191,36,0.5); }
+        
+        .board { display: grid; gap: 8px; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 25px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.1); }
+        .board-3 { grid-template-columns: repeat(3, 1fr); }
+        .board-5 { grid-template-columns: repeat(5, 1fr); }
+        .cell { aspect-ratio: 1/1; background: rgba(30, 41, 59, 0.5); border-radius: 18px; font-size: 2.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(255,255,255,0.05); }
+        .cell:hover { background: rgba(255,255,255,0.1); transform: scale(1.05); border-color: var(--cyan); }
+        .cell:active { transform: scale(0.9); }
+
+        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .btn { background: linear-gradient(90deg, #0ea5e9, #6366f1); color: white; border: none; padding: 12px; border-radius: 18px; font-weight: bold; font-family: 'Orbitron'; cursor: pointer; transition: 0.3s; font-size: 0.8rem; }
+        .btn-loot { background: linear-gradient(90deg, #8b5cf6, #ec4899); box-shadow: 0 0 15px rgba(139, 92, 246, 0.4); }
+        .btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
+
+        .shop-tray { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
+        .skin-icon { min-width: 60px; height: 60px; background: rgba(0,0,0,0.5); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid transparent; cursor: pointer; }
+        .skin-icon.active { border-color: var(--cyan); box-shadow: 0 0 15px var(--cyan); }
+
+        input { background: rgba(0,0,0,0.5); border: 1px solid #334155; color: white; padding: 15px; border-radius: 18px; width: 85%; text-align: center; margin-bottom: 20px; font-family: 'Kanit'; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="login-part">
-        <h1 style="color: var(--accent); margin-bottom: 5px;">XO SUPREME</h1>
-        <p style="font-size: 0.8rem; opacity: 0.7;">เวอร์ชันแก้บัคโค้ดหลุด 100%</p>
-        <input type="text" id="nameInp" placeholder="ใส่ชื่อเท่ๆ ของคุณ">
-        <button class="btn" onclick="goPlay()">เริ่มตำนาน</button>
+    <div id="screen-start">
+        <h1 style="margin-bottom: 10px;">XO SUPREME</h1>
+        <p style="color: var(--cyan); font-size: 0.8rem; letter-spacing: 2px;">CONQUEROR EDITION</p>
+        <div style="margin: 30px 0;">
+            <input type="text" id="playerName" placeholder="ใส่ชื่อนักรบของคุณ">
+            <button class="btn" style="width: 90%; font-size: 1.1rem;" onclick="login()">ENTER LOBBY</button>
+        </div>
     </div>
 
-    <div id="game-part" style="display:none;">
-        <div class="coin-box">🪙 <span id="c-count">0</span></div>
-        <div id="u-tag" style="color: var(--accent); font-weight: bold; margin-bottom: 10px;"></div>
-        
-        <div class="shop">
-            <button class="shop-item" onclick="buy('rem')">🧹 ลบ O AI<br>(100🪙)</button>
-            <button class="shop-item" id="x2-btn" onclick="buy('x2')">✖️ ชนะ x2<br>(50🪙)</button>
+    <div id="screen-game" style="display:none">
+        <div class="rank-card">
+            <div id="tier-label" class="tier-text">BRONZE IV</div>
+            <div style="font-size: 0.7rem; opacity: 0.6; margin-top: 4px;">RANK PROGRESS</div>
         </div>
 
-        <div class="board" id="main-board"></div>
+        <div class="coin-box">🪙 <span id="coin-val">0</span></div>
         
-        <button class="btn" onclick="re()">ล้างกระดาน</button>
+        <div class="action-btns">
+            <button class="btn btn-loot" onclick="openBox()">📦 สุ่มสกิน (300)</button>
+            <button class="btn" style="background: #1e293b;" onclick="luckySpin()">🎡 วงล้อฟรี</button>
+        </div>
 
-        <div class="leaderboard">
-            <b style="color: var(--gold);">🏆 TOP RANKING</b>
-            <div id="lb-view" style="margin-top:5px;"></div>
+        <div class="shop-tray" id="skin-list"></div>
+
+        <div style="margin-bottom: 10px;">
+            <select id="mode-sel" onchange="initBoard()" style="background:#0f172a; color:white; border:1px solid #334155; padding:8px; border-radius:10px;">
+                <option value="3">CLASSIC 3X3</option>
+                <option value="5">ELITE 5X5</option>
+            </select>
+        </div>
+
+        <div id="game-grid" class="board"></div>
+
+        <button class="btn" style="background:transparent; border:1px solid #334155; width:100%" onclick="initBoard()">REMATCH</button>
+        
+        <div style="margin-top: 15px; font-size: 0.7rem; color: #94a3b8;">
+            <span id="display-n"></span> | <span style="color:var(--gold)">TOP: <span id="top-score">-</span></span>
         </div>
     </div>
 </div>
 
 <script>
-    // ตัวแปรระบบ
-    let c = parseInt(localStorage.getItem('xo_c')) || 0;
-    let u = localStorage.getItem('xo_u') || '';
-    let b = Array(9).fill('');
-    let active = true;
-    let isX2 = false;
+    let coins = parseInt(localStorage.getItem('xo_c')) || 0;
+    let user = localStorage.getItem('xo_u') || '';
+    let board = [];
+    let isActive = true;
+    let currentSkin = 'Classic';
+    const allSkins = [
+        {id:'Classic', s:['X','O'], rarity:'Common'},
+        {id:'Neon', s:['💎','💠'], rarity:'Rare'},
+        {id:'Fire', s:['🔥','❄️'], rarity:'Epic'},
+        {id:'God', s:['👑','💀'], rarity:'Legendary'},
+        {id:'Space', s:['🚀','👾'], rarity:'Legendary'}
+    ];
+    let inventory = JSON.parse(localStorage.getItem('xo_inv')) || ['Classic'];
 
-    function goPlay() {
-        let val = document.getElementById('nameInp').value || u;
-        if(val) {
-            u = val; localStorage.setItem('xo_u', u);
-            document.getElementById('login-part').style.display = 'none';
-            document.getElementById('game-part').style.display = 'block';
-            document.getElementById('u-tag').innerText = "PLAYER: " + u;
-            draw();
+    const sfx = (f, t, d=0.1) => {
+        const c=new(window.AudioContext||window.webkitAudioContext)();
+        const o=c.createOscillator(); const g=c.createGain();
+        o.type=t; o.frequency.setValueAtTime(f, c.currentTime);
+        g.gain.setValueAtTime(0.1, c.currentTime);
+        o.connect(g); g.connect(c.destination);
+        o.start(); o.stop(c.currentTime+d);
+    };
+
+    function login() {
+        let n = document.getElementById('playerName').value || user;
+        if(n) {
+            user = n; localStorage.setItem('xo_u', user);
+            document.getElementById('screen-start').style.display = 'none';
+            document.getElementById('screen-game').style.display = 'block';
+            document.getElementById('display-n').innerText = user.toUpperCase();
+            initBoard();
         }
     }
 
-    function draw() {
-        const grid = document.getElementById('main-board');
-        grid.innerHTML = '';
-        b.forEach((v, i) => {
-            const div = document.createElement('div');
-            div.className = 'cell';
-            div.innerText = v;
-            div.onclick = () => tap(i);
-            grid.appendChild(div);
+    function initBoard() {
+        let s = parseInt(document.getElementById('mode-sel').value);
+        board = Array(s * s).fill('');
+        isActive = true;
+        document.getElementById('game-grid').className = `board board-${s}`;
+        render();
+    }
+
+    function render() {
+        const g = document.getElementById('game-grid'); g.innerHTML = '';
+        board.forEach((v, i) => {
+            const c = document.createElement('div');
+            c.className = 'cell'; c.innerText = v;
+            if(v) {
+                const colors = skins().s;
+                c.style.color = (v === colors[0]) ? 'var(--cyan)' : 'var(--pink)';
+                if(v === colors[0]) c.style.textShadow = '0 0 15px var(--cyan)';
+            }
+            c.onclick = () => play(i);
+            g.appendChild(c);
         });
-        document.getElementById('c-count').innerText = c.toLocaleString();
-        updateLB();
-    }
-
-    function tap(i) {
-        if(b[i] === '' && active) {
-            b[i] = 'X'; draw();
-            if(win('X')) { finish('X'); }
-            else if(b.every(s => s !== '')) { finish('T'); }
-            else { active = false; setTimeout(ai, 500); }
-        }
-    }
-
-    function ai() {
-        let empty = b.map((v,i) => v==='' ? i : null).filter(v => v!==null);
-        if(empty.length > 0) {
-            let move = empty[Math.floor(Math.random() * empty.length)];
-            b[move] = 'O';
-            if(win('O')) finish('O');
-            else if(b.every(s => s !== '')) finish('T');
-        }
-        active = true; draw();
-    }
-
-    function buy(t) {
-        if(t === 'rem' && c >= 100) {
-            let o = b.map((v,i) => v==='O' ? i : null).filter(v => v!==null);
-            if(o.length > 0) { c -= 100; b[o[0]] = ''; draw(); }
-        } else if(t === 'x2' && c >= 50) {
-            c -= 50; isX2 = true;
-            document.getElementById('x2-btn').innerText = "✅ ACTIVE";
-            document.getElementById('x2-btn').disabled = true;
-            draw();
-        } else { alert("เงินไม่พอ!"); }
-    }
-
-    function finish(res) {
-        active = false;
-        if(res === 'X') {
-            let p = isX2 ? 100 : 50; c += p;
-            alert("คุณชนะ! +" + p + " 🪙");
-        } else if(res === 'O') { alert("AI ชนะ!"); }
-        else { alert("เสมอ!"); }
+        document.getElementById('coin-val').innerText = coins.toLocaleString();
         
-        isX2 = false;
-        document.getElementById('x2-btn').innerText = "✖️ ชนะ x2 (50🪙)";
-        document.getElementById('x2-btn').disabled = false;
-        localStorage.setItem('xo_c', c);
-        re();
+        // Tier System
+        let t = "BRONZE", cl = "tier-gold";
+        if(coins >= 10000) { t="CONQUEROR"; cl="tier-conqueror"; }
+        else if(coins >= 5000) { t="DIAMOND"; cl="tier-diamond"; }
+        else if(coins >= 2000) { t="PLATINUM"; cl="tier-gold"; }
+        else if(coins >= 1000) { t="GOLD"; cl="tier-gold"; }
+        else if(coins >= 500) { t="SILVER"; cl=""; }
+        const lbl = document.getElementById('tier-label');
+        lbl.innerText = t + " I"; lbl.className = "tier-text " + cl;
+
+        // Inventory
+        const inv = document.getElementById('skin-list'); inv.innerHTML = '';
+        allSkins.filter(s => inventory.includes(s.id)).forEach(sk => {
+            const d = document.createElement('div');
+            d.className = `skin-icon ${currentSkin===sk.id?'active':''}`;
+            d.innerHTML = sk.s[0];
+            d.onclick = () => { currentSkin = sk.id; sfx(800, 'sine'); render(); };
+            inv.appendChild(d);
+        });
+        updateRank();
     }
 
-    function win(p) {
-        const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-        return lines.some(l => l.every(i => b[i] === p));
+    const skins = () => allSkins.find(x => x.id === currentSkin);
+
+    function play(i) {
+        if(board[i] === '' && isActive) {
+            board[i] = skins().s[0]; sfx(600, 'sine');
+            if(checkWin(skins().s[0])) end('W');
+            else if(board.every(x=>x!=='')) end('T');
+            else { isActive = false; setTimeout(bot, 400); }
+            render();
+        }
     }
 
-    function updateLB() {
-        let list = JSON.parse(localStorage.getItem('xo_lb')) || [];
-        let f = list.findIndex(x => x.n === u);
-        if(f > -1) list[f].c = c; else if(u) list.push({n: u, c: c});
-        list.sort((x,y) => y.c - x.c);
-        localStorage.setItem('xo_lb', JSON.stringify(list));
-        document.getElementById('lb-view').innerHTML = list.slice(0,3).map((p,i) => `<div>${i+1}. ${p.n}: ${p.c}</div>`).join('');
+    function bot() {
+        let e = board.map((v,i)=>v===''?i:null).filter(v=>v!==null);
+        if(e.length > 0) {
+            board[e[Math.floor(Math.random()*e.length)]] = skins().s[1];
+            sfx(400, 'square');
+            if(checkWin(skins().s[1])) end('L');
+            else if(board.every(x=>x!=='')) end('T');
+        }
+        isActive = true; render();
     }
 
-    function re() { b = Array(9).fill(''); active = true; draw(); }
-    if(u) goPlay();
+    function checkWin(p) {
+        let sz = parseInt(document.getElementById('mode-sel').value);
+        let goal = sz === 3 ? 3 : 4;
+        for(let i=0; i<sz*sz; i++) {
+            if(board[i]===p) {
+                if(i%sz<=sz-goal) {
+                    let w=true; for(let j=0; j<goal; j++) if(board[i+j]!==p) w=false;
+                    if(w) return true;
+                }
+                if(i<sz*(sz-goal+1)) {
+                    let w=true; for(let j=0; j<goal; j++) if(board[i+j*sz]!==p) w=false;
+                    if(w) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function end(res) {
+        isActive = false;
+        if(res === 'W') {
+            coins += 150; sfx(1200, 'sine', 0.3);
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            alert("🏆 ชัยชนะ! รับ 150 เหรียญ");
+        } else if(res === 'L') { sfx(150, 'sawtooth', 0.5); alert("💀 ปราชัย..."); }
+        else { alert("⚖️ เสมอ"); }
+        save(); initBoard();
+    }
+
+    function openBox() {
+        if(coins >= 300) {
+            coins -= 300; sfx(900, 'sine', 0.5);
+            let unowned = allSkins.filter(s => !inventory.includes(s.id));
+            if(unowned.length > 0) {
+                let got = unowned[Math.floor(Math.random()*unowned.length)];
+                inventory.push(got.id);
+                alert(`🎊 ยินดีด้วย! คุณได้รับสกินระดับ ${got.rarity}: ${got.id}`);
+            } else {
+                coins += 150; alert("คุณมีสกินครบแล้ว! รับเงินคืน 150 เหรียญ");
+            }
+            save(); render();
+        } else { alert("เหรียญไม่พอ!"); }
+    }
+
+    function luckySpin() {
+        let r = [50, 100, 200, 500][Math.floor(Math.random()*4)];
+        coins += r; sfx(1000, 'sine'); alert(`🎡 วงล้อหยุดที่... ${r} 🪙`);
+        save(); render();
+    }
+
+    function save() {
+        localStorage.setItem('xo_c', coins);
+        localStorage.setItem('xo_inv', JSON.stringify(inventory));
+    }
+
+    function updateRank() {
+        let lb = JSON.parse(localStorage.getItem('xo_lb_final')) || [];
+        let f = lb.findIndex(x=>x.n===user);
+        if(f>-1) lb[f].c=coins; else if(user) lb.push({n:user, c:coins});
+        lb.sort((a,b)=>b.c-a.c);
+        localStorage.setItem('xo_lb_final', JSON.stringify(lb));
+        if(lb.length > 0) document.getElementById('top-score').innerText = lb[0].n + " (" + lb[0].c + ")";
+    }
+
+    if(user) login();
 </script>
-
 </body>
 </html>
