@@ -3,38 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AYU Official Gazette - Public Vote</title>
+    <title>AYU Official - New Project Public Vote</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&family=Orbitron:wght@400;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
-        body { background: #0f172a; margin: 0; padding: 40px 20px; font-family: 'Kanit', sans-serif; }
+        body { background: #f1f5f9; margin: 0; padding: 40px 20px; font-family: 'Kanit', sans-serif; }
         .document-container {
-            max-width: 900px; margin: 0 auto; background: #fff; padding: 80px 70px;
-            border-radius: 4px; box-shadow: 0 40px 100px rgba(0,0,0,0.5); position: relative;
-            color: #1a1a1a; border-top: 15px solid #1e293b;
+            max-width: 850px; margin: 0 auto; background: #fff; padding: 70px 60px;
+            border-radius: 2px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); position: relative;
+            color: #1a1a1a; border: 1px solid #e2e8f0;
         }
         .ayu-seal {
-            width: 120px; height: 120px; border: 4px double #1e293b; border-radius: 50%;
+            width: 110px; height: 110px; border: 3px double #1e293b; border-radius: 50%;
             display: flex; align-items: center; justify-content: center; margin: 0 auto 30px;
-            position: relative;
         }
-        .ayu-seal::after {
-            content: 'OFFICIAL SEAL'; position: absolute; font-size: 0.5rem; bottom: 15px; letter-spacing: 2px;
+        .choice-box {
+            border: 1px solid #cbd5e1; padding: 20px; margin-bottom: 20px;
+            border-radius: 8px; transition: 0.3s;
         }
-        .choice-card {
-            border: 1px solid #e2e8f0; padding: 25px; border-radius: 8px; margin-bottom: 20px;
-            transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden;
-        }
-        .choice-card:hover { border-color: #1e293b; background: #f8fafc; transform: translateY(-3px); }
-        .progress-bg { height: 10px; background: #f1f5f9; border-radius: 10px; margin-top: 15px; }
-        .progress-fill { height: 100%; background: #1e293b; border-radius: 10px; transition: width 1s ease-in-out; }
-        .vote-number { font-family: 'Orbitron'; font-weight: 700; color: #1e293b; font-size: 1.1rem; }
-        .official-signature { float: right; text-align: center; margin-top: 60px; width: 350px; }
-        .red-stamp {
-            width: 100px; height: 100px; border: 4px solid rgba(220, 20, 60, 0.6);
-            border-radius: 50%; color: rgba(220, 20, 60, 0.6); position: absolute;
-            right: 40px; bottom: 10px; display: flex; align-items: center; justify-content: center;
-            font-size: 0.7rem; font-weight: bold; transform: rotate(15deg);
-            pointer-events: none; background: rgba(220, 20, 60, 0.02); text-align: center;
+        .choice-box:hover { border-color: #1e293b; background: #f8fafc; }
+        .vote-stats { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .progress-bar { height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #1e293b; width: 0%; transition: width 1.5s ease; }
+        .official-sign { float: right; text-align: center; margin-top: 50px; width: 320px; }
+        .red-seal {
+            width: 90px; height: 90px; border: 3px solid rgba(185, 28, 28, 0.5);
+            border-radius: 50%; color: rgba(185, 28, 28, 0.5); position: absolute;
+            right: 50px; bottom: 30px; display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: bold; transform: rotate(12deg);
+            pointer-events: none; text-align: center;
         }
     </style>
 </head>
@@ -42,91 +38,87 @@
 
     <div class="document-container">
         <div class="ayu-seal">
-            <span style="font-family: 'Orbitron'; font-weight: 900; font-size: 2.5rem; letter-spacing: -2px;">AYU</span>
+            <span style="font-family: 'Orbitron'; font-weight: 900; font-size: 2.2rem;">AYU</span>
         </div>
 
-        <div style="text-align: center; margin-bottom: 50px;">
-            <h2 style="font-weight: 700; letter-spacing: 3px; border-bottom: 2px solid #1a1a1a; display: inline-block; padding-bottom: 5px;">
-                ประกาศคณะบริหารจัดการระบบสถาบัน AYU
-            </h2>
-            <p style="margin-top: 10px; font-weight: 400; color: #64748b;">ฉบับที่ ๐๒๕/๒๕๖๘ เรื่อง การลงมติเลือกแนวทางการพัฒนาแพลตฟอร์มตามความต้องการของผู้ใช้งาน</p>
+        <div style="text-align: center; margin-bottom: 40px;">
+            <h2 style="font-weight: 700; border-bottom: 2px solid #1a1a1a; display: inline-block; padding-bottom: 5px;">ประกาศคำสั่งแต่งตั้งการสรรหารูปแบบซอฟต์แวร์ใหม่</h2>
+            <p style="font-size: 0.9rem; color: #64748b;">รหัสอ้างอิง: AYU-VOTE-2025/002</p>
         </div>
 
-        <div style="line-height: 2.2; text-align: justify; font-size: 1.05rem; margin-bottom: 50px;">
-            <p style="text-indent: 50px;">ตามที่คณะบริหาร AYU ได้มีประกาศเริ่มโครงการพัฒนา Underground Arena ไปก่อนหน้านี้นั้น บัดนี้ทางสำนักบริหารได้รับทราบถึง "ข้อร้องเรียน" และความต้องการที่เปลี่ยนแปลงไปของสมาชิกส่วนใหญ่ ซึ่งมีความประสงค์จะให้มีการปรับเปลี่ยนรูปแบบเกมให้สอดคล้องกับความต้องการของมวลชนอย่างแท้จริง</p>
-            
-            <p style="text-indent: 50px;">เพื่อให้การดำเนินงานเป็นไปอย่างโปร่งใสและยึดถือผู้ใช้งานเป็นศูนย์กลาง คณะบริหารจึงมีคำสั่งให้ **"หยุดการพัฒนาโครงการเดิมชั่วคราว"** และจัดให้มีการลงคะแนนเสียง (Public Vote) อีกครั้งเพื่อเลือกโปรเจกต์ใหม่ที่จะถูกนำมาสร้างเป็นลำดับถัดไป โดยมีตัวเลือกดังต่อไปนี้:</p>
+        <div style="line-height: 1.8; text-align: justify; margin-bottom: 40px;">
+            <p style="text-indent: 50px;">ตามที่มีข้อร้องเรียนและข้อเสนอแนะจากมวลชนผู้ใช้งานเกี่ยวกับทิศทางการพัฒนาแพลตฟอร์ม AYU ทางคณะบริหารจึงได้มีมติยกเลิกแผนงานเดิม และเปิดให้มีการทำประชามติคัดเลือกเกมรูปแบบใหม่ที่เน้นความสนุกสนานและการมีส่วนร่วมของชุมชน โดยมีรายการตัวเลือกและคำอธิบายรายละเอียดดังนี้:</p>
         </div>
 
-        <div id="voting-area">
-            <div class="choice-card">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="margin:0;">๑. AYU Metaverse (2D Pixel World)</h3>
-                    <span class="vote-number" id="v1">0</span>
+        <div id="vote-container">
+            <div class="choice-box">
+                <div class="vote-stats">
+                    <h3 style="margin:0;">๑. AYU Pet (ทามาก็อตจิ)</h3>
+                    <span style="font-family: 'Orbitron'; font-weight: bold;" id="v1">0</span>
                 </div>
-                <p style="font-size: 0.9rem; color: #64748b; margin: 10px 0;">ระบบจำลองโลกเสมือนจริงแบบ Pixel เดินพบปะสมาชิกได้ แชทเห็นข้อความบนหัว มีโซนคาสิโนและมินิเกมครบวงจร</p>
-                <div class="progress-bg"><div id="p1" class="progress-fill" style="width: 0%"></div></div>
+                <p style="font-size: 0.9rem; color: #475569;"><b>คำอธิบาย:</b> ระบบจำลองการเลี้ยงสัตว์ดิจิทัลระดับสูง ผู้เล่นต้องคอยให้อาหาร ทำความสะอาด และฝึกฝนสัตว์เลี้ยงเพื่อนำไปประลองกับผู้เล่นอื่นในอนาคต เป็นเกมที่เน้นความผูกพันและการดูแลเอาใจใส่ระยะยาว</p>
+                <div class="progress-bar"><div id="p1" class="progress-fill"></div></div>
             </div>
 
-            <div class="choice-card">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="margin:0;">๒. AYU Trading Card Game</h3>
-                    <span class="vote-number" id="v2">0</span>
+            <div class="choice-box">
+                <div class="vote-stats">
+                    <h3 style="margin:0;">๒. Choice Master (เกมเลือกคำ)</h3>
+                    <span style="font-family: 'Orbitron'; font-weight: bold;" id="v2">0</span>
                 </div>
-                <p style="font-size: 0.9rem; color: #64748b; margin: 10px 0;">ระบบการ์ดเกมกลยุทธ์ สะสมการ์ดแอดมินและสมาชิกในกลุ่ม มีระบบเปิดซอง Gacha และประลองฝีมือระดับสากล</p>
-                <div class="progress-bg"><div id="p2" class="progress-fill" style="width: 0%"></div></div>
+                <p style="font-size: 0.9rem; color: #475569;"><b>คำอธิบาย:</b> เกมประลองปัญญาที่เน้นการตัดสินใจจากชุดข้อมูลที่กำหนด ผู้เล่นต้องเลือกคำตอบหรือทางเลือกที่ถูกต้องที่สุดภายใต้เงื่อนไขที่ซับซ้อนและจำกัดเวลา เพื่อสะสมแต้มและไต่อันดับกระดานผู้นำ (Leaderboard)</p>
+                <div class="progress-bar"><div id="p2" class="progress-fill"></div></div>
             </div>
 
-            <div class="choice-card">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="margin:0;">๓. AYU Life Simulator</h3>
-                    <span style="color: #94a3b8; font-size: 0.8rem;">[รอการอนุมัติ]</span>
+            <div class="choice-box">
+                <div class="vote-stats">
+                    <h3 style="margin:0;">๓. Classic Snake (เกมงูกินหาง)</h3>
+                    <span style="font-family: 'Orbitron'; font-weight: bold;" id="v3">0</span>
                 </div>
-                <p style="font-size: 0.9rem; color: #64748b; margin: 10px 0;">จำลองบทบาทแอดมิน จัดการระบบ บริหารเซิร์ฟเวอร์ และแก้ปัญหาลิขสิทธิ์เพื่อหาเงินเข้าอาณาจักร</p>
+                <p style="font-size: 0.9rem; color: #475569;"><b>คำอธิบาย:</b> การกลับมาของเกมระดับตำนานในเวอร์ชัน AYU ที่รองรับผู้เล่นหลายคนพร้อมกัน (Multiplayer) เน้นทักษะการควบคุมและการชิงไหวชิงพริบในสนามแข่ง เพื่อขยายขนาดลำตัวและเป็นผู้รอดชีวิตเพียงคนเดียวในสมรภูมิ</p>
+                <div class="progress-bar"><div id="p3" class="progress-fill"></div></div>
+            </div>
+
+            <div class="choice-box">
+                <div class="vote-stats">
+                    <h3 style="margin:0;">๔. Word Chain (เกมต่อคำ)</h3>
+                    <span style="font-family: 'Orbitron'; font-weight: bold;" id="v4">0</span>
+                </div>
+                <p style="font-size: 0.9rem; color: #475569;"><b>คำอธิบาย:</b> เกมทักษะทางภาษาที่ต้องใช้ความเร็วและความคิดสร้างสรรค์ ผู้เล่นต้องแข่งกันต่อคำศัพท์จากอักษรตัวสุดท้ายของคู่ต่อสู้ เป็นการพิสูจน์คลังความรู้และไหวพริบปฏิภาณในเวลาที่บีบคั้น</p>
+                <div class="progress-bar"><div id="p4" class="progress-fill"></div></div>
             </div>
         </div>
 
-        <p style="margin-top: 40px; font-size: 0.9rem; color: #ef4444; font-weight: bold; text-align: center;">* ข้อมูลคะแนนโหวตจะถูกประมวลผลแบบ Real-time จากฐานข้อมูลผู้ใช้งาน 10,000,000 บัญชี *</p>
-
-        <div class="official-signature">
-            <p>ประกาศ ณ วันที่ ๓๑ ธันวาคม ๒๕๖๘</p>
+        <div class="official-sign">
+            <p>ประกาศ ณ วันที่ ๓๑ ธันวาคม พุทธศักราช ๒๕๖๘</p>
             <br>
-            <div style="font-family: 'Dancing Script', cursive; font-size: 2.2rem; margin-bottom: -10px; transform: rotate(-2deg);">
-                Ayu_Support_Ter
-            </div>
+            <div style="font-family: 'Dancing Script', cursive; font-size: 2rem; color: #1e293b; margin-bottom: -10px;">Ayu_Support_Ter</div>
             <p>( .................................................... )</p>
-            <p style="font-weight: 700; font-size: 1.1rem;">ผู้อำนวยการฝ่ายส่งเสริมและรับฟังผู้ใช้งาน</p>
-            <p style="margin-top: -10px; font-size: 0.9rem;">คณะกรรมการบริหารกลาง AYU OFFICIAL</p>
+            <p style="font-weight: 700; font-size: 1rem;">ผู้อำนวยการฝ่ายบริหารจัดการความต้องการ</p>
+            <p style="margin-top: -10px; font-size: 0.8rem;">สำนักงานส่วนกลาง AYU GAME ZONE</p>
         </div>
 
-        <div class="red-stamp">
-            AYU<br>ADMINISTRATION<br>CERTIFIED
-        </div>
-
+        <div class="red-seal">AYU<br>ADMIN<br>SEAL</div>
         <div style="clear: both;"></div>
     </div>
 
     <script>
-        // จำลองคะแนนโหวตมหาศาล
-        let v1 = 845200;
-        let v2 = 512300;
-
-        function updateVotes() {
-            // สุ่มคะแนนเพิ่ม (จำลองว่าคนแย่งกันโหวตข้อ 1)
-            v1 += Math.floor(Math.random() * 300);
-            v2 += Math.floor(Math.random() * 120);
+        // จำลองระบบโหวต 10 ล้านบัญชี
+        let votes = [4250100, 2105400, 1580200, 3120500]; // คะแนนตั้งต้น
+        
+        function refreshVotes() {
+            // จำลองคนโหวตเพิ่มเรื่อยๆ
+            votes = votes.map(v => v + Math.floor(Math.random() * 500));
+            let total = votes.reduce((a, b) => a + b, 0);
             
-            let total = v1 + v2;
-            
-            document.getElementById('v1').innerText = v1.toLocaleString();
-            document.getElementById('v2').innerText = v2.toLocaleString();
-            
-            document.getElementById('p1').style.width = (v1 / total * 100) + "%";
-            document.getElementById('p2').style.width = (v2 / total * 100) + "%";
+            votes.forEach((v, i) => {
+                let index = i + 1;
+                document.getElementById('v' + index).innerText = v.toLocaleString();
+                document.getElementById('p' + index).style.width = (v / total * 100) + "%";
+            });
         }
 
-        setInterval(updateVotes, 1500);
-        updateVotes(); // รันครั้งแรกทันที
+        setInterval(refreshVotes, 2000);
+        refreshVotes();
     </script>
 </body>
 </html>
