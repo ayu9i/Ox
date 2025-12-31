@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AYU Official - New Project Public Vote</title>
+    <title>AYU Official - Final Resolution</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&family=Orbitron:wght@400;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
         body { background: #f1f5f9; margin: 0; padding: 40px 20px; font-family: 'Kanit', sans-serif; }
@@ -16,20 +16,28 @@
             width: 110px; height: 110px; border: 3px double #1e293b; border-radius: 50%;
             display: flex; align-items: center; justify-content: center; margin: 0 auto 30px;
         }
-        .choice-box {
-            border: 1px solid #cbd5e1; padding: 20px; margin-bottom: 20px;
-            border-radius: 8px; transition: 0.3s;
+        .winner-section {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px;
         }
-        .choice-box:hover { border-color: #1e293b; background: #f8fafc; }
-        .vote-stats { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .progress-bar { height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; background: #1e293b; width: 0%; transition: width 1.5s ease; }
-        .official-sign { float: right; text-align: center; margin-top: 50px; width: 320px; }
+        .winner-card {
+            border: 2px solid #1e293b; padding: 20px; border-radius: 12px;
+            background: #f8fafc; position: relative; text-align: center;
+        }
+        .badge {
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: #1e293b; color: white; padding: 4px 15px; border-radius: 20px;
+            font-size: 0.7rem; font-weight: bold; font-family: 'Orbitron';
+        }
+        .official-text {
+            line-height: 2.2; text-align: justify; font-size: 1.05rem; color: #334155;
+            margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 30px;
+        }
+        .official-sign { float: right; text-align: center; margin-top: 40px; width: 320px; }
         .red-seal {
-            width: 90px; height: 90px; border: 3px solid rgba(185, 28, 28, 0.5);
+            width: 100px; height: 100px; border: 4px solid rgba(185, 28, 28, 0.5);
             border-radius: 50%; color: rgba(185, 28, 28, 0.5); position: absolute;
-            right: 50px; bottom: 30px; display: flex; align-items: center; justify-content: center;
-            font-size: 0.7rem; font-weight: bold; transform: rotate(12deg);
+            right: 60px; bottom: 40px; display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: bold; transform: rotate(15deg);
             pointer-events: none; text-align: center;
         }
     </style>
@@ -41,84 +49,59 @@
             <span style="font-family: 'Orbitron'; font-weight: 900; font-size: 2.2rem;">AYU</span>
         </div>
 
-        <div style="text-align: center; margin-bottom: 40px;">
-            <h2 style="font-weight: 700; border-bottom: 2px solid #1a1a1a; display: inline-block; padding-bottom: 5px;">ประกาศคำสั่งแต่งตั้งการสรรหารูปแบบซอฟต์แวร์ใหม่</h2>
-            <p style="font-size: 0.9rem; color: #64748b;">รหัสอ้างอิง: AYU-VOTE-2025/002</p>
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="font-weight: 700; border-bottom: 2px solid #1a1a1a; display: inline-block; padding-bottom: 5px;">ประกาศแจ้งมติเอกฉันท์และคำสั่งยุติข้อโต้แย้งโดยบริบูรณ์</h2>
+            <p style="font-size: 0.9rem; color: #64748b;">รหัสอ้างอิง: AYU-FINAL-RESOLVE/2025</p>
         </div>
 
-        <div style="line-height: 1.8; text-align: justify; margin-bottom: 40px;">
-            <p style="text-indent: 50px;">ตามที่มีข้อร้องเรียนและข้อเสนอแนะจากมวลชนผู้ใช้งานเกี่ยวกับทิศทางการพัฒนาแพลตฟอร์ม AYU ทางคณะบริหารจึงได้มีมติยกเลิกแผนงานเดิม และเปิดให้มีการทำประชามติคัดเลือกเกมรูปแบบใหม่ที่เน้นความสนุกสนานและการมีส่วนร่วมของชุมชน โดยมีรายการตัวเลือกและคำอธิบายรายละเอียดดังนี้:</p>
+        <div class="winner-section">
+            <div class="winner-card">
+                <div class="badge">WINNER #1</div>
+                <h4 style="margin: 10px 0;">AYU Pet (ทามาก็อตจิ)</h4>
+                <div style="font-size: 0.8rem; color: #64748b;">สถานะ: กำลังร่างโครงสร้างระบบเลี้ยงสัตว์</div>
+            </div>
+            <div class="winner-card">
+                <div class="badge">WINNER #2</div>
+                <h4 style="margin: 10px 0;">Word Chain (เกมต่อคำ)</h4>
+                <div style="font-size: 0.8rem; color: #64748b;">สถานะ: กำลังรวบรวมคลังคำศัพท์หลัก</div>
+            </div>
         </div>
 
-        <div id="vote-container">
-            <div class="choice-box">
-                <div class="vote-stats">
-                    <h3 style="margin:0;">๑. AYU Pet (ทามาก็อตจิ)</h3>
-                    <span style="font-family: 'Orbitron'; font-weight: bold;" id="v1">0</span>
-                </div>
-                <p style="font-size: 0.9rem; color: #475569;"><b>คำอธิบาย:</b> ระบบจำลองการเลี้ยงสัตว์ดิจิทัลระดับสูง ผู้เล่นต้องคอยให้อาหาร ทำความสะอาด และฝึกฝนสัตว์เลี้ยงเพื่อนำไปประลองกับผู้เล่นอื่นในอนาคต เป็นเกมที่เน้นความผูกพันและการดูแลเอาใจใส่ระยะยาว</p>
-                <div class="progress-bar"><div id="p1" class="progress-fill"></div></div>
-            </div>
-
-            <div class="choice-box">
-                <div class="vote-stats">
-                    <h3 style="margin:0;">๒. Choice Master (เกมเลือกคำ)</h3>
-                    <span style="font-family: 'Orbitron'; font-weight: bold;" id="v2">0</span>
-                </div>
-                <p style="font-size: 0.9rem; color: #475569;"><b>คำอธิบาย:</b> เกมประลองปัญญาที่เน้นการตัดสินใจจากชุดข้อมูลที่กำหนด ผู้เล่นต้องเลือกคำตอบหรือทางเลือกที่ถูกต้องที่สุดภายใต้เงื่อนไขที่ซับซ้อนและจำกัดเวลา เพื่อสะสมแต้มและไต่อันดับกระดานผู้นำ (Leaderboard)</p>
-                <div class="progress-bar"><div id="p2" class="progress-fill"></div></div>
-            </div>
-
-            <div class="choice-box">
-                <div class="vote-stats">
-                    <h3 style="margin:0;">๓. Classic Snake (เกมงูกินหาง)</h3>
-                    <span style="font-family: 'Orbitron'; font-weight: bold;" id="v3">0</span>
-                </div>
-                <p style="font-size: 0.9rem; color: #475569;"><b>คำอธิบาย:</b> การกลับมาของเกมระดับตำนานในเวอร์ชัน AYU ที่รองรับผู้เล่นหลายคนพร้อมกัน (Multiplayer) เน้นทักษะการควบคุมและการชิงไหวชิงพริบในสนามแข่ง เพื่อขยายขนาดลำตัวและเป็นผู้รอดชีวิตเพียงคนเดียวในสมรภูมิ</p>
-                <div class="progress-bar"><div id="p3" class="progress-fill"></div></div>
-            </div>
-
-            <div class="choice-box">
-                <div class="vote-stats">
-                    <h3 style="margin:0;">๔. Word Chain (เกมต่อคำ)</h3>
-                    <span style="font-family: 'Orbitron'; font-weight: bold;" id="v4">0</span>
-                </div>
-                <p style="font-size: 0.9rem; color: #475569;"><b>คำอธิบาย:</b> เกมทักษะทางภาษาที่ต้องใช้ความเร็วและความคิดสร้างสรรค์ ผู้เล่นต้องแข่งกันต่อคำศัพท์จากอักษรตัวสุดท้ายของคู่ต่อสู้ เป็นการพิสูจน์คลังความรู้และไหวพริบปฏิภาณในเวลาที่บีบคั้น</p>
-                <div class="progress-bar"><div id="p4" class="progress-fill"></div></div>
-            </div>
+        <div class="official-text">
+            บัดนี้ กระบวนการนับคะแนนประชามติจากฐานข้อมูลสมาชิกหลักสิบล้านคนได้เสร็จสิ้นสมบูรณ์แล้วอย่างไม่มีข้อกังขาใดๆ ทั้งสิ้น<br>
+            คณะบริหารขอประกาศให้ทราบว่า เกมทามาก็อตจิ และ เกมต่อคำ คือผู้ชนะอย่างเป็นทางการในโครงการพัฒนาซอฟต์แวร์ชุดนี้<br>
+            มติครั้งนี้ถือเป็นที่สิ้นสุดและมีผลบังคับใช้ทันที เพื่อยุติความสับสนและการตั้งข้อสงสัยใดๆ ที่อาจเกิดขึ้นจากบุคคลภายนอก<br>
+            โดยอาศัยอำนาจตามระเบียบกลางของ AYU คณะกรรมการขอสงวนสิทธิ์ในการไม่รับพิจารณาข้อโต้แย้งที่ไร้มูลความจริงในทุกกรณี<br>
+            ทีมวิศวกรซอฟต์แวร์ได้เริ่มเข้าประจำการเพื่อวางระบบฐานข้อมูล DNA ของสัตว์เลี้ยงในโปรเจกต์ทามาก็อตจิอย่างเร่งด่วนที่สุด<br>
+            คลังข้อมูลภาษาไทยและสากลถูกจัดเตรียมไว้สำหรับเกมต่อคำ เพื่อสร้างประสบการณ์การเล่นที่ไร้รอยต่อและมีความแม่นยำสูงสุด<br>
+            การตัดสินใจเลือกทั้งสองรูปแบบนี้ สอดคล้องกับพฤติกรรมการใช้งานและความพึงพอใจของเสียงส่วนใหญ่จากสมาชิกทุกภาคส่วน<br>
+            เราตระหนักดีถึงความคาดหวังของสมาชิก จึงได้สั่งการให้เพิ่มขีดความสามารถของเซิร์ฟเวอร์หลักเพื่อรองรับการใช้งานพร้อมกัน<br>
+            ทุกหน่วยงานในเครือของ AYU จะต้องให้ความร่วมมือและสนับสนุนการดำเนินงานในครั้งนี้อย่างเต็มกำลังโดยไม่มีข้อยกเว้นใดๆ<br>
+            หากมีการตรวจพบการพยายามบิดเบือนผลโหวตหรือสร้างความไม่สงบ ระบบจะดำเนินมาตรการระงับบัญชีถาวรในขั้นเด็ดขาด<br>
+            รายละเอียดความคืบหน้าของการพัฒนาจะถูกรายงานผ่านหน้าเว็บไซต์ทางการตามลำดับขั้นความสำคัญและระยะเวลาที่เหมาะสม<br>
+            เป้าหมายหลักคือการสร้างสังคมออนไลน์ที่มีคุณภาพและมีความสนุกสนานภายใต้การดูแลที่โปร่งใสของทีมงาน AYU SUPPORT<br>
+            ขอให้สมาชิกทุกท่านเตรียมความพร้อมสำหรับการเข้าถึงระบบทดสอบเบื้องต้นที่จะเปิดให้ลงทะเบียนในระยะเวลาอันใกล้นี้<br>
+            คณะบริหารขอขอบพระคุณในความไว้วางใจที่ท่านมีให้แก่ทีมงานเสมอมา และหวังเป็นอย่างยิ่งว่าทั้งสองเกมจะสร้างความสุขได้<br>
+            ไม่ว่าผลการโหวตลำดับรองจะเป็นอย่างไร เจตนารมณ์หลักคือการก้าวไปข้างหน้าเพื่อความมั่นคงของอาณาจักรเราในอนาคต<br>
+            ข้อพิพาทใดๆ เกี่ยวกับรูปแบบเกมที่ไม่ได้ระบุในประกาศฉบับนี้ ให้ถือว่าสิ้นสุดลงและจะไม่มีการรื้อฟื้นขึ้นมาพิจารณาซ้ำอีก<br>
+            คณะผู้จัดทำได้ตรวจสอบความถูกต้องของรหัสคำสั่งทุกบรรทัดเพื่อให้มั่นใจว่าระบบจะทำงานได้อย่างมีประสิทธิภาพสูงสุดเสมอ<br>
+            ขอความร่วมมือสมาชิกในการติดตามข่าวสารผ่านช่องทางหลักเท่านั้น เพื่อป้องกันการได้รับข้อมูลที่คลาดเคลื่อนจากความเป็นจริง<br>
+            ท้ายที่สุดนี้ ความสำเร็จของโปรเจกต์ขึ้นอยู่กับการมีส่วนร่วมและการปฏิบัติตามกฎระเบียบที่เคร่งครัดของสมาชิกทุกท่านทุกคน<br>
+            จึงประกาศมาเพื่อทราบและให้ถือปฏิบัติโดยเคร่งครัดตั้งแต่วันที่ประกาศฉบับนี้มีผลบังคับใช้เป็นต้นไปเพื่อความสงบเรียบร้อย
         </div>
 
         <div class="official-sign">
             <p>ประกาศ ณ วันที่ ๓๑ ธันวาคม พุทธศักราช ๒๕๖๘</p>
             <br>
-            <div style="font-family: 'Dancing Script', cursive; font-size: 2rem; color: #1e293b; margin-bottom: -10px;">Ayu_Support_Ter</div>
+            <div style="font-family: 'Dancing Script', cursive; font-size: 2.2rem; color: #1e293b; margin-bottom: -10px;">Ayu_Support_Ter</div>
             <p>( .................................................... )</p>
-            <p style="font-weight: 700; font-size: 1rem;">ผู้อำนวยการฝ่ายบริหารจัดการความต้องการ</p>
-            <p style="margin-top: -10px; font-size: 0.8rem;">สำนักงานส่วนกลาง AYU GAME ZONE</p>
+            <p style="font-weight: 700; font-size: 1.1rem;">ผู้อำนวยการสูงสุดคณะบริหาร AYU</p>
+            <p style="margin-top: -10px; font-size: 0.8rem;">ผู้รับผิดชอบการตัดสินใจขั้นเด็ดขาด</p>
         </div>
 
-        <div class="red-seal">AYU<br>ADMIN<br>SEAL</div>
+        <div class="red-seal">AYU<br>ADMIN<br>FINALIZED</div>
         <div style="clear: both;"></div>
     </div>
 
-    <script>
-        // จำลองระบบโหวต 10 ล้านบัญชี
-        let votes = [4250100, 2105400, 1580200, 3120500]; // คะแนนตั้งต้น
-        
-        function refreshVotes() {
-            // จำลองคนโหวตเพิ่มเรื่อยๆ
-            votes = votes.map(v => v + Math.floor(Math.random() * 500));
-            let total = votes.reduce((a, b) => a + b, 0);
-            
-            votes.forEach((v, i) => {
-                let index = i + 1;
-                document.getElementById('v' + index).innerText = v.toLocaleString();
-                document.getElementById('p' + index).style.width = (v / total * 100) + "%";
-            });
-        }
-
-        setInterval(refreshVotes, 2000);
-        refreshVotes();
-    </script>
 </body>
 </html>
