@@ -3,394 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AYU Game Zone - Login</title>
+    <title>AYU GAME ARENA - ULTIMATE</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
     <style>
-        body {
-            margin: 0; padding: 0;
-            font-family: 'Kanit', sans-serif;
-            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-            color: #e2e8f0;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-            position: relative;
+        :root {
+            --primary: #6366f1; --primary-dark: #4f46e5;
+            --bg: #020617; --card: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
         }
 
-        /* --- Background Animation --- */
-        .background-circles {
-            position: absolute; inset: 0;
-            pointer-events: none;
+        body, html {
+            margin: 0; padding: 0; min-height: 100vh;
+            font-family: 'Kanit', sans-serif; background: var(--bg);
+            color: var(--text); display: flex; justify-content: center; align-items: center;
             overflow: hidden;
-            opacity: 0.1;
-        }
-        .background-circles div {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            animation: moveCircles 15s infinite linear;
-        }
-        .background-circles div:nth-child(1) { width: 60px; height: 60px; left: 10%; top: 20%; animation-duration: 18s; }
-        .background-circles div:nth-child(2) { width: 100px; height: 100px; left: 80%; top: 50%; animation-duration: 22s; }
-        .background-circles div:nth-child(3) { width: 40px; height: 40px; left: 30%; top: 70%; animation-duration: 16s; }
-        .background-circles div:nth-child(4) { width: 80px; height: 80px; left: 50%; top: 10%; animation-duration: 20s; }
-        .background-circles div:nth-child(5) { width: 70px; height: 70px; left: 0%; top: 90%; animation-duration: 25s; }
-        @keyframes moveCircles {
-            0% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-50px) scale(1.1); }
-            100% { transform: translateY(0) scale(1); }
         }
 
-        /* --- Main Containers --- */
+        /* Ambient Glow Background */
+        .glow {
+            position: fixed; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            z-index: -1; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+
         .container {
-            background: rgba(45, 55, 72, 0.8); /* Darker, slightly transparent */
-            padding: 40px 50px;
-            border-radius: 12px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-            text-align: center;
-            width: 100%;
-            max-width: 450px;
-            position: relative;
-            z-index: 10;
+            width: 100%; max-width: 450px; background: var(--card);
+            backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px; padding: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            text-align: center; position: relative; transition: 0.5s;
         }
 
-        /* --- Login / Redeem Elements --- */
-        .ayu-logo {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: 2.8rem;
-            color: #667eea; /* A nice bluish-purple */
-            margin-bottom: 25px;
-            text-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
-            letter-spacing: -2px;
-        }
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            color: #a0aec0;
-        }
-        .input-group input {
-            width: calc(100% - 20px);
-            padding: 12px 10px;
-            border: 1px solid #4a5568;
-            border-radius: 8px;
-            background: #2d3748;
-            color: #e2e8f0;
-            font-size: 1rem;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        .input-group input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 8px rgba(102, 126, 234, 0.4);
-            outline: none;
-        }
-        .btn-primary {
-            width: 100%;
-            padding: 15px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.3s, transform 0.2s;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-        .btn-primary:hover {
-            background: #5a67d8;
-            transform: translateY(-2px);
-        }
-        .footer-links {
-            margin-top: 25px;
-            font-size: 0.85rem;
-        }
-        .footer-links a {
-            color: #667eea;
-            text-decoration: none;
-            margin: 0 10px;
-            transition: color 0.3s;
-        }
-        .footer-links a:hover {
-            color: #5a67d8;
-            text-decoration: underline;
-        }
+        .hidden { display: none !important; }
+        .logo { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; font-weight: 900; 
+                background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* --- Redeem Code Specific --- */
-        .redeem-section {
-            display: none; /* Hidden by default */
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #4a5568;
+        /* Form Styles */
+        input {
+            width: 100%; padding: 12px 15px; margin: 10px 0; background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; color: white; box-sizing: border-box;
         }
-        .redeem-section h3 {
-            color: #a0aec0;
-            font-size: 1.1rem;
-            margin-bottom: 20px;
+        button {
+            width: 100%; padding: 14px; margin-top: 15px; background: var(--primary);
+            color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s;
         }
+        button:hover { background: var(--primary-dark); transform: translateY(-2px); }
 
-        /* --- Game Selection Screen --- */
-        #game-selection-screen {
-            display: none; /* Hidden by default */
-            max-width: 900px;
-            width: 100%;
-            text-align: center;
-        }
-        #game-selection-screen h2 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.2rem;
-            color: #667eea;
-            margin-bottom: 40px;
-            text-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
-        }
-        .game-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        .game-card {
-            background: rgba(45, 55, 72, 0.8);
-            border: 2px solid #4a5568;
-            border-radius: 15px;
-            padding: 30px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-        }
-        .game-card:hover {
-            border-color: #667eea;
-            transform: translateY(-8px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4), 0 0 15px rgba(102, 126, 234, 0.5);
-        }
-        .game-card .game-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            color: #667eea;
-        }
-        .game-card h3 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
-            color: #e2e8f0;
-            margin-bottom: 10px;
-        }
-        .game-card p {
-            font-size: 0.95rem;
-            color: #a0aec0;
-            line-height: 1.6;
-        }
+        /* Pet System Styles */
+        .pet-visual { font-size: 80px; margin: 20px 0; transition: 0.3s; animation: float 2s infinite ease-in-out; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .stat-bar { background: #1e293b; border-radius: 5px; height: 10px; overflow: hidden; margin-top: 5px; }
+        .stat-fill { background: var(--primary); height: 100%; width: 50%; transition: 0.5s; }
 
-        /* --- Individual Game Screens --- */
-        #ayu-pet-screen, #word-chain-screen {
-            display: none;
-            max-width: 900px;
-            width: 100%;
-            background: rgba(45, 55, 72, 0.8);
-            padding: 50px;
-            border-radius: 12px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-            text-align: center;
-        }
-        #ayu-pet-screen h2, #word-chain-screen h2 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
-            color: #667eea;
-            margin-bottom: 30px;
-            text-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
-        }
-        #ayu-pet-screen .pet-display {
-            background: #2d3748;
-            border: 2px dashed #4a5568;
-            padding: 40px;
-            border-radius: 10px;
-            min-height: 250px;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 1.5rem;
-            color: #a0aec0;
-            margin-bottom: 30px;
-        }
-        #word-chain-screen .word-display {
-            background: #2d3748;
-            border: 2px dashed #4a5568;
-            padding: 40px;
-            border-radius: 10px;
-            min-height: 150px;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 2rem;
-            color: #e2e8f0;
-            margin-bottom: 30px;
-        }
-        .game-buttons .btn-primary {
-            width: auto;
-            min-width: 150px;
-            margin: 0 10px;
-        }
+        /* Word Chain Styles */
+        .word-history { height: 120px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; text-align: left; margin-bottom: 15px; font-size: 0.9rem; }
+        .current-word { font-size: 1.5rem; color: #fbbf24; margin-bottom: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
+    <div class="glow"></div>
 
-    <div class="background-circles">
-        <div></div><div></div><div></div><div></div><div></div>
-    </div>
-
-    <div id="login-screen" class="container">
-        <div class="ayu-logo">AYU</div>
-        <form id="login-form">
-            <div class="input-group">
-                <label for="username">ชื่อผู้ใช้</label>
-                <input type="text" id="username" placeholder="Username" required>
-            </div>
-            <div class="input-group">
-                <label for="password">รหัสผ่าน</label>
-                <input type="password" id="password" placeholder="Password" required>
-            </div>
-            <button type="submit" class="btn-primary">เข้าสู่ระบบ</button>
-        </form>
-        <div class="footer-links">
-            <a href="#" onclick="toggleRedeem()">แลกโค้ด</a>
-            <a href="#">ลืมรหัสผ่าน?</a>
-        </div>
-
-        <div id="redeem-code-section" class="redeem-section">
-            <h3>แลกโค้ดพิเศษ</h3>
-            <div class="input-group">
-                <label for="redeem-code">กรอกโค้ด</label>
-                <input type="text" id="redeem-code" placeholder="AYU-XXXX-XXXX">
-            </div>
-            <button type="button" class="btn-primary" onclick="redeemCode()">ยืนยัน</button>
+    <div id="screen-login" class="container">
+        <div class="logo">AYU</div>
+        <p style="letter-spacing: 3px; font-size: 0.8rem; color: #94a3b8;">SECURE LOGIN</p>
+        <input type="text" id="user" placeholder="Username (admin)">
+        <input type="password" id="pass" placeholder="Password (1234)">
+        <button onclick="login()">ENTER ARENA</button>
+        <div style="margin-top: 20px; cursor: pointer; font-size: 0.8rem; color: #6366f1;" onclick="toggleRedeem()">+ REDEEM CODE</div>
+        <div id="redeem-box" class="hidden">
+            <input type="text" id="code-val" placeholder="CODE-XXXX">
+            <button style="background: #a855f7;" onclick="redeem()">REDEEM</button>
         </div>
     </div>
 
-    <div id="game-selection-screen" class="container hidden">
-        <h2>เลือกเกมที่คุณต้องการ</h2>
-        <div class="game-grid">
-            <div class="game-card" onclick="selectGame('ayu-pet')">
-                <div class="game-icon">🐾</div>
-                <h3>AYU Pet (ทามาก็อตจิ)</h3>
-                <p>เลี้ยงดูเพื่อนซี้ดิจิทัล ให้อาหาร ฝึกฝน และเติบโตไปพร้อมกันในโลก AYU</p>
-            </div>
-            <div class="game-card" onclick="selectGame('word-chain')">
-                <div class="game-icon">📚</div>
-                <h3>Word Chain (เกมต่อคำ)</h3>
-                <p>ทดสอบคลังคำศัพท์ของคุณ แข่งขันต่อคำกับเพื่อนและไต่อันดับกระดานผู้นำ</p>
-            </div>
+    <div id="screen-menu" class="container hidden">
+        <div class="logo" style="font-size: 1.5rem;">SELECT GAME</div>
+        <div style="margin: 30px 0;">
+            <button onclick="startPet()">🐾 AYU PET (ทามาก็อตจิ)</button>
+            <button onclick="startWord()">📚 WORD CHAIN (ต่อคำ)</button>
         </div>
-        <div class="footer-links" style="margin-top: 40px;">
-            <a href="#" onclick="logout()">ออกจากระบบ</a>
-        </div>
+        <button style="background: transparent; border: 1px solid #ef4444; color: #ef4444;" onclick="location.reload()">LOGOUT</button>
     </div>
 
-    <div id="ayu-pet-screen" class="hidden">
-        <h2>AYU Pet World</h2>
-        <div class="pet-display">
-            <p>กำลังโหลดสัตว์เลี้ยงของคุณ...</p>
+    <div id="screen-pet" class="container hidden">
+        <div class="logo" style="font-size: 1.5rem;">AYU PET</div>
+        <div id="pet-char" class="pet-visual">🐱</div>
+        <div class="stats-grid">
+            <div>หิว: <div class="stat-bar"><div id="bar-hunger" class="stat-fill"></div></div></div>
+            <div>ความสุข: <div class="stat-bar"><div id="bar-happy" class="stat-fill"></div></div></div>
         </div>
-        <div class="game-buttons">
-            <button class="btn-primary">ให้อาหาร</button>
-            <button class="btn-primary">ทำความสะอาด</button>
-            <button class="btn-primary">ฝึกฝน</button>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="feed()">🍖 กิน</button>
+            <button onclick="play()">🎾 เล่น</button>
         </div>
-        <div class="footer-links" style="margin-top: 40px;">
-            <a href="#" onclick="backToGameSelection()">กลับหน้าเลือกเกม</a>
-        </div>
+        <button style="background: #1e293b;" onclick="showMenu()">กลับหน้าหลัก</button>
     </div>
 
-    <div id="word-chain-screen" class="hidden">
-        <h2>Word Chain Challenge</h2>
-        <div class="word-display">
-            <p>คำเริ่มต้น: AYU</p>
-        </div>
-        <div class="input-group" style="margin-top: 30px;">
-            <label for="your-word">คำของคุณ</label>
-            <input type="text" id="your-word" placeholder="พิมพ์คำศัพท์ของคุณที่นี่">
-        </div>
-        <div class="game-buttons">
-            <button class="btn-primary">ส่งคำ</button>
-            <button class="btn-primary">ขอข้าม</button>
-        </div>
-        <div class="footer-links" style="margin-top: 40px;">
-            <a href="#" onclick="backToGameSelection()">กลับหน้าเลือกเกม</a>
-        </div>
+    <div id="screen-word" class="container hidden">
+        <div class="logo" style="font-size: 1.5rem;">WORD CHAIN</div>
+        <p>คำปัจจุบัน:</p>
+        <div id="current-word" class="current-word">APPLE</div>
+        <div id="word-log" class="word-history"></div>
+        <input type="text" id="word-input" placeholder="คำถัดไป (เริ่มด้วยตัวสุดท้าย)">
+        <button onclick="submitWord()">SUBMIT WORD</button>
+        <button style="background: #1e293b;" onclick="showMenu()">กลับหน้าหลัก</button>
     </div>
 
     <script>
-        // --- JavaScript Logic ---
-
-        // Function to show/hide sections
-        function showScreen(screenId) {
-            document.querySelectorAll('.container, #game-selection-screen, #ayu-pet-screen, #word-chain-screen').forEach(el => {
-                el.classList.add('hidden');
-            });
-            document.getElementById(screenId).classList.remove('hidden');
+        // -- Core System --
+        function login() {
+            if(document.getElementById('user').value === 'admin' && document.getElementById('pass').value === '1234') {
+                showMenu();
+            } else { alert('Access Denied'); }
         }
 
-        // Login Form Submission
-        document.getElementById('login-form').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
-            // In a real app, you would send username/password to a server
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+        function showMenu() {
+            hideAll(); document.getElementById('screen-menu').classList.remove('hidden');
+        }
 
-            if (username === 'admin' && password === 'admin') { // Simple dummy login
-                alert('เข้าสู่ระบบสำเร็จ! ยินดีต้อนรับ, ' + username);
-                showScreen('game-selection-screen');
+        function hideAll() {
+            document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
+        }
+
+        function toggleRedeem() { document.getElementById('redeem-box').classList.toggle('hidden'); }
+        function redeem() { alert('โค้ดสำเร็จ! คุณได้รับ 500 AYU Coins'); }
+
+        // -- AYU PET Logic --
+        let hunger = 80, happy = 50;
+        function startPet() {
+            hideAll(); document.getElementById('screen-pet').classList.remove('hidden');
+            updatePetUI();
+        }
+        function updatePetUI() {
+            document.getElementById('bar-hunger').style.width = hunger + '%';
+            document.getElementById('bar-happy').style.width = happy + '%';
+            if(hunger < 20) document.getElementById('pet-char').innerText = '😿';
+            else if(happy > 80) document.getElementById('pet-char').innerText = '😺';
+            else document.getElementById('pet-char').innerText = '🐱';
+        }
+        function feed() { hunger = Math.min(100, hunger + 20); updatePetUI(); }
+        function play() { happy = Math.min(100, happy + 20); hunger -= 10; updatePetUI(); }
+
+        // -- Word Chain Logic --
+        let lastWord = 'APPLE';
+        function startWord() {
+            hideAll(); document.getElementById('screen-word').classList.remove('hidden');
+        }
+        function submitWord() {
+            let input = document.getElementById('word-input').value.toUpperCase().trim();
+            if(input.startsWith(lastWord.slice(-1))) {
+                document.getElementById('word-log').innerHTML += `<div>✅ ${input}</div>`;
+                lastWord = input;
+                document.getElementById('current-word').innerText = lastWord;
+                document.getElementById('word-input').value = '';
             } else {
-                alert('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
-            }
-        });
-
-        // Toggle Redeem Code Section
-        function toggleRedeem() {
-            const redeemSection = document.getElementById('redeem-code-section');
-            if (redeemSection.style.display === 'block') {
-                redeemSection.style.display = 'none';
-            } else {
-                redeemSection.style.display = 'block';
+                alert(`ต้องเริ่มด้วยตัว ${lastWord.slice(-1)}`);
             }
         }
-
-        // Redeem Code Function
-        function redeemCode() {
-            const code = document.getElementById('redeem-code').value;
-            if (code === 'AYU-WELCOME-2025') { // Example code
-                alert('แลกโค้ดสำเร็จ! คุณได้รับไอเท็มพิเศษ!');
-                document.getElementById('redeem-code').value = '';
-            } else {
-                alert('โค้ดไม่ถูกต้องหรือไม่สามารถใช้งานได้');
-            }
-        }
-
-        // Select Game
-        function selectGame(gameId) {
-            if (gameId === 'ayu-pet') {
-                showScreen('ayu-pet-screen');
-            } else if (gameId === 'word-chain') {
-                showScreen('word-chain-screen');
-            }
-        }
-
-        // Back to Game Selection
-        function backToGameSelection() {
-            showScreen('game-selection-screen');
-        }
-
-        // Logout
-        function logout() {
-            if (confirm('คุณต้องการออกจากระบบหรือไม่?')) {
-                showScreen('login-screen');
-                document.getElementById('login-form').reset(); // Clear login form
-                document.getElementById('redeem-code-section').style.display = 'none'; // Hide redeem
-            }
-        }
-
-        // Initial setup: Ensure only login screen is visible on load
-        document.addEventListener('DOMContentLoaded', () => {
-            showScreen('login-screen');
-        });
     </script>
 </body>
 </html>
