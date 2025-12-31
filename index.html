@@ -1,210 +1,35 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AYU GAME ZONE: OMNI V12</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <style>
-        :root {
-            --bg: #020617; --cyan: #22d3ee; --pink: #f43f5e; --gold: #fbbf24;
-            --green: #10b981; --red: #ef4444; --admin: #a855f7; --glass: rgba(15, 23, 42, 0.9);
-        }
-        * { box-sizing: border-box; font-family: 'Kanit', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: white; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #020617 100%); overflow-x: hidden; }
+<div id="maintenance-overlay" style="display: flex; position: fixed; inset: 0; background: #000; z-index: 99999999; flex-direction: column; justify-content: center; align-items: center; padding: 25px; text-align: center; color: white; overflow-y: auto;">
+    <div style="max-width: 700px; border: 2px solid #ef4444; padding: 40px; border-radius: 20px; background: rgba(20, 2, 2, 0.95); box-shadow: 0 0 60px rgba(239, 68, 68, 0.3); line-height: 1.8;">
         
-        /* --- ระบบปิดใช้งานชั่วคราว (Maintenance UI) --- */
-        #maintenance-screen {
-            display: none; position: fixed; inset: 0; background: #000; z-index: 999999;
-            flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center;
-        }
-        .m-box { max-width: 600px; border: 1px solid var(--gold); padding: 30px; border-radius: 20px; background: rgba(251, 191, 36, 0.05); line-height: 1.8; }
-        .m-title { color: var(--gold); font-family: 'Orbitron'; font-size: 2rem; margin-bottom: 20px; text-shadow: 0 0 15px var(--gold); }
-        .m-text { color: #cbd5e1; font-size: 0.95rem; text-align: justify; }
-
-        /* --- UI เดิมทั้งหมด --- */
-        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; }
-        .login-box { width: 100%; max-width: 320px; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 25px; border: 1px solid var(--cyan); box-shadow: 0 0 30px rgba(34, 211, 238, 0.2); text-align: center; }
-        .container { width: 100%; max-width: 480px; background: var(--glass); backdrop-filter: blur(20px); border-radius: 30px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 50px rgba(0,0,0,0.8); display: none; }
-        .badge-admin { background: var(--admin); color: white; padding: 2px 8px; border-radius: 5px; font-weight: 900; font-family: 'Orbitron'; font-size: 0.7rem; box-shadow: 0 0 10px var(--admin); }
-        .stats-panel { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; }
-        .exp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--admin)); width: 0%; transition: 1s; }
-        .coin-box { font-size: 2.2rem; color: var(--gold); font-family: 'Orbitron'; text-align: center; margin: 5px 0; font-weight: 900; }
-        #admin-panel { display: none; background: rgba(168, 85, 247, 0.1); border: 2px solid var(--admin); border-radius: 20px; padding: 15px; margin-bottom: 15px; }
-        .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
-        .cell { aspect-ratio: 1/1; background: rgba(30, 41, 59, 0.8); border-radius: 15px; font-size: 2.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
-        .chat-area { background: rgba(0,0,0,0.5); border-radius: 15px; height: 90px; overflow-y: auto; padding: 10px; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; }
-        .btn-main { background: linear-gradient(90deg, #0ea5e9, #6366f1); color: white; border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; }
-        #ban-screen { display: none; position: fixed; inset: 0; background: black; color: red; z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        input { background: rgba(0,0,0,0.3); border: 1px solid #444; color: white; padding: 10px; border-radius: 10px; width: 100%; }
-        .shop-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; scrollbar-width: none; }
-        .skin-item { min-width: 80px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px; text-align: center; border: 2px solid transparent; cursor: pointer; }
-        .skin-item.active { border-color: var(--cyan); background: rgba(34, 211, 238, 0.1); }
-    </style>
-</head>
-<body>
-
-<div id="maintenance-screen">
-    <div class="m-box">
-        <div class="m-title">SYSTEM OFFLINE</div>
-        <div class="m-text">
-            1. ขออภัยในความไม่สะดวก ขณะนี้ระบบ AYU GAME ZONE กำลังอยู่ภายใต้การปรับปรุงโครงสร้างเซิร์ฟเวอร์หลัก<br>
-            2. เพื่อยกระดับความเสถียรและความปลอดภัยของข้อมูลผู้เล่นทุกคน เราจำเป็นต้องหยุดการเข้าถึงชั่วคราว<br>
-            3. ทีมงานกำลังดำเนินการอัปเดตระบบ AI และเพิ่มฟีเจอร์ใหม่ๆ ที่มีความซับซ้อนมากกว่าเดิม<br>
-            4. ในระหว่างนี้ ข้อมูลเหรียญ สกิน และเลเวลของผู้เล่นจะถูกเก็บรักษาไว้อย่างปลอดภัยในฐานข้อมูลสำรอง<br>
-            5. คาดว่ากระบวนการปรับปรุงระบบจะใช้เวลาประมาณ 2-4 ชั่วโมง ขึ้นอยู่กับความเรียบร้อยของโค้ดใหม่<br>
-            6. โปรดหลีกเลี่ยงการรีเฟรชหน้าจอบ่อยเกินไปเพื่อป้องกันการติดขัดของคิวการเข้าถึงในอนาคต<br>
-            7. เรากำลังปรับจูนระบบ Anti-Cheat เพื่อให้การแข่งขันมีความยุติธรรมสำหรับผู้เล่นทุกคน<br>
-            8. ขอขอบคุณผู้เล่นทุกท่านที่ให้การสนับสนุนและรอคอยการกลับมาของเวอร์ชันที่สมบูรณ์กว่าเดิม<br>
-            9. หากท่านมีข้อสงสัยหรือปัญหาเร่งด่วน สามารถติดต่อผ่านช่องทางดิสคอร์ดหลักของทางเราได้ทันที<br>
-            10. เมื่อระบบเปิดใช้งานอีกครั้ง ผู้เล่นที่เข้าใช้งานใน 1 ชั่วโมงแรกจะได้รับโบนัสเหรียญฟรีเป็นการชดเชย<br>
-            11. ขอบคุณที่เข้าใจในความจำเป็นของการพัฒนาครั้งใหญ่ครั้งนี้<br>
-            12. แล้วเจอกันเร็วๆ นี้ ในเวอร์ชันที่เหนือกว่าเดิมที่โลกเคยสัมผัส!<br>
+        <h1 style="font-family: 'Orbitron', sans-serif; color: #ef4444; font-size: 2.5rem; margin-bottom: 25px; text-shadow: 0 0 15px rgba(239, 68, 68, 0.6);">COPYRIGHT NOTICE</h1>
+        
+        <div style="font-family: 'Kanit', sans-serif; text-align: justify; color: #e2e8f0; font-size: 0.95rem;">
+            1. ประกาศด่วนถึงผู้ใช้งาน AYU GAME ZONE ทุกท่าน ขณะนี้ตัวเว็บไซต์จำเป็นต้องยุติการให้บริการชั่วคราว<br>
+            2. เนื่องจากเราได้รับหนังสือแจ้งเตือนเกี่ยวกับปัญหาด้านลิขสิทธิ์ของทรัพยากรบางส่วนที่ใช้ภายในตัวเว็บ<br>
+            3. ทางทีมงานแอดมินให้ความสำคัญกับกฎหมายทรัพย์สินทางปัญญาและจำเป็นต้องปฏิบัติตามคำร้องขอโดยเคร่งครัด<br>
+            4. ด้วยเหตุนี้ เราจึงตัดสินใจยุติการให้บริการในรูปแบบเว็บแอปพลิเคชัน (Web App) อย่างเป็นทางการนับตั้งแต่นี้<br>
+            5. แต่โปรดอย่าตกใจไป เพราะนี่ไม่ใช่จุดจบ แต่เป็นการเริ่มต้นใหม่ที่ยิ่งใหญ่และถูกต้องกว่าเดิม<br>
+            6. เรากำลังดำเนินการรวบรวมข้อมูลและซอร์สโค้ดทั้งหมด เพื่อเปลี่ยนรูปแบบไปสู่ "ตัวเกมตัวเต็ม" (Standalone Game)<br>
+            7. ในรูปแบบใหม่นี้ ท่านจะได้พบกับกราฟิกที่อัปเกรดขึ้น และระบบ AI ที่มีความซับซ้อนและท้าทายมากยิ่งขึ้น<br>
+            8. ตัวเกมเวอร์ชันใหม่จะมาพร้อมกับระบบความปลอดภัยขั้นสูงและใบอนุญาตที่ถูกต้องตามกฎหมายทุกประการ<br>
+            9. สำหรับข้อมูลบัญชีผู้เล่นเดิม เหรียญทอง และสกินต่างๆ ทีมงานได้ทำการสำรอง (Backup) ไว้ในฐานข้อมูลออฟไลน์แล้ว<br>
+            10. ท่านจะสามารถนำรหัสเดิมไปเคลมของรางวัลคืนได้ เมื่อตัวเกมเวอร์ชันสมบูรณ์ถูกปล่อยให้ดาวน์โหลด<br>
+            11. ขอให้ทุกท่านติดตามการเคลื่อนไหวผ่านช่องทางลับและเพจหลักของเรา เพื่อรับลิงก์ดาวน์โหลดตัวเกมใหม่ในเร็วๆ นี้<br>
+            12. การพัฒนาในรูปแบบซอฟต์แวร์เกมจะช่วยให้เราสามารถใส่ฟีเจอร์ที่บนหน้าเว็บไม่สามารถทำได้อีกมากมาย<br>
+            13. เราขออภัยเป็นอย่างสูงที่ไม่ได้แจ้งให้ทราบล่วงหน้า เนื่องจากสถานการณ์ทางกฎหมายที่เกิดขึ้นอย่างกะทันหัน<br>
+            14. ทีมงานขอยืนยันว่าเราไม่ได้ทิ้งโปรเจกต์นี้ไปไหน แต่เราจะกลับมาในภาพลักษณ์ใหม่ที่มืออาชีพยิ่งขึ้น<br>
+            15. ในระหว่างนี้ ระบบหลังบ้านทั้งหมดจะถูกปิดกั้นเพื่อทำการล้างข้อมูลที่มีความเสี่ยงต่อการละเมิดลิขสิทธิ์<br>
+            16. เราจำเป็นต้องใช้เวลาในการตรวจสอบไฟล์งานและโมเดลต่างๆ ภายในเกมใหม่ทั้งหมดแบบ 100%<br>
+            17. เพื่อให้มั่นใจว่าการเปิดตัวในครั้งหน้าจะไม่มีปัญหาเรื่องกฎหมายลิขสิทธิ์มาขัดขวางการเล่นของทุกท่านอีก<br>
+            18. เราต้องขอเวลาไป "เคลียร์" ประเด็นข้อพิพาทเกี่ยวกับลิขสิทธิ์เหล่านี้ให้จบสิ้นและถูกต้องตามขั้นตอน<br>
+            19. ทางเราจะเร่งดำเนินการให้เร็วที่สุดเพื่อให้ AYU GAME ZONE กลับมาสร้างความสนุกให้ทุกคนอีกครั้ง<br>
+            20. ขอบคุณที่ร่วมเดินทางและเข้าใจในสถานการณ์ที่ยากลำบากนี้ แล้วเจอกันในรูปแบบใหม่ที่เหนือชั้นกว่าเดิม!<br>
             <br>
-            <span style="color:var(--cyan); font-family:'Orbitron';">ESTIMATED COMPLETION: 20:00 PM (GMT+7)</span>
+            <div style="text-align: center; margin-top: 25px;">
+                <span style="color: #fbbf24; font-family: 'Orbitron'; font-weight: bold; border: 1px solid #fbbf24; padding: 5px 15px; border-radius: 5px;">
+                    STATUS: WAITING FOR LEGAL CLEARANCE
+                </span>
+            </div>
         </div>
     </div>
 </div>
-
-<div id="login-screen">
-    <div class="login-box">
-        <h2 style="color:var(--cyan); font-family:'Orbitron';">LOGIN</h2>
-        <input type="text" id="name-input" placeholder="Enter Your Name..." maxlength="12">
-        <button class="btn-main" style="margin-top:15px;" onclick="startGame()">START GAME</button>
-    </div>
-</div>
-
-<div id="ban-screen"><h1>BANNED</h1></div>
-
-<div class="container" id="game-ui">
-    <div style="display:flex; justify-content:space-between; font-size:0.7rem; font-family:'Orbitron';">
-        <div>PING: <span id="ping">15</span>ms</div>
-        <div><span id="adm-badge"></span> <span id="display-name" style="color:var(--cyan)">Player</span></div>
-    </div>
-    
-    <div id="admin-panel">
-        <p style="color:var(--admin); font-weight:bold; font-size:0.8rem;">ADMIN TOOLS</p>
-        <button onclick="adm('coin')" style="background:var(--admin); border:none; color:white; padding:5px; border-radius:5px; margin:2px;">COINS</button>
-        <button onclick="adm('level')" style="background:var(--admin); border:none; color:white; padding:5px; border-radius:5px; margin:2px;">LEVEL</button>
-        <button onclick="adm('ban')" style="background:var(--red); border:none; color:white; padding:5px; border-radius:5px; margin:2px;">BAN</button>
-    </div>
-
-    <div class="stats-panel">
-        <div style="display:flex; justify-content:space-between; font-size:0.75rem;">
-            <span id="lvl-txt">LVL 1</span>
-            <span id="exp-txt">0/500</span>
-        </div>
-        <div style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden;">
-            <div id="exp-fill" class="exp-bar-fill"></div>
-        </div>
-    </div>
-
-    <div class="coin-box">🪙 <span id="coin-val">0</span></div>
-    
-    <div style="display:flex; gap:5px; margin-bottom:10px;">
-        <input type="text" id="code-in" placeholder="Redeem...">
-        <button class="btn-main" style="width:60px; padding:0;" onclick="redeem()">OK</button>
-    </div>
-
-    <div class="shop-row" id="shop"></div>
-    <div class="chat-area" id="chat"></div>
-    <div style="display:flex; gap:5px; margin-bottom:10px;">
-        <input type="text" id="chat-in" placeholder="Chat...">
-        <button class="btn-main" style="width:50px; padding:0;" onclick="chat()">➤</button>
-    </div>
-
-    <div class="board" id="board"></div>
-    <button class="btn-main" onclick="match()">START</button>
-</div>
-
-<script>
-    // ==========================================
-    // ตัวแปรควบคุม: เปลี่ยนเป็น true เพื่อปิดใช้งานเว็บ
-    // ==========================================
-    const IS_MAINTENANCE = false; 
-
-    if(IS_MAINTENANCE) {
-        document.getElementById('maintenance-screen').style.display = 'flex';
-        document.getElementById('login-screen').style.display = 'none';
-    }
-
-    /* --- Logic ของเกมทั้งหมด (คงไว้ตาม V11) --- */
-    let user = JSON.parse(localStorage.getItem('ayu_v12_db')) || {
-        name: '', coins: 0, exp: 0, lvl: 1, wins: 0, isAdmin: false, isBanned: false, skin: '❌', owned: ['❌']
-    };
-
-    if(user.name && !IS_MAINTENANCE) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('game-ui').style.display = 'block';
-        updateUI();
-    }
-
-    function startGame() {
-        let n = document.getElementById('name-input').value.trim();
-        if(!n) return;
-        user.name = n;
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('game-ui').style.display = 'block';
-        updateUI(); save();
-    }
-
-    function updateUI() {
-        document.getElementById('display-name').innerText = user.name;
-        document.getElementById('coin-val').innerText = user.coins.toLocaleString();
-        document.getElementById('lvl-txt').innerText = "LVL " + user.lvl;
-        document.getElementById('exp-fill').style.width = (user.exp / (user.lvl * 500) * 100) + "%";
-        document.getElementById('adm-badge').innerHTML = user.isAdmin ? '<span class="badge-admin">A</span>' : '';
-        document.getElementById('admin-panel').style.display = user.isAdmin ? 'block' : 'none';
-        if(user.isBanned) document.getElementById('ban-screen').style.display = 'flex';
-        
-        // Shop
-        const sItems = ['❌', '💎', '🔥', '👑', '💀'];
-        const sDiv = document.getElementById('shop'); sDiv.innerHTML = '';
-        sItems.forEach(s => {
-            let ow = user.owned.includes(s);
-            sDiv.innerHTML += `<div class="skin-item ${user.skin===s?'active':''}" onclick="buy('${s}')">${s}<br><small>${ow?'OK':'500'}</small></div>`;
-        });
-    }
-
-    function buy(s) {
-        if(user.owned.includes(s)) user.skin = s;
-        else if(user.coins >= 500) { user.coins -= 500; user.owned.push(s); user.skin = s; }
-        updateUI(); save(); render();
-    }
-
-    /* --- ระบบ AI Minimax และส่วนอื่นๆ --- */
-    let b = Array(9).fill('');
-    function render() {
-        const grid = document.getElementById('board'); grid.innerHTML = '';
-        b.forEach((v, i) => {
-            let c = document.createElement('div'); c.className = 'cell';
-            c.innerText = v === 'X' ? (user.isAdmin ? 'A' : user.skin) : (v === 'O' ? '⭕' : '');
-            c.onclick = () => { if(b[i]==='') { b[i]='X'; setTimeout(bot, 500); render(); check(); } };
-            grid.appendChild(c);
-        });
-    }
-
-    function bot() {
-        let empty = b.map((v,i)=>v===''?i:null).filter(v=>v!==null);
-        if(empty.length > 0) { b[empty[0]] = 'O'; render(); check(); }
-    }
-
-    function check() { /* ระบบเช็คชนะแบบ V11 */ }
-    function match() { b = Array(9).fill(''); render(); }
-    function chat() { /* ระบบแชท */ }
-    function redeem() { 
-        if(document.getElementById('code-in').value === 'ADMIN_AYU_2026') { user.isAdmin = true; updateUI(); }
-        document.getElementById('code-in').value = '';
-    }
-    function adm(t) {
-        if(t==='coin') user.coins += 999999;
-        if(t==='level') user.lvl = 99;
-        if(t==='ban') user.isBanned = true;
-        updateUI(); save();
-    }
-    function save() { localStorage.setItem('ayu_v12_db', JSON.stringify(user)); }
-    setInterval(() => document.getElementById('ping').innerText = Math.floor(Math.random()*10)+10, 2000);
-</script>
-</body>
-</html>
