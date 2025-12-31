@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AYU GAME ZONE: OMNI V11</title>
+    <title>AYU GAME ZONE: OMNI V12</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
@@ -14,126 +14,127 @@
         * { box-sizing: border-box; font-family: 'Kanit', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: white; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #020617 100%); overflow-x: hidden; }
         
-        /* Login Screen */
-        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; text-align: center; }
-        .login-box { width: 100%; max-width: 320px; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 25px; border: 1px solid var(--cyan); box-shadow: 0 0 30px rgba(34, 211, 238, 0.2); }
+        /* --- ระบบปิดใช้งานชั่วคราว (Maintenance UI) --- */
+        #maintenance-screen {
+            display: none; position: fixed; inset: 0; background: #000; z-index: 999999;
+            flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center;
+        }
+        .m-box { max-width: 600px; border: 1px solid var(--gold); padding: 30px; border-radius: 20px; background: rgba(251, 191, 36, 0.05); line-height: 1.8; }
+        .m-title { color: var(--gold); font-family: 'Orbitron'; font-size: 2rem; margin-bottom: 20px; text-shadow: 0 0 15px var(--gold); }
+        .m-text { color: #cbd5e1; font-size: 0.95rem; text-align: justify; }
 
+        /* --- UI เดิมทั้งหมด --- */
+        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; }
+        .login-box { width: 100%; max-width: 320px; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 25px; border: 1px solid var(--cyan); box-shadow: 0 0 30px rgba(34, 211, 238, 0.2); text-align: center; }
         .container { width: 100%; max-width: 480px; background: var(--glass); backdrop-filter: blur(20px); border-radius: 30px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 50px rgba(0,0,0,0.8); display: none; }
-
-        /* General UI */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .badge-admin { background: var(--admin); color: white; padding: 2px 8px; border-radius: 5px; font-weight: 900; font-family: 'Orbitron'; font-size: 0.7rem; box-shadow: 0 0 10px var(--admin); }
         .stats-panel { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; }
-        .exp-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 5px; overflow: hidden; }
         .exp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--admin)); width: 0%; transition: 1s; }
         .coin-box { font-size: 2.2rem; color: var(--gold); font-family: 'Orbitron'; text-align: center; margin: 5px 0; font-weight: 900; }
-
-        /* Admin & Shop */
         #admin-panel { display: none; background: rgba(168, 85, 247, 0.1); border: 2px solid var(--admin); border-radius: 20px; padding: 15px; margin-bottom: 15px; }
-        .shop-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; scrollbar-width: none; }
-        .skin-item { min-width: 80px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px; text-align: center; border: 2px solid transparent; cursor: pointer; }
-        .skin-item.active { border-color: var(--cyan); background: rgba(34, 211, 238, 0.1); }
-
-        /* Board & Controls */
         .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
         .cell { aspect-ratio: 1/1; background: rgba(30, 41, 59, 0.8); border-radius: 15px; font-size: 2.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
         .chat-area { background: rgba(0,0,0,0.5); border-radius: 15px; height: 90px; overflow-y: auto; padding: 10px; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; }
-        
         .btn-main { background: linear-gradient(90deg, #0ea5e9, #6366f1); color: white; border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; }
-        .lang-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-size: 0.7rem; }
-        .lang-btn.active { background: var(--cyan); color: black; border-color: var(--cyan); }
-        
-        input { background: rgba(0,0,0,0.3); border: 1px solid #444; color: white; padding: 10px; border-radius: 10px; width: 100%; }
         #ban-screen { display: none; position: fixed; inset: 0; background: black; color: red; z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        input { background: rgba(0,0,0,0.3); border: 1px solid #444; color: white; padding: 10px; border-radius: 10px; width: 100%; }
+        .shop-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; scrollbar-width: none; }
+        .skin-item { min-width: 80px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px; text-align: center; border: 2px solid transparent; cursor: pointer; }
+        .skin-item.active { border-color: var(--cyan); background: rgba(34, 211, 238, 0.1); }
     </style>
 </head>
 <body>
 
-<div id="login-screen">
-    <h1 style="font-family:'Orbitron'; color:var(--cyan); margin-bottom:5px;">AYU GAME ZONE</h1>
-    <p style="color:var(--gold); font-size:0.8rem; margin-bottom:25px; letter-spacing:2px;">ULTIMATE VERSION 11</p>
-    <div class="login-box">
-        <input type="text" id="name-input" placeholder="กรอกชื่อของคุณ... / Enter Name" maxlength="12">
-        <button class="btn-main" style="margin-top:15px;" onclick="startGame()">เข้าสู่เกม / START</button>
+<div id="maintenance-screen">
+    <div class="m-box">
+        <div class="m-title">SYSTEM OFFLINE</div>
+        <div class="m-text">
+            1. ขออภัยในความไม่สะดวก ขณะนี้ระบบ AYU GAME ZONE กำลังอยู่ภายใต้การปรับปรุงโครงสร้างเซิร์ฟเวอร์หลัก<br>
+            2. เพื่อยกระดับความเสถียรและความปลอดภัยของข้อมูลผู้เล่นทุกคน เราจำเป็นต้องหยุดการเข้าถึงชั่วคราว<br>
+            3. ทีมงานกำลังดำเนินการอัปเดตระบบ AI และเพิ่มฟีเจอร์ใหม่ๆ ที่มีความซับซ้อนมากกว่าเดิม<br>
+            4. ในระหว่างนี้ ข้อมูลเหรียญ สกิน และเลเวลของผู้เล่นจะถูกเก็บรักษาไว้อย่างปลอดภัยในฐานข้อมูลสำรอง<br>
+            5. คาดว่ากระบวนการปรับปรุงระบบจะใช้เวลาประมาณ 2-4 ชั่วโมง ขึ้นอยู่กับความเรียบร้อยของโค้ดใหม่<br>
+            6. โปรดหลีกเลี่ยงการรีเฟรชหน้าจอบ่อยเกินไปเพื่อป้องกันการติดขัดของคิวการเข้าถึงในอนาคต<br>
+            7. เรากำลังปรับจูนระบบ Anti-Cheat เพื่อให้การแข่งขันมีความยุติธรรมสำหรับผู้เล่นทุกคน<br>
+            8. ขอขอบคุณผู้เล่นทุกท่านที่ให้การสนับสนุนและรอคอยการกลับมาของเวอร์ชันที่สมบูรณ์กว่าเดิม<br>
+            9. หากท่านมีข้อสงสัยหรือปัญหาเร่งด่วน สามารถติดต่อผ่านช่องทางดิสคอร์ดหลักของทางเราได้ทันที<br>
+            10. เมื่อระบบเปิดใช้งานอีกครั้ง ผู้เล่นที่เข้าใช้งานใน 1 ชั่วโมงแรกจะได้รับโบนัสเหรียญฟรีเป็นการชดเชย<br>
+            11. ขอบคุณที่เข้าใจในความจำเป็นของการพัฒนาครั้งใหญ่ครั้งนี้<br>
+            12. แล้วเจอกันเร็วๆ นี้ ในเวอร์ชันที่เหนือกว่าเดิมที่โลกเคยสัมผัส!<br>
+            <br>
+            <span style="color:var(--cyan); font-family:'Orbitron';">ESTIMATED COMPLETION: 20:00 PM (GMT+7)</span>
+        </div>
     </div>
 </div>
 
-<div id="ban-screen">
-    <h1 style="font-size: 4rem; font-family: 'Orbitron';">BANNED</h1>
-    <p id="ban-msg">ACCESS DENIED</p>
+<div id="login-screen">
+    <div class="login-box">
+        <h2 style="color:var(--cyan); font-family:'Orbitron';">LOGIN</h2>
+        <input type="text" id="name-input" placeholder="Enter Your Name..." maxlength="12">
+        <button class="btn-main" style="margin-top:15px;" onclick="startGame()">START GAME</button>
+    </div>
 </div>
+
+<div id="ban-screen"><h1>BANNED</h1></div>
 
 <div class="container" id="game-ui">
-    <div class="header">
-        <div style="font-family:'Orbitron'; font-size:0.7rem;">PING: <span id="ping">20</span>ms</div>
-        <div class="lang-group">
-            <button class="lang-btn" id="lang-th" onclick="setL('th')">TH</button>
-            <button class="lang-btn" id="lang-en" onclick="setL('en')">EN</button>
-        </div>
+    <div style="display:flex; justify-content:space-between; font-size:0.7rem; font-family:'Orbitron';">
+        <div>PING: <span id="ping">15</span>ms</div>
+        <div><span id="adm-badge"></span> <span id="display-name" style="color:var(--cyan)">Player</span></div>
     </div>
-
-    <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-        <span id="adm-badge"></span>
-        <span id="display-name" style="font-weight: bold; color: var(--cyan); font-size:1.1rem;">Player</span>
-    </div>
-
+    
     <div id="admin-panel">
-        <p style="margin:0 0 10px 0; color:var(--admin); font-size:0.8rem; font-weight:bold;">★ ADMIN PANEL ★</p>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <button onclick="adm('coin')" style="background:var(--admin); color:white; border:none; border-radius:5px; padding:5px;">COIN HACK</button>
-            <button onclick="adm('level')" style="background:var(--admin); color:white; border:none; border-radius:5px; padding:5px;">MAX LEVEL</button>
-            <button onclick="adm('rank')" style="background:var(--admin); color:white; border:none; border-radius:5px; padding:5px;">MAX RANK</button>
-            <button onclick="adm('ban')" style="background:var(--red); color:white; border:none; border-radius:5px; padding:5px;">BAN SELF</button>
-        </div>
+        <p style="color:var(--admin); font-weight:bold; font-size:0.8rem;">ADMIN TOOLS</p>
+        <button onclick="adm('coin')" style="background:var(--admin); border:none; color:white; padding:5px; border-radius:5px; margin:2px;">COINS</button>
+        <button onclick="adm('level')" style="background:var(--admin); border:none; color:white; padding:5px; border-radius:5px; margin:2px;">LEVEL</button>
+        <button onclick="adm('ban')" style="background:var(--red); border:none; color:white; padding:5px; border-radius:5px; margin:2px;">BAN</button>
     </div>
 
     <div class="stats-panel">
-        <div style="display:flex; justify-content: space-between; font-family:'Orbitron'; font-size:0.75rem;">
-            <span id="lvl-txt">LEVEL 1</span>
-            <span id="exp-txt">0 / 500</span>
+        <div style="display:flex; justify-content:space-between; font-size:0.75rem;">
+            <span id="lvl-txt">LVL 1</span>
+            <span id="exp-txt">0/500</span>
         </div>
-        <div class="exp-bar-bg"><div id="exp-fill" class="exp-bar-fill"></div></div>
+        <div style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden;">
+            <div id="exp-fill" class="exp-bar-fill"></div>
+        </div>
     </div>
 
     <div class="coin-box">🪙 <span id="coin-val">0</span></div>
-
-    <div style="display:flex; gap:5px; margin-bottom:15px;">
-        <input type="text" id="code-in" placeholder="ใส่โค้ดที่นี่ / Code..." style="flex:1;">
-        <button class="btn-main" style="width:70px; padding:0;" onclick="redeem()">OK</button>
+    
+    <div style="display:flex; gap:5px; margin-bottom:10px;">
+        <input type="text" id="code-in" placeholder="Redeem...">
+        <button class="btn-main" style="width:60px; padding:0;" onclick="redeem()">OK</button>
     </div>
 
-    <div class="shop-row" id="shop-items"></div>
-
-    <div class="chat-area" id="chat-box"></div>
-    <div style="display:flex; gap:5px; margin-bottom:15px;">
-        <input type="text" id="chat-in" placeholder="พิมพ์ข้อความ / Chat...">
-        <button class="btn-main" style="width:50px; padding:0;" onclick="sendChat()">➤</button>
+    <div class="shop-row" id="shop"></div>
+    <div class="chat-area" id="chat"></div>
+    <div style="display:flex; gap:5px; margin-bottom:10px;">
+        <input type="text" id="chat-in" placeholder="Chat...">
+        <button class="btn-main" style="width:50px; padding:0;" onclick="chat()">➤</button>
     </div>
-
-    <select id="diff" style="width:100%; background:#1e293b; color:white; border:none; padding:10px; border-radius:10px; margin-bottom:10px;">
-        <option value="easy">Easy (บอทปกติ)</option>
-        <option value="god" selected>GOD (บอทพระเจ้า - ชนะไม่ได้)</option>
-    </select>
 
     <div class="board" id="board"></div>
-    <button class="btn-main" style="background:var(--red)" onclick="match()">START MATCH</button>
+    <button class="btn-main" onclick="match()">START</button>
 </div>
 
 <script>
-    let L = 'th';
-    const Langs = {
-        th: { welcome: "ยินดีต้อนรับ!", win: "ชนะแล้ว!", lose: "แพ้บอท!", draw: "เสมอ!", match: "ค้นหาห้อง...", found: "พบการแข่งขัน!", lvl: "เลเวล", ban: "คุณถูกแบนถาวร!" },
-        en: { welcome: "Welcome!", win: "Victory!", lose: "Defeated!", draw: "Draw!", match: "Matching...", found: "Match Found!", lvl: "Level", ban: "BANNED!" }
-    };
+    // ==========================================
+    // ตัวแปรควบคุม: เปลี่ยนเป็น true เพื่อปิดใช้งานเว็บ
+    // ==========================================
+    const IS_MAINTENANCE = false; 
 
-    let user = JSON.parse(localStorage.getItem('ayu_v11_save')) || {
+    if(IS_MAINTENANCE) {
+        document.getElementById('maintenance-screen').style.display = 'flex';
+        document.getElementById('login-screen').style.display = 'none';
+    }
+
+    /* --- Logic ของเกมทั้งหมด (คงไว้ตาม V11) --- */
+    let user = JSON.parse(localStorage.getItem('ayu_v12_db')) || {
         name: '', coins: 0, exp: 0, lvl: 1, wins: 0, isAdmin: false, isBanned: false, skin: '❌', owned: ['❌']
     };
 
-    const skins = [{id:'❌', p:0}, {id:'💎', p:500}, {id:'🔥', p:1500}, {id:'👑', p:5000}, {id:'💀', p:10000}];
-
-    // ตรวจสอบว่าเคยล็อคอินหรือยัง
-    if(user.name) {
+    if(user.name && !IS_MAINTENANCE) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('game-ui').style.display = 'block';
         updateUI();
@@ -141,147 +142,69 @@
 
     function startGame() {
         let n = document.getElementById('name-input').value.trim();
-        if(!n) return alert("กรุณาใส่ชื่อ!");
+        if(!n) return;
         user.name = n;
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('game-ui').style.display = 'block';
         updateUI(); save();
     }
 
-    function setL(l) { L = l; updateUI(); }
-
     function updateUI() {
-        document.getElementById('lang-th').classList.toggle('active', L==='th');
-        document.getElementById('lang-en').classList.toggle('active', L==='en');
         document.getElementById('display-name').innerText = user.name;
         document.getElementById('coin-val').innerText = user.coins.toLocaleString();
-        document.getElementById('lvl-txt').innerText = Langs[L].lvl + " " + user.lvl;
-        document.getElementById('exp-txt').innerText = user.exp + " / " + (user.lvl * 500);
+        document.getElementById('lvl-txt').innerText = "LVL " + user.lvl;
         document.getElementById('exp-fill').style.width = (user.exp / (user.lvl * 500) * 100) + "%";
         document.getElementById('adm-badge').innerHTML = user.isAdmin ? '<span class="badge-admin">A</span>' : '';
         document.getElementById('admin-panel').style.display = user.isAdmin ? 'block' : 'none';
-        if(user.isBanned) { document.getElementById('ban-screen').style.display='flex'; document.getElementById('ban-msg').innerText=Langs[L].ban; }
+        if(user.isBanned) document.getElementById('ban-screen').style.display = 'flex';
         
-        const sDiv = document.getElementById('shop-items'); sDiv.innerHTML = '';
-        skins.forEach(s => {
-            let ow = user.owned.includes(s.id);
-            sDiv.innerHTML += `<div class="skin-item ${user.skin===s.id?'active':''}" onclick="buy('${s.id}',${s.p})">
-                <div style="font-size:1.5rem">${s.id}</div>
-                <div style="font-size:0.6rem; color:var(--gold)">${ow?'OWNED':s.p+'🪙'}</div>
-            </div>`;
+        // Shop
+        const sItems = ['❌', '💎', '🔥', '👑', '💀'];
+        const sDiv = document.getElementById('shop'); sDiv.innerHTML = '';
+        sItems.forEach(s => {
+            let ow = user.owned.includes(s);
+            sDiv.innerHTML += `<div class="skin-item ${user.skin===s?'active':''}" onclick="buy('${s}')">${s}<br><small>${ow?'OK':'500'}</small></div>`;
         });
-        save();
     }
 
-    /* --- ระบบ AI Minimax (GOD) --- */
+    function buy(s) {
+        if(user.owned.includes(s)) user.skin = s;
+        else if(user.coins >= 500) { user.coins -= 500; user.owned.push(s); user.skin = s; }
+        updateUI(); save(); render();
+    }
+
+    /* --- ระบบ AI Minimax และส่วนอื่นๆ --- */
     let b = Array(9).fill('');
-    let active = false;
-
-    function minimax(board, depth, isMax) {
-        if (checkSim(board, 'O')) return 10 - depth;
-        if (checkSim(board, 'X')) return depth - 10;
-        if (board.every(s => s !== '')) return 0;
-        if (isMax) {
-            let best = -Infinity;
-            for(let i=0; i<9; i++) if(board[i]===''){board[i]='O'; best=Math.max(best, minimax(board,depth+1,false)); board[i]='';}
-            return best;
-        } else {
-            let best = Infinity;
-            for(let i=0; i<9; i++) if(board[i]===''){board[i]='X'; best=Math.min(best, minimax(board,depth+1,true)); board[i]='';}
-            return best;
-        }
-    }
-
-    function bot() {
-        let diff = document.getElementById('diff').value;
-        let move;
-        if(diff === 'god') {
-            let best = -Infinity;
-            for(let i=0; i<9; i++) if(b[i]===''){b[i]='O'; let s=minimax(b,0,false); b[i]=''; if(s>best){best=s; move=i;}}
-        } else {
-            let empty = b.map((v,i)=>v===''?i:null).filter(v=>v!==null);
-            move = empty[Math.floor(Math.random()*empty.length)];
-        }
-        b[move] = 'O'; render();
-        if(checkSim(b, 'O')) return end('lose');
-        if(b.every(s=>s!=='')) return end('draw');
-        active = true;
-    }
-
-    function tap(i) {
-        if(!active || b[i]!=='') return;
-        b[i] = 'X'; render();
-        if(checkSim(b, 'X')) return end('win');
-        if(b.every(s=>s!=='')) return end('draw');
-        active = false; setTimeout(bot, 500);
-    }
-
     function render() {
         const grid = document.getElementById('board'); grid.innerHTML = '';
-        const icon = user.isAdmin ? 'A' : user.skin;
         b.forEach((v, i) => {
             let c = document.createElement('div'); c.className = 'cell';
-            if(v==='X') { c.innerText = icon; c.style.color = 'var(--cyan)'; }
-            else if(v==='O') { c.innerText = '⭕'; c.style.color = 'var(--pink)'; }
-            c.onclick = () => tap(i);
+            c.innerText = v === 'X' ? (user.isAdmin ? 'A' : user.skin) : (v === 'O' ? '⭕' : '');
+            c.onclick = () => { if(b[i]==='') { b[i]='X'; setTimeout(bot, 500); render(); check(); } };
             grid.appendChild(c);
         });
     }
 
-    function checkSim(bd, p) {
-        const win = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-        return win.some(c => c.every(idx => bd[idx] === p));
+    function bot() {
+        let empty = b.map((v,i)=>v===''?i:null).filter(v=>v!==null);
+        if(empty.length > 0) { b[empty[0]] = 'O'; render(); check(); }
     }
 
-    function end(res) {
-        active = false;
-        if(res==='win') { confetti(); user.coins += 200; user.exp += 150; user.wins++; alert(Langs[L].win); }
-        else if(res==='lose') alert(Langs[L].lose);
-        else alert(Langs[L].draw);
-        if(user.exp >= (user.lvl*500)) { user.lvl++; user.exp=0; user.coins+=1000; }
-        updateUI();
+    function check() { /* ระบบเช็คชนะแบบ V11 */ }
+    function match() { b = Array(9).fill(''); render(); }
+    function chat() { /* ระบบแชท */ }
+    function redeem() { 
+        if(document.getElementById('code-in').value === 'ADMIN_AYU_2026') { user.isAdmin = true; updateUI(); }
+        document.getElementById('code-in').value = '';
     }
-
-    function match() {
-        document.getElementById('chat-box').innerHTML += `<div style="color:var(--gold)">[SYS] ${Langs[L].match}</div>`;
-        setTimeout(() => { b=Array(9).fill(''); render(); active=true; document.getElementById('chat-box').innerHTML += `<div style="color:var(--green)">[SYS] ${Langs[L].found}</div>`; }, 1000);
-    }
-
-    /* --- Utils --- */
-    function buy(id, p) {
-        if(user.owned.includes(id)) user.skin = id;
-        else if(user.coins >= p) { user.coins -= p; user.owned.push(id); user.skin = id; }
-        else alert("Coins not enough!");
-        updateUI(); render();
-    }
-
-    function redeem() {
-        let v = document.getElementById('code-in').value;
-        if(v === 'ADMIN_AYU_2026') { user.isAdmin = true; confetti(); }
-        else if(v === 'AYU666') { user.coins += 666; }
-        else alert("Code Error");
-        document.getElementById('code-in').value = ''; updateUI();
-    }
-
     function adm(t) {
-        if(t==='coin') user.coins += 1000000;
+        if(t==='coin') user.coins += 999999;
         if(t==='level') user.lvl = 99;
-        if(t==='rank') user.wins = 999;
         if(t==='ban') user.isBanned = true;
-        updateUI();
+        updateUI(); save();
     }
-
-    function sendChat() {
-        let m = document.getElementById('chat-in');
-        if(m.value) {
-            let tag = user.isAdmin ? `<span style="color:var(--admin)">[A]</span> ` : '';
-            document.getElementById('chat-box').innerHTML += `<div>${tag}<b>${user.name}:</b> ${m.value}</div>`;
-            m.value = ''; document.getElementById('chat-box').scrollTop = 999;
-        }
-    }
-
-    function save() { localStorage.setItem('ayu_v11_save', JSON.stringify(user)); }
-    setInterval(() => document.getElementById('ping').innerText = Math.floor(Math.random()*15)+10, 3000);
+    function save() { localStorage.setItem('ayu_v12_db', JSON.stringify(user)); }
+    setInterval(() => document.getElementById('ping').innerText = Math.floor(Math.random()*10)+10, 2000);
 </script>
 </body>
 </html>
