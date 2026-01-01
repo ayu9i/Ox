@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AYU ARENA - THE COMPLETE ANTHOLOGY</title>
+    <title>AYU ARENA - THE ULTIMATE ANTHOLOGY</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
     <style>
         :root { --p: #6366f1; --g: #fbbf24; --bg: #020617; --glass: rgba(15, 23, 42, 0.95); --green: #10b981; --red: #ef4444; }
@@ -11,7 +11,7 @@
         body, html { margin: 0; padding: 0; min-height: 100vh; font-family: 'Kanit', sans-serif; background: var(--bg); color: white; overflow: hidden; }
 
         /* --- STABILITY & NET --- */
-        .net-status { position: fixed; top: 15px; right: 15px; z-index: 5000; display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.7); padding: 5px 12px; border-radius: 12px; font-size: 0.7rem; font-family: 'Orbitron'; border: 1px solid rgba(255,255,255,0.1); }
+        .net-status { position: fixed; top: 15px; right: 15px; z-index: 5000; display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.8); padding: 5px 12px; border-radius: 12px; font-size: 0.7rem; font-family: 'Orbitron'; border: 1px solid rgba(255,255,255,0.1); }
         .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
         .dot.off { background: var(--red); box-shadow: 0 0 10px var(--red); }
 
@@ -23,214 +23,264 @@
         .gate-open .door-l { transform: rotateY(-110deg); opacity: 0; }
         .gate-open .door-r { transform: rotateY(110deg); opacity: 0; }
 
-        /* --- MAIN UI --- */
-        .c { width: 95%; max-width: 480px; background: var(--glass); border-radius: 35px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 60px #000; z-index: 100; max-height: 95vh; overflow-y: auto; }
+        /* --- MAIN UI CONTAINER --- */
+        .c { width: 95%; max-width: 480px; background: var(--glass); border-radius: 35px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 60px #000; z-index: 100; max-height: 95vh; overflow-y: auto; text-align: center; }
         .hidden { display: none !important; }
         
         /* --- WORLD SCREEN --- */
-        .screen { width: 100%; height: 210px; border-radius: 25px; border: 3px solid #1e293b; position: relative; overflow: hidden; background-size: cover; background-position: center; margin: 15px 0; }
-        #pet { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 60px; z-index: 10; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); cursor: pointer; }
-        #pet:active { transform: translateX(-50%) scale(0.9); }
+        .screen { width: 100%; height: 210px; border-radius: 25px; border: 3px solid #1e293b; position: relative; overflow: hidden; background-size: cover; background-position: center; margin: 15px 0; background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800'); }
+        #pet { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 60px; z-index: 10; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); }
+        #pet-hat { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 25px; pointer-events: none; }
+        #enemy { position: absolute; bottom: 20px; right: -50px; font-size: 40px; }
         .loc-tag { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; border: 1px solid var(--p); color: var(--g); font-family: 'Orbitron'; }
         
         /* --- CHAT BOX --- */
-        .chat-box { height: 100px; background: rgba(0,0,0,0.4); border-radius: 15px; padding: 10px; font-size: 0.75rem; overflow-y: auto; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); }
-        .chat-msg { margin-bottom: 5px; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .chat-box { height: 80px; background: rgba(0,0,0,0.4); border-radius: 15px; padding: 10px; font-size: 0.75rem; overflow-y: auto; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); text-align: left; }
+        
+        /* --- BARS --- */
+        .bar-bg { width: 100%; height: 8px; background: #0f172a; border-radius: 10px; overflow: hidden; margin-top: 4px; border: 1px solid rgba(255,255,255,0.1); }
+        .bar-fill { height: 100%; width: 100%; transition: 0.5s; background: var(--green); }
 
         /* --- BUTTONS & INPUTS --- */
-        .btn { border: none; border-radius: 15px; padding: 12px; color: white; font-family: 'Kanit'; font-weight: 700; cursor: pointer; background: var(--p); border-bottom: 4px solid #3730a3; margin: 4px 0; width: 100%; }
+        .btn { border: none; border-radius: 15px; padding: 10px; color: white; font-family: 'Kanit'; font-weight: 700; cursor: pointer; background: var(--p); border-bottom: 4px solid #3730a3; margin: 3px 0; width: 100%; display: flex; flex-direction: column; align-items: center; font-size: 0.8rem; }
         .btn:active { transform: translateY(2px); border-bottom-width: 2px; }
         .btn-g { background: var(--g); color: #000; border-bottom-color: #b45309; }
         .btn-green { background: var(--green); border-bottom-color: #064e3b; }
         
         input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--p); background: #000; color: white; margin: 8px 0; text-align: center; }
         
-        /* --- MINI GAMES --- */
+        /* --- ANIMATIONS --- */
         .star { position: absolute; font-size: 24px; animation: fall 2s linear forwards; }
         @keyframes fall { to { top: 250px; } }
+        .jump { animation: jumpAnim 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes jumpAnim { 0%, 100% { bottom: 20px; } 50% { bottom: 120px; } }
     </style>
 </head>
 <body>
 
     <div class="net-status"><div id="net-dot" class="dot"></div><span id="ping">PING: --ms</span></div>
-
     <div id="gate"><div class="door door-l"><h1>AYU</h1></div><div class="door door-r"><h1>ARENA</h1></div></div>
 
-    <div id="scr-reg" class="c">
-        <h1 style="font-family:'Orbitron'; color:var(--p); text-align:center;">PLAYER ENTRY</h1>
-        <p style="text-align:center; font-size:0.8rem; color:#94a3b8;">ตั้งชื่อและไอดีเพื่อเข้าสู่ระบบ 2026</p>
-        <input type="text" id="in-name" placeholder="ชื่อผู้เล่น (Username)">
-        <input type="text" id="in-id" placeholder="ไอดี (Player ID)">
-        <p style="margin:15px 0 5px; font-size:0.85rem;">เลือกสายพันธุ์เริ่มต้น:</p>
+    <div id="scr-lang" class="c">
+        <h1 style="font-family:'Orbitron'; color:var(--g)">LANGUAGE</h1>
+        <p>เลือกภาษาเพื่อเริ่มต้น / Select Language</p>
+        <button class="btn btn-g" onclick="setLang('th')">🇹🇭 ภาษาไทย</button>
+        <button class="btn" onclick="setLang('en')">🇺🇸 English</button>
+    </div>
+
+    <div id="scr-reg" class="c hidden">
+        <h2 id="t-reg-title" style="font-family:'Orbitron'; color:var(--p)">PLAYER ENTRY</h2>
+        <input type="text" id="in-name" placeholder="Name">
+        <input type="text" id="in-id" placeholder="Player ID">
+        <p id="t-choose-p">Choose Pet:</p>
         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
-            <button class="btn" onclick="selP('🐶')">🐶</button>
-            <button class="btn" onclick="selP('🐱')">🐱</button>
-            <button class="btn" onclick="selP('🐼')">🐼</button>
+            <button class="btn" onclick="s.a='🐶'; alert('Selected 🐶')">🐶</button>
+            <button class="btn" onclick="s.a='🐱'; alert('Selected 🐱')">🐱</button>
+            <button class="btn" onclick="s.a='🐼'; alert('Selected 🐼')">🐼</button>
         </div>
-        <button class="btn btn-g" style="margin-top:20px;" onclick="launch()">INITIALIZE GATE</button>
+        <button id="t-launch" class="btn btn-g" style="margin-top:20px;" onclick="launch()">INITIALIZE</button>
     </div>
 
     <div id="scr-hub" class="c hidden">
-        <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--g); font-family:'Orbitron';">
+        <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--g); font-family:'Orbitron';">
             <span>ID: <span id="u-id">---</span></span>
             <span>💰 <span id="u-c">0</span></span>
         </div>
 
-        <div class="screen" id="main-sc" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800');">
+        <div class="screen" id="main-sc">
             <div id="loc-tag" class="loc-tag">THAILAND</div>
-            <div id="pet">🐶</div>
-            <div id="game-val" class="hidden" style="position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); font-size:3rem; font-family:Orbitron; font-weight:900;">0</div>
+            <div id="pet">
+                <div id="pet-hat"></div>
+                <span id="pet-emoji">🐶</span>
+            </div>
+            <div id="enemy">🌵</div>
+            <div id="game-val" class="hidden" style="position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); font-size:3rem; font-family:Orbitron; z-index:50; color:var(--g);">0</div>
         </div>
 
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px; font-size:0.65rem; text-align:center; margin-bottom:10px;">
-            <div>🍖 อาหาร: <b id="u-f">0</b></div>
-            <div>🎂 อายุ: <b id="u-age">0.0</b></div>
-            <div>🧬 รุ่น: <b id="u-gen">1</b></div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px; font-size:0.6rem; margin-bottom:10px;">
+            <div><span id="t-f">Food</span>: <b id="u-f">0</b></div>
+            <div><span id="t-age">Age</span>: <b id="u-age">0.0</b></div>
+            <div><span id="t-gen">Gen</span>: <b id="u-gen">1</b></div>
         </div>
 
-        <div class="chat-box" id="chat-box">
-            <div class="chat-msg" style="color:var(--g)">[ระบบ] ยินดีต้อนรับสู่ AYU ARENA World Chat...</div>
-        </div>
+        <div class="bar-bg"><div id="b-h" class="bar-fill"></div></div>
 
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-            <button class="btn" onclick="feed()">ป้อนอาหาร</button>
-            <button class="btn" onclick="startMiniGame()">เล่นเกมหาเงิน</button>
-            <button class="btn btn-g" onclick="openMod('word')">ต่อคำกับ AI</button>
-            <button class="btn btn-g" onclick="openMod('world')">พาไปเที่ยว</button>
-            <button class="btn" onclick="openMod('shop')">ร้านค้า</button>
-            <button class="btn" onclick="openMod('code')">ใส่โค้ดลับ</button>
-            <button id="btn-marry" class="btn btn-green hidden" style="grid-column: span 2;" onclick="marry()">แต่งงาน & มีลูก (อายุครบ 10)</button>
+        <div class="chat-box" id="chat-box"></div>
+
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:6px;">
+            <button class="btn" onclick="feed()"><span>🍗</span><span id="b-feed">Feed</span></button>
+            <button class="btn" onclick="openMod('game')"><span>🎮</span><span id="b-game">Games</span></button>
+            <button class="btn" onclick="openMod('shop')"><span>🛒</span><span id="b-shop">Shop</span></button>
+            <button class="btn btn-g" onclick="openMod('word')"><span>🤖</span>AI Battle</button>
+            <button class="btn btn-g" onclick="openMod('world')"><span>🌍</span><span id="b-travel">Travel</span></button>
+            <button class="btn btn-g" onclick="openMod('hat')"><span>👒</span><span id="b-dress">Dress</span></button>
+            <button class="btn" onclick="openMod('code')"><span>🔑</span>Code</button>
+            <button class="btn" onclick="openMod('gacha')"><span>🎲</span>Gacha</button>
+            <button class="btn btn-green" style="grid-column: span 3;" id="btn-marry" onclick="marry()">Wedding</button>
         </div>
+    </div>
+
+    <div id="mod-game" class="c hidden" style="z-index:200;">
+        <h2 id="t-game-title">MINI GAMES</h2>
+        <button class="btn" onclick="gameStar()">⭐ Star Catcher</button>
+        <button class="btn" onclick="gameRun()">🏃 Dino Run</button>
+        <button class="btn btn-g" onclick="closeMod()">Back</button>
     </div>
 
     <div id="mod-word" class="c hidden" style="z-index:200;">
-        <h2 style="font-family:Orbitron; color:var(--g)">AI BATTLE</h2>
+        <h2>AI WORD BATTLE</h2>
         <div id="ai-word-display" style="font-size:2rem; background:#000; padding:15px; border-radius:15px; margin-bottom:10px;">CAT</div>
-        <p>ตัวอักษรต่อไป: <b id="next-char" style="color:var(--red)">T</b></p>
-        <input type="text" id="word-in" placeholder="พิมพ์คำศัพท์ภาษาอังกฤษ...">
-        <button class="btn btn-g" onclick="checkWord()">ส่งคำศัพท์ (+20💰)</button>
-        <button class="btn" onclick="closeMod()">กลับ</button>
-    </div>
-
-    <div id="mod-world" class="c hidden" style="z-index:200;">
-        <h2 style="font-family:Orbitron; color:var(--p)">TRAVEL</h2>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <button class="btn" onclick="travel('JAPAN', 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800', 300)">🇯🇵 ญี่ปุ่น</button>
-            <button class="btn" onclick="travel('USA', 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800', 500)">🇺🇸 อเมริกา</button>
-            <button class="btn" onclick="travel('EGYPT', 'https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?w=800', 400)">🇪🇬 อียิปต์</button>
-            <button class="btn" onclick="travel('PARIS', 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800', 600)">🇫🇷 ปารีส</button>
-        </div>
-        <button class="btn" onclick="closeMod()">กลับ</button>
+        <p>Next: <b id="next-char" style="color:var(--red)">T</b></p>
+        <input type="text" id="word-in" placeholder="Word...">
+        <button class="btn btn-g" onclick="checkWord()">Submit</button>
+        <button class="btn" onclick="closeMod()">Back</button>
     </div>
 
     <div id="mod-shop" class="c hidden" style="z-index:200;">
-        <h2 style="font-family:Orbitron; color:var(--g)">SHOP</h2>
-        <button class="btn btn-g" onclick="buy(1, 50)">ซื้ออาหาร x1 (50💰)</button>
-        <button class="btn btn-g" onclick="buy(10, 450)">ซื้ออาหาร x10 (450💰)</button>
-        <button class="btn" onclick="closeMod()">กลับ</button>
+        <h2>SHOP</h2>
+        <button class="btn btn-g" onclick="buy(1, 50)">Food x1 (50💰)</button>
+        <button class="btn btn-g" onclick="buy(10, 450)">Food x10 (450💰)</button>
+        <button class="btn" onclick="closeMod()">Back</button>
+    </div>
+
+    <div id="mod-world" class="c hidden" style="z-index:200;">
+        <h2>WORLD TRAVEL</h2>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <button class="btn" onclick="travel('JAPAN', 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800', 300)">🇯🇵 JP</button>
+            <button class="btn" onclick="travel('USA', 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800', 500)">🇺🇸 USA</button>
+            <button class="btn" onclick="travel('EGYPT', 'https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?w=800', 400)">🇪🇬 EG</button>
+            <button class="btn" onclick="travel('PARIS', 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800', 600)">🇫🇷 FR</button>
+        </div>
+        <button class="btn" onclick="closeMod()">Back</button>
+    </div>
+
+    <div id="mod-hat" class="c hidden" style="z-index:200;">
+        <h2>DRESS UP</h2>
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
+            <button class="btn" onclick="s.hat='👑'; updateUI();">👑</button>
+            <button class="btn" onclick="s.hat='🎩'; updateUI();">🎩</button>
+            <button class="btn" onclick="s.hat='👒'; updateUI();">👒</button>
+            <button class="btn" onclick="s.hat=''; updateUI();">OFF</button>
+        </div>
+        <button class="btn" onclick="closeMod()">Back</button>
+    </div>
+
+    <div id="mod-gacha" class="c hidden" style="z-index:200;">
+        <h2>GACHA (100💰)</h2>
+        <button class="btn btn-g" onclick="rollGacha()">Roll!</button>
+        <div id="gacha-res" style="margin:10px; font-size:1.2rem; color:var(--g)"></div>
+        <button class="btn" onclick="closeMod()">Back</button>
     </div>
 
     <div id="mod-code" class="c hidden" style="z-index:200;">
-        <h2 style="font-family:Orbitron; color:var(--green)">REDEEM</h2>
-        <input type="text" id="code-in" placeholder="ใส่โค้ดลับ 2026">
-        <button class="btn btn-green" onclick="redeem()">ยืนยัน</button>
-        <button class="btn" onclick="closeMod()">กลับ</button>
+        <h2>REDEEM CODE</h2>
+        <input type="text" id="code-in" placeholder="Enter Code">
+        <button class="btn btn-green" onclick="redeem()">Redeem</button>
+        <button class="btn" onclick="closeMod()">Back</button>
     </div>
 
     <script>
-        let s = { user:'', id:'', a:'🐶', c:200, f:5, age:0, gen:1, loc:'THAILAND', reg:false, used:[], curW:'CAT' };
-        let gameActive = false;
+        let s = { lang:'th', user:'', id:'', a:'🐶', c:200, f:5, age:0, gen:1, h:100, loc:'THAILAND', used:[], curW:'CAT', hat:'', reg:false };
+        let activeG = false;
 
-        // --- STABILITY ---
-        setInterval(() => {
-            const dot = document.getElementById('net-dot');
-            dot.className = navigator.onLine ? "dot" : "dot off";
-            document.getElementById('ping').innerText = "PING: " + (Math.floor(Math.random()*20)+15) + "ms";
-            if(s.reg) simulateChat();
-        }, 4000);
+        const i18n = {
+            th: { title:"เข้าสู่ระบบ", name:"ชื่อผู้เล่น", id:"ไอดี", init:"เปิดระบบ", choose:"เลือกสัตว์เลี้ยง:", food:"อาหาร", age:"อายุ", gen:"รุ่น", feed:"ป้อนอาหาร", games:"มินิเกม", shop:"ร้านค้า", travel:"ท่องเที่ยว", dress:"แต่งตัว", wedding:"แต่งงาน (อายุ 10+)", welcome:"[ระบบ] ยินดีต้อนรับ!" },
+            en: { title:"PLAYER ENTRY", name:"Name", id:"ID", init:"INITIALIZE", choose:"Choose Pet:", food:"Food", age:"Age", gen:"Gen", feed:"Feed", games:"Games", shop:"Shop", travel:"Travel", dress:"Dress", wedding:"Wedding (Age 10+)", welcome:"[System] Welcome!" }
+        };
 
-        // --- GATE & LAUNCH ---
-        function selP(p) { s.a = p; alert("เลือก " + p); }
+        const CODES = { "AYU2026":{c:1000,f:10}, "GODMODE":{c:9999,f:99}, "RICH":{c:5000} };
+
+        function setLang(l) {
+            s.lang = l; document.getElementById('scr-lang').classList.add('hidden');
+            document.getElementById('scr-reg').classList.remove('hidden');
+            const t = i18n[l];
+            document.getElementById('t-reg-title').innerText = t.title;
+            document.getElementById('in-name').placeholder = t.name;
+            document.getElementById('in-id').placeholder = t.id;
+            document.getElementById('t-launch').innerText = t.init;
+            document.getElementById('t-choose-p').innerText = t.choose;
+            document.getElementById('t-f').innerText = t.food;
+            document.getElementById('t-age').innerText = t.age;
+            document.getElementById('t-gen').innerText = t.gen;
+            document.getElementById('b-feed').innerText = t.feed;
+            document.getElementById('b-game').innerText = t.games;
+            document.getElementById('b-shop').innerText = t.shop;
+            document.getElementById('b-travel').innerText = t.travel;
+            document.getElementById('b-dress').innerText = t.dress;
+            document.getElementById('btn-marry').innerText = t.wedding;
+        }
+
         function launch() {
-            const name = document.getElementById('in-name').value;
-            const id = document.getElementById('in-id').value;
-            if(!name || !id) return alert("กรุณากรอกชื่อและไอดี!");
-            s.user = name; s.id = id; s.reg = true;
-            
-            const g = document.getElementById('gate');
-            g.style.display = 'block';
+            const n = document.getElementById('in-name').value;
+            const i = document.getElementById('in-id').value;
+            if(!n || !i) return alert("Error: No Data");
+            s.user = n; s.id = i; s.reg = true;
+            const gate = document.getElementById('gate');
+            gate.style.display = 'block';
             setTimeout(() => {
-                g.classList.add('gate-open');
+                gate.classList.add('gate-open');
                 setTimeout(() => {
-                    g.style.display = 'none';
+                    gate.style.display = 'none';
                     document.getElementById('scr-reg').classList.add('hidden');
                     document.getElementById('scr-hub').classList.remove('hidden');
-                    init();
+                    startEngine();
                 }, 1500);
             }, 100);
         }
 
-        function init() {
+        function startEngine() {
             document.getElementById('u-id').innerText = s.id;
-            document.getElementById('pet').innerText = s.a;
-            updateUI();
+            addChat(i18n[s.lang].welcome);
             setInterval(() => {
-                if(s.reg && !gameActive) {
-                    s.age += 0.05;
+                const dot = document.getElementById('net-dot');
+                dot.className = navigator.onLine ? "dot" : "dot off";
+                document.getElementById('ping').innerText = "PING: " + (Math.floor(Math.random()*15)+10) + "ms";
+                if(s.reg && !activeG) {
+                    s.h = Math.max(0, s.h - 1); s.age += 0.05;
                     if(s.age >= 10) document.getElementById('btn-marry').classList.remove('hidden');
-                    updateUI(); save();
+                    updateUI(); save(); if(Math.random()>0.8) simulateChat();
                 }
-            }, 10000);
+            }, 5000);
+            updateUI();
         }
 
-        // --- AI WORD BATTLE ---
+        function updateUI() {
+            document.getElementById('u-c').innerText = Math.floor(s.c).toLocaleString();
+            document.getElementById('u-f').innerText = s.f;
+            document.getElementById('u-age').innerText = s.age.toFixed(1);
+            document.getElementById('u-gen').innerText = s.gen;
+            document.getElementById('b-h').style.width = s.h + "%";
+            document.getElementById('pet-emoji').innerText = s.a;
+            document.getElementById('pet-hat').innerText = s.hat;
+            document.getElementById('loc-tag').innerText = s.loc;
+        }
+
+        function feed() { if(s.f > 0 && s.h < 100) { s.f--; s.h = Math.min(100, s.h+20); updateUI(); } }
+        function openMod(id) { document.getElementById('mod-'+id).classList.remove('hidden'); }
+        function closeMod() { document.querySelectorAll('.c').forEach(c => { if(c.id !== 'scr-hub') c.classList.add('hidden'); }); }
+
         function checkWord() {
             const val = document.getElementById('word-in').value.toUpperCase().trim();
-            const lastChar = s.curW.slice(-1);
-            if(val.startsWith(lastChar) && val.length > 1) {
-                s.curW = val; s.c += 20;
-                addChat(`[คุณ] ต่อคำว่า: ${val}`);
+            if(val.startsWith(s.curW.slice(-1))) {
+                s.c += 20; s.curW = val; addChat(`[You] ${val}`);
                 document.getElementById('word-in').value = "";
-                // AI Response
                 setTimeout(() => {
-                    const aiDict = ["TIGER", "RABBIT", "APPLE", "EGG", "GOAT", "YOYO", "ZEBRA", "NOSE", "ELEPHANT"];
-                    const choices = aiDict.filter(w => w.startsWith(s.curW.slice(-1)));
-                    if(choices.length > 0) {
-                        s.curW = choices[Math.floor(Math.random()*choices.length)];
-                        addChat(`[AI] สวนกลับด้วย: ${s.curW}`);
-                    } else {
-                        addChat(`[AI] ยอมแพ้! คุณเก่งมาก`);
-                        s.c += 100;
-                    }
-                    updateAIUI(); updateUI(); save();
-                }, 1000);
-            } else alert("ต้องเริ่มด้วยตัวอักษร " + lastChar);
-        }
-        function updateAIUI() {
-            document.getElementById('ai-word-display').innerText = s.curW;
-            document.getElementById('next-char').innerText = s.curW.slice(-1);
+                    const aiDict = ["TIGER", "RABBIT", "EGG", "GOAT", "YOYO"];
+                    s.curW = aiDict[Math.floor(Math.random()*aiDict.length)];
+                    document.getElementById('ai-word-display').innerText = s.curW;
+                    document.getElementById('next-char').innerText = s.curW.slice(-1);
+                    addChat(`[AI] ${s.curW}`); updateUI();
+                }, 800);
+            }
         }
 
-        // --- MINI GAME (STARS) ---
-        function startMiniGame() {
-            gameActive = true; let score = 0;
-            const overlay = document.getElementById('game-val');
-            overlay.classList.remove('hidden'); overlay.innerText = "0";
-            const area = document.getElementById('main-sc');
-
-            const move = (e) => {
-                let rect = area.getBoundingClientRect();
-                let x = (e.clientX || e.touches[0].clientX) - rect.left;
-                document.getElementById('pet').style.left = Math.max(30, Math.min(x, rect.width-30)) + "px";
-            };
-            area.onmousemove = move; area.ontouchmove = move;
-
+        function gameStar() {
+            closeMod(); activeG = true; let score = 0;
+            const overlay = document.getElementById('game-val'); overlay.classList.remove('hidden');
             let si = setInterval(() => {
-                const star = document.createElement('div');
-                star.className = 'star'; star.innerText = "⭐";
+                const star = document.createElement('div'); star.className = 'star'; star.innerText = "⭐";
                 star.style.left = Math.random()*90+"%"; star.style.top = "0";
-                area.appendChild(star);
+                document.getElementById('main-sc').appendChild(star);
                 let fall = setInterval(() => {
                     star.style.top = (parseInt(star.style.top)||0)+6+"px";
                     let pR = document.getElementById('pet').getBoundingClientRect();
@@ -240,69 +290,61 @@
                     }
                     if(parseInt(star.style.top) > 210) { star.remove(); clearInterval(fall); }
                 }, 30);
-            }, 700);
-
-            setTimeout(() => {
-                clearInterval(si); gameActive = false;
-                overlay.classList.add('hidden');
-                document.getElementById('pet').style.left = "50%";
-                s.c += score * 25; alert("ได้เงินทั้งหมด " + (score*25) + "💰");
-                updateUI(); save();
-            }, 12000);
+            }, 800);
+            setTimeout(() => { clearInterval(si); activeG = false; overlay.classList.add('hidden'); s.c += score*20; updateUI(); }, 10000);
         }
 
-        // --- CHAT SYSTEM ---
-        function simulateChat() {
-            const names = ["Killer_X", "Mochi_Fan", "Admin_Ayu", "Player_99", "Zaza"];
-            const msgs = ["เพิ่งได้ Gen 5 ครับ!", "มินิเกมเก็บดาวยากจัง", "ใครมีโค้ดลับบ้าง?", "พาไปญี่ปุ่นมาสวยมาก", "เงินครบ 1000 แล้ว!"];
-            if(Math.random() > 0.7) {
-                addChat(`[${names[Math.floor(Math.random()*names.length)]}] ${msgs[Math.floor(Math.random()*msgs.length)]}`);
-            }
-        }
-        function addChat(m) {
-            const box = document.getElementById('chat-box');
-            box.innerHTML += `<div class="chat-msg">${m}</div>`;
-            box.scrollTop = box.scrollHeight;
-        }
-
-        // --- CORE ACTIONS ---
-        function feed() { if(s.f > 0) { s.f--; updateUI(); save(); alert("ง่ำๆ!"); } else alert("อาหารหมด!"); }
-        function buy(a,p) { if(s.c >= p) { s.c -= p; s.f += a; updateUI(); save(); } }
-        function travel(n,img,p) { if(s.c >= p) { s.c -= p; s.loc = n; document.getElementById('main-sc').style.backgroundImage = `url('${img}')`; closeMod(); updateUI(); save(); } }
-        function openMod(id) { document.getElementById('mod-'+id).classList.remove('hidden'); }
-        function closeMod() { document.querySelectorAll('.c').forEach(c => { if(c.id !== 'scr-hub') c.classList.add('hidden'); }); }
-        
-        function updateUI() {
-            document.getElementById('u-c').innerText = Math.floor(s.c).toLocaleString();
-            document.getElementById('u-f').innerText = s.f;
-            document.getElementById('u-age').innerText = s.age.toFixed(1);
-            document.getElementById('u-gen').innerText = s.gen;
-            document.getElementById('loc-tag').innerText = s.loc;
-            updateAIUI();
+        function gameRun() {
+            closeMod(); activeG = true; let sc = 0;
+            const pet = document.getElementById('pet'); const enemy = document.getElementById('enemy');
+            const overlay = document.getElementById('game-val'); overlay.classList.remove('hidden');
+            window.onclick = () => pet.classList.add('jump');
+            pet.onanimationend = () => pet.classList.remove('jump');
+            let runInt = setInterval(() => {
+                let eL = parseInt(window.getComputedStyle(enemy).right);
+                if(eL > 500) { eL = -50; sc++; overlay.innerText = sc; }
+                enemy.style.right = (eL + 8) + "px";
+                let pB = parseInt(window.getComputedStyle(pet).bottom);
+                if(eL > 200 && eL < 250 && pB < 60) {
+                    clearInterval(runInt); activeG = false; overlay.classList.add('hidden');
+                    enemy.style.right = "-50px"; s.c += sc*10; updateUI();
+                }
+            }, 20);
         }
 
-        function marry() {
-            if(confirm("แต่งงานเพื่อสืบทอดรุ่นใหม่?")) {
-                s.gen++; s.age = 0; 
-                document.getElementById('btn-marry').classList.add('hidden');
-                updateUI(); save(); alert("ยินดีด้วยกับรุ่นที่ " + s.gen);
-            }
+        function rollGacha() {
+            if(s.c < 100) return; s.c -= 100;
+            const r = Math.random(); let msg = r > 0.5 ? "🍖 x3" : "💰 500";
+            if(r > 0.5) s.f += 3; else s.c += 500;
+            document.getElementById('gacha-res').innerText = msg; updateUI();
         }
 
         function redeem() {
             const c = document.getElementById('code-in').value.toUpperCase();
-            if(c === "AYU2026") { s.c += 1000; alert("สำเร็จ!"); }
-            else if(c === "GODMODE") { s.c += 99999; s.f += 99; alert("โหมดพระเจ้า!"); }
-            else { alert("โค้ดผิด"); }
-            closeMod(); updateUI(); save();
+            if(CODES[c]) { s.c += CODES[c].c; s.f += CODES[c].f; alert("Redeemed!"); closeMod(); updateUI(); }
         }
 
-        function save() { localStorage.setItem('AYU_LEGACY_DATA', JSON.stringify(s)); }
+        function travel(n, img, p) { if(s.c >= p) { s.c -= p; s.loc = n; document.getElementById('main-sc').style.backgroundImage = `url('${img}')`; closeMod(); updateUI(); } }
+        
+        function marry() { s.gen++; s.age = 0; document.getElementById('btn-marry').classList.add('hidden'); updateUI(); save(); }
+        
+        function addChat(m) {
+            const box = document.getElementById('chat-box');
+            box.innerHTML += `<div>${m}</div>`; box.scrollTop = box.scrollHeight;
+        }
+
+        function simulateChat() {
+            const bots = ["Zaza", "Mochi", "Admin", "Killer"];
+            const msgs = ["Hi All!", "Look at my Pet", "Gen 5!", "Code?"];
+            addChat(`[${bots[Math.floor(Math.random()*4)]}] ${msgs[Math.floor(Math.random()*4)]}`);
+        }
+
+        function save() { localStorage.setItem('AYU_ULT_DATA', JSON.stringify(s)); }
         window.onload = () => {
-            const saved = localStorage.getItem('AYU_LEGACY_DATA');
+            const saved = localStorage.getItem('AYU_ULT_DATA');
             if(saved) {
                 s = JSON.parse(saved);
-                if(s.reg) { document.getElementById('scr-reg').classList.add('hidden'); document.getElementById('scr-hub').classList.remove('hidden'); init(); }
+                if(s.reg) { document.getElementById('scr-lang').classList.add('hidden'); document.getElementById('scr-hub').classList.remove('hidden'); setLang(s.lang); startEngine(); }
             }
         };
     </script>
