@@ -3,256 +3,308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AYU ARENA - THE MULTIVERSE</title>
+    <title>AYU ARENA - THE COMPLETE ANTHOLOGY</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
     <style>
         :root { --p: #6366f1; --g: #fbbf24; --bg: #020617; --glass: rgba(15, 23, 42, 0.95); --green: #10b981; --red: #ef4444; }
-        * { box-sizing: border-box; transition: 0.2s; -webkit-tap-highlight-color: transparent; }
-        body, html { margin: 0; padding: 0; min-height: 100vh; font-family: 'Kanit', sans-serif; background: var(--bg); color: white; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        * { box-sizing: border-box; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); -webkit-tap-highlight-color: transparent; }
+        body, html { margin: 0; padding: 0; min-height: 100vh; font-family: 'Kanit', sans-serif; background: var(--bg); color: white; overflow: hidden; }
 
-        .game-card { width: 95%; max-width: 480px; background: var(--glass); border-radius: 40px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); position: relative; box-shadow: 0 0 50px #000; }
+        /* --- STABILITY & NET --- */
+        .net-status { position: fixed; top: 15px; right: 15px; z-index: 5000; display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.7); padding: 5px 12px; border-radius: 12px; font-size: 0.7rem; font-family: 'Orbitron'; border: 1px solid rgba(255,255,255,0.1); }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
+        .dot.off { background: var(--red); box-shadow: 0 0 10px var(--red); }
+
+        /* --- CONAN GATE --- */
+        #gate { position: fixed; inset: 0; z-index: 9999; display: none; perspective: 1000px; }
+        .door { position: absolute; width: 50%; height: 100%; background: #0f172a; border: 1px solid #1e293b; display: flex; align-items: center; justify-content: center; transition: 1.5s ease-in-out; }
+        .door-l { left: 0; transform-origin: left; border-right: 4px solid var(--g); }
+        .door-r { right: 0; transform-origin: right; border-left: 4px solid var(--g); }
+        .gate-open .door-l { transform: rotateY(-110deg); opacity: 0; }
+        .gate-open .door-r { transform: rotateY(110deg); opacity: 0; }
+
+        /* --- MAIN UI --- */
+        .c { width: 95%; max-width: 480px; background: var(--glass); border-radius: 35px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 60px #000; z-index: 100; max-height: 95vh; overflow-y: auto; }
         .hidden { display: none !important; }
-
-        /* --- STATS --- */
-        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-bottom: 15px; }
-        .stat-i { background: #1e293b; padding: 5px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-        .stat-i b { display: block; font-size: 0.8rem; color: var(--g); font-family: 'Orbitron'; }
-        .stat-i span { font-size: 0.6rem; color: #94a3b8; }
-
-        /* --- SCREEN --- */
-        .screen { width: 100%; height: 230px; border-radius: 30px; border: 3px solid #334155; position: relative; overflow: hidden; background-size: cover; margin-bottom: 15px; }
-        #pet { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 60px; z-index: 10; }
-        #pet-hat { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 25px; pointer-events: none; }
-        #enemy { position: absolute; bottom: 20px; right: -50px; font-size: 40px; } /* สำหรับเกมวิ่ง */
-        .weather-layer { position: absolute; inset: 0; pointer-events: none; background: transparent; z-index: 5; }
-
-        /* --- BARS --- */
-        .bar-container { display: flex; gap: 10px; margin-bottom: 15px; }
-        .bar-wrap { flex: 1; }
-        .bar-bg { height: 8px; background: #0f172a; border-radius: 10px; overflow: hidden; margin-top: 4px; }
-        .bar-fill { height: 100%; transition: 0.5s; }
-
-        /* --- CONTROLS --- */
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .btn { border: none; border-radius: 18px; padding: 12px 5px; color: white; font-family: 'Kanit'; font-weight: 700; cursor: pointer; background: #1e293b; border-bottom: 4px solid #000; display: flex; flex-direction: column; align-items: center; font-size: 0.8rem; }
-        .btn:active { transform: translateY(2px); border-bottom-width: 2px; }
-        .btn-p { background: var(--p); }
-        .btn-g { background: var(--g); color: #000; }
-
-        /* --- MODAL --- */
-        .modal { position: absolute; inset: 15px; background: #0f172a; border-radius: 30px; z-index: 100; padding: 20px; border: 1px solid var(--p); display: none; flex-direction: column; }
         
-        /* --- ANIMATIONS --- */
-        .jump { animation: jumpAnim 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        @keyframes jumpAnim { 0%, 100% { bottom: 20px; } 50% { bottom: 120px; } }
-        .rain { background: rgba(0, 100, 255, 0.1); box-shadow: inset 0 0 30px rgba(0,100,255,0.2); }
+        /* --- WORLD SCREEN --- */
+        .screen { width: 100%; height: 210px; border-radius: 25px; border: 3px solid #1e293b; position: relative; overflow: hidden; background-size: cover; background-position: center; margin: 15px 0; }
+        #pet { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 60px; z-index: 10; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); cursor: pointer; }
+        #pet:active { transform: translateX(-50%) scale(0.9); }
+        .loc-tag { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; border: 1px solid var(--p); color: var(--g); font-family: 'Orbitron'; }
+        
+        /* --- CHAT BOX --- */
+        .chat-box { height: 100px; background: rgba(0,0,0,0.4); border-radius: 15px; padding: 10px; font-size: 0.75rem; overflow-y: auto; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); }
+        .chat-msg { margin-bottom: 5px; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- BUTTONS & INPUTS --- */
+        .btn { border: none; border-radius: 15px; padding: 12px; color: white; font-family: 'Kanit'; font-weight: 700; cursor: pointer; background: var(--p); border-bottom: 4px solid #3730a3; margin: 4px 0; width: 100%; }
+        .btn:active { transform: translateY(2px); border-bottom-width: 2px; }
+        .btn-g { background: var(--g); color: #000; border-bottom-color: #b45309; }
+        .btn-green { background: var(--green); border-bottom-color: #064e3b; }
+        
+        input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--p); background: #000; color: white; margin: 8px 0; text-align: center; }
+        
+        /* --- MINI GAMES --- */
+        .star { position: absolute; font-size: 24px; animation: fall 2s linear forwards; }
+        @keyframes fall { to { top: 250px; } }
     </style>
 </head>
 <body>
 
-    <div class="game-card">
-        <div class="stats">
-            <div class="stat-i"><span>MONEY</span><b id="u-c">0</b></div>
-            <div class="stat-i"><span>FOOD</span><b id="u-f">0</b></div>
-            <div class="stat-i"><span>AGE</span><b id="u-age">0.0</b></div>
-            <div class="stat-i"><span>LOVE</span><b id="u-love">0</b></div>
+    <div class="net-status"><div id="net-dot" class="dot"></div><span id="ping">PING: --ms</span></div>
+
+    <div id="gate"><div class="door door-l"><h1>AYU</h1></div><div class="door door-r"><h1>ARENA</h1></div></div>
+
+    <div id="scr-reg" class="c">
+        <h1 style="font-family:'Orbitron'; color:var(--p); text-align:center;">PLAYER ENTRY</h1>
+        <p style="text-align:center; font-size:0.8rem; color:#94a3b8;">ตั้งชื่อและไอดีเพื่อเข้าสู่ระบบ 2026</p>
+        <input type="text" id="in-name" placeholder="ชื่อผู้เล่น (Username)">
+        <input type="text" id="in-id" placeholder="ไอดี (Player ID)">
+        <p style="margin:15px 0 5px; font-size:0.85rem;">เลือกสายพันธุ์เริ่มต้น:</p>
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+            <button class="btn" onclick="selP('🐶')">🐶</button>
+            <button class="btn" onclick="selP('🐱')">🐱</button>
+            <button class="btn" onclick="selP('🐼')">🐼</button>
+        </div>
+        <button class="btn btn-g" style="margin-top:20px;" onclick="launch()">INITIALIZE GATE</button>
+    </div>
+
+    <div id="scr-hub" class="c hidden">
+        <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--g); font-family:'Orbitron';">
+            <span>ID: <span id="u-id">---</span></span>
+            <span>💰 <span id="u-c">0</span></span>
         </div>
 
-        <div class="screen" id="sc" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500');">
-            <div id="weather" class="weather-layer"></div>
-            <div id="pet">
-                <div id="pet-hat"></div>
-                <span id="pet-emoji">🐶</span>
-            </div>
-            <div id="enemy">🌵</div>
-            <div id="score-box" class="hidden" style="position:absolute; top:10px; left:50%; transform:translateX(-50%); font-family:Orbitron; font-size:1.5rem; color:var(--g); z-index:20;">0</div>
+        <div class="screen" id="main-sc" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800');">
+            <div id="loc-tag" class="loc-tag">THAILAND</div>
+            <div id="pet">🐶</div>
+            <div id="game-val" class="hidden" style="position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); font-size:3rem; font-family:Orbitron; font-weight:900;">0</div>
         </div>
 
-        <div class="bar-container">
-            <div class="bar-wrap">
-                <span style="font-size:0.6rem">HUNGER (หิว)</span>
-                <div class="bar-bg"><div id="b-h" class="bar-fill" style="background:var(--red)"></div></div>
-            </div>
-            <div class="bar-wrap">
-                <span style="font-size:0.6rem">ENERGY (พลัง)</span>
-                <div class="bar-bg"><div id="b-e" class="bar-fill" style="background:var(--p)"></div></div>
-            </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px; font-size:0.65rem; text-align:center; margin-bottom:10px;">
+            <div>🍖 อาหาร: <b id="u-f">0</b></div>
+            <div>🎂 อายุ: <b id="u-age">0.0</b></div>
+            <div>🧬 รุ่น: <b id="u-gen">1</b></div>
         </div>
 
-        <div class="grid">
-            <button class="btn btn-p" onclick="feed()"><span>🍖</span>ป้อนข้าว</button>
-            <button class="btn btn-p" onclick="openMod('game')"><span>🎮</span>เล่นเกม</button>
-            <button class="btn btn-p" onclick="openMod('shop')"><span>🛒</span>ร้านค้า</button>
-            
-            <button class="btn btn-g" onclick="openMod('gacha')"><span>🎲</span>สุ่มโชค</button>
-            <button class="btn btn-g" onclick="openMod('hat')"><span>👒</span>แต่งตัว</button>
-            <button class="btn btn-g" onclick="openMod('code')"><span>🔑</span>โค้ดลับ</button>
-            
-            <button id="btn-marry" class="btn hidden" style="grid-column: span 3; background:var(--green)" onclick="marry()">💒 พร้อมมีทายาท (Age 10)</button>
+        <div class="chat-box" id="chat-box">
+            <div class="chat-msg" style="color:var(--g)">[ระบบ] ยินดีต้อนรับสู่ AYU ARENA World Chat...</div>
         </div>
 
-        <div id="mod-shop" class="modal">
-            <h2 style="color:var(--g)">SHOP</h2>
-            <button class="btn btn-g" style="width:100%; margin-bottom:10px" onclick="buy(1, 50)">น่องไก่ x1 (50💰)</button>
-            <button class="btn btn-g" style="width:100%" onclick="buy(10, 450)">น่องไก่ x10 (450💰)</button>
-            <button class="btn" style="margin-top:auto" onclick="closeMod()">ปิด</button>
-        </div>
-
-        <div id="mod-game" class="modal">
-            <h2 style="color:var(--p)">ARCADE</h2>
-            <button class="btn btn-p" style="width:100%; margin-bottom:10px" onclick="gameStar()">⭐ เก็บดาว (หาเงิน)</button>
-            <button class="btn btn-p" style="width:100%" onclick="gameRun()">🏃 วิ่งสู้ฟัด (หาแต้มรัก)</button>
-            <button class="btn" style="margin-top:auto" onclick="closeMod()">ปิด</button>
-        </div>
-
-        <div id="mod-gacha" class="modal">
-            <h2 style="color:var(--g)">GACHA</h2>
-            <p>สุ่มของรางวัล (100💰 ต่อครั้ง)</p>
-            <button class="btn btn-g" style="width:100%" onclick="rollGacha()">เสี่ยงโชค!</button>
-            <div id="gacha-res" style="margin-top:20px; text-align:center; font-size:1.5rem"></div>
-            <button class="btn" style="margin-top:auto" onclick="closeMod()">ปิด</button>
-        </div>
-
-        <div id="mod-hat" class="modal">
-            <h2 style="color:var(--g)">DRESS UP</h2>
-            <div class="grid">
-                <button class="btn" onclick="setHat('👑')">👑</button>
-                <button class="btn" onclick="setHat('🎩')">🎩</button>
-                <button class="btn" onclick="setHat('👒')">👒</button>
-                <button class="btn" onclick="setHat('🎀')">🎀</button>
-                <button class="btn" onclick="setHat('')">ถอด</button>
-            </div>
-            <button class="btn" style="margin-top:auto" onclick="closeMod()">ปิด</button>
-        </div>
-
-        <div id="mod-code" class="modal">
-            <h2 style="color:var(--green)">CODE</h2>
-            <input type="text" id="code-in" placeholder="ใส่โค้ดลับ...">
-            <button class="btn btn-p" style="width:100%" onclick="redeem()">REDEEM</button>
-            <button class="btn" style="margin-top:auto" onclick="closeMod()">ปิด</button>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+            <button class="btn" onclick="feed()">ป้อนอาหาร</button>
+            <button class="btn" onclick="startMiniGame()">เล่นเกมหาเงิน</button>
+            <button class="btn btn-g" onclick="openMod('word')">ต่อคำกับ AI</button>
+            <button class="btn btn-g" onclick="openMod('world')">พาไปเที่ยว</button>
+            <button class="btn" onclick="openMod('shop')">ร้านค้า</button>
+            <button class="btn" onclick="openMod('code')">ใส่โค้ดลับ</button>
+            <button id="btn-marry" class="btn btn-green hidden" style="grid-column: span 2;" onclick="marry()">แต่งงาน & มีลูก (อายุครบ 10)</button>
         </div>
     </div>
 
+    <div id="mod-word" class="c hidden" style="z-index:200;">
+        <h2 style="font-family:Orbitron; color:var(--g)">AI BATTLE</h2>
+        <div id="ai-word-display" style="font-size:2rem; background:#000; padding:15px; border-radius:15px; margin-bottom:10px;">CAT</div>
+        <p>ตัวอักษรต่อไป: <b id="next-char" style="color:var(--red)">T</b></p>
+        <input type="text" id="word-in" placeholder="พิมพ์คำศัพท์ภาษาอังกฤษ...">
+        <button class="btn btn-g" onclick="checkWord()">ส่งคำศัพท์ (+20💰)</button>
+        <button class="btn" onclick="closeMod()">กลับ</button>
+    </div>
+
+    <div id="mod-world" class="c hidden" style="z-index:200;">
+        <h2 style="font-family:Orbitron; color:var(--p)">TRAVEL</h2>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <button class="btn" onclick="travel('JAPAN', 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800', 300)">🇯🇵 ญี่ปุ่น</button>
+            <button class="btn" onclick="travel('USA', 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800', 500)">🇺🇸 อเมริกา</button>
+            <button class="btn" onclick="travel('EGYPT', 'https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?w=800', 400)">🇪🇬 อียิปต์</button>
+            <button class="btn" onclick="travel('PARIS', 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800', 600)">🇫🇷 ปารีส</button>
+        </div>
+        <button class="btn" onclick="closeMod()">กลับ</button>
+    </div>
+
+    <div id="mod-shop" class="c hidden" style="z-index:200;">
+        <h2 style="font-family:Orbitron; color:var(--g)">SHOP</h2>
+        <button class="btn btn-g" onclick="buy(1, 50)">ซื้ออาหาร x1 (50💰)</button>
+        <button class="btn btn-g" onclick="buy(10, 450)">ซื้ออาหาร x10 (450💰)</button>
+        <button class="btn" onclick="closeMod()">กลับ</button>
+    </div>
+
+    <div id="mod-code" class="c hidden" style="z-index:200;">
+        <h2 style="font-family:Orbitron; color:var(--green)">REDEEM</h2>
+        <input type="text" id="code-in" placeholder="ใส่โค้ดลับ 2026">
+        <button class="btn btn-green" onclick="redeem()">ยืนยัน</button>
+        <button class="btn" onclick="closeMod()">กลับ</button>
+    </div>
+
     <script>
-        let s = { c:200, f:5, h:100, e:100, age:0, love:0, hat:'', gen:1, used:[], reg:false, p:'🐶' };
-        let activeG = false;
+        let s = { user:'', id:'', a:'🐶', c:200, f:5, age:0, gen:1, loc:'THAILAND', reg:false, used:[], curW:'CAT' };
+        let gameActive = false;
 
-        // 20 CODES
-        const CODES = { "AYU2026":{c:1000}, "GODMODE":{c:9999,f:99}, "RICH":{c:5000}, "LOVE":{love:50}, "STARTER":{c:200,f:5} /* ... เพิ่มเติมได้ตามชอบ */ };
+        // --- STABILITY ---
+        setInterval(() => {
+            const dot = document.getElementById('net-dot');
+            dot.className = navigator.onLine ? "dot" : "dot off";
+            document.getElementById('ping').innerText = "PING: " + (Math.floor(Math.random()*20)+15) + "ms";
+            if(s.reg) simulateChat();
+        }, 4000);
 
-        window.onload = () => {
-            const save = localStorage.getItem('AYU_MULTIVERSE');
-            if(save) { s = JSON.parse(save); updateUI(); }
+        // --- GATE & LAUNCH ---
+        function selP(p) { s.a = p; alert("เลือก " + p); }
+        function launch() {
+            const name = document.getElementById('in-name').value;
+            const id = document.getElementById('in-id').value;
+            if(!name || !id) return alert("กรุณากรอกชื่อและไอดี!");
+            s.user = name; s.id = id; s.reg = true;
+            
+            const g = document.getElementById('gate');
+            g.style.display = 'block';
+            setTimeout(() => {
+                g.classList.add('gate-open');
+                setTimeout(() => {
+                    g.style.display = 'none';
+                    document.getElementById('scr-reg').classList.add('hidden');
+                    document.getElementById('scr-hub').classList.remove('hidden');
+                    init();
+                }, 1500);
+            }, 100);
+        }
+
+        function init() {
+            document.getElementById('u-id').innerText = s.id;
+            document.getElementById('pet').innerText = s.a;
+            updateUI();
             setInterval(() => {
-                if(!activeG) {
-                    s.h = Math.max(0, s.h - 1);
-                    s.e = Math.max(0, s.e - 0.5);
+                if(s.reg && !gameActive) {
                     s.age += 0.05;
                     if(s.age >= 10) document.getElementById('btn-marry').classList.remove('hidden');
-                    updateUI(); saveG();
+                    updateUI(); save();
                 }
             }, 10000);
-        };
+        }
 
-        function saveG() { localStorage.setItem('AYU_MULTIVERSE', JSON.stringify(s)); }
+        // --- AI WORD BATTLE ---
+        function checkWord() {
+            const val = document.getElementById('word-in').value.toUpperCase().trim();
+            const lastChar = s.curW.slice(-1);
+            if(val.startsWith(lastChar) && val.length > 1) {
+                s.curW = val; s.c += 20;
+                addChat(`[คุณ] ต่อคำว่า: ${val}`);
+                document.getElementById('word-in').value = "";
+                // AI Response
+                setTimeout(() => {
+                    const aiDict = ["TIGER", "RABBIT", "APPLE", "EGG", "GOAT", "YOYO", "ZEBRA", "NOSE", "ELEPHANT"];
+                    const choices = aiDict.filter(w => w.startsWith(s.curW.slice(-1)));
+                    if(choices.length > 0) {
+                        s.curW = choices[Math.floor(Math.random()*choices.length)];
+                        addChat(`[AI] สวนกลับด้วย: ${s.curW}`);
+                    } else {
+                        addChat(`[AI] ยอมแพ้! คุณเก่งมาก`);
+                        s.c += 100;
+                    }
+                    updateAIUI(); updateUI(); save();
+                }, 1000);
+            } else alert("ต้องเริ่มด้วยตัวอักษร " + lastChar);
+        }
+        function updateAIUI() {
+            document.getElementById('ai-word-display').innerText = s.curW;
+            document.getElementById('next-char').innerText = s.curW.slice(-1);
+        }
+
+        // --- MINI GAME (STARS) ---
+        function startMiniGame() {
+            gameActive = true; let score = 0;
+            const overlay = document.getElementById('game-val');
+            overlay.classList.remove('hidden'); overlay.innerText = "0";
+            const area = document.getElementById('main-sc');
+
+            const move = (e) => {
+                let rect = area.getBoundingClientRect();
+                let x = (e.clientX || e.touches[0].clientX) - rect.left;
+                document.getElementById('pet').style.left = Math.max(30, Math.min(x, rect.width-30)) + "px";
+            };
+            area.onmousemove = move; area.ontouchmove = move;
+
+            let si = setInterval(() => {
+                const star = document.createElement('div');
+                star.className = 'star'; star.innerText = "⭐";
+                star.style.left = Math.random()*90+"%"; star.style.top = "0";
+                area.appendChild(star);
+                let fall = setInterval(() => {
+                    star.style.top = (parseInt(star.style.top)||0)+6+"px";
+                    let pR = document.getElementById('pet').getBoundingClientRect();
+                    let sR = star.getBoundingClientRect();
+                    if(sR.bottom >= pR.top && sR.left < pR.right && sR.right > pR.left) {
+                        score++; overlay.innerText = score; star.remove(); clearInterval(fall);
+                    }
+                    if(parseInt(star.style.top) > 210) { star.remove(); clearInterval(fall); }
+                }, 30);
+            }, 700);
+
+            setTimeout(() => {
+                clearInterval(si); gameActive = false;
+                overlay.classList.add('hidden');
+                document.getElementById('pet').style.left = "50%";
+                s.c += score * 25; alert("ได้เงินทั้งหมด " + (score*25) + "💰");
+                updateUI(); save();
+            }, 12000);
+        }
+
+        // --- CHAT SYSTEM ---
+        function simulateChat() {
+            const names = ["Killer_X", "Mochi_Fan", "Admin_Ayu", "Player_99", "Zaza"];
+            const msgs = ["เพิ่งได้ Gen 5 ครับ!", "มินิเกมเก็บดาวยากจัง", "ใครมีโค้ดลับบ้าง?", "พาไปญี่ปุ่นมาสวยมาก", "เงินครบ 1000 แล้ว!"];
+            if(Math.random() > 0.7) {
+                addChat(`[${names[Math.floor(Math.random()*names.length)]}] ${msgs[Math.floor(Math.random()*msgs.length)]}`);
+            }
+        }
+        function addChat(m) {
+            const box = document.getElementById('chat-box');
+            box.innerHTML += `<div class="chat-msg">${m}</div>`;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // --- CORE ACTIONS ---
+        function feed() { if(s.f > 0) { s.f--; updateUI(); save(); alert("ง่ำๆ!"); } else alert("อาหารหมด!"); }
+        function buy(a,p) { if(s.c >= p) { s.c -= p; s.f += a; updateUI(); save(); } }
+        function travel(n,img,p) { if(s.c >= p) { s.c -= p; s.loc = n; document.getElementById('main-sc').style.backgroundImage = `url('${img}')`; closeMod(); updateUI(); save(); } }
+        function openMod(id) { document.getElementById('mod-'+id).classList.remove('hidden'); }
+        function closeMod() { document.querySelectorAll('.c').forEach(c => { if(c.id !== 'scr-hub') c.classList.add('hidden'); }); }
+        
         function updateUI() {
-            document.getElementById('u-c').innerText = Math.floor(s.c);
+            document.getElementById('u-c').innerText = Math.floor(s.c).toLocaleString();
             document.getElementById('u-f').innerText = s.f;
             document.getElementById('u-age').innerText = s.age.toFixed(1);
-            document.getElementById('u-love').innerText = s.love;
-            document.getElementById('b-h').style.width = s.h + "%";
-            document.getElementById('b-e').style.width = s.e + "%";
-            document.getElementById('pet-emoji').innerText = s.p;
-            document.getElementById('pet-hat').innerText = s.hat;
-        }
-
-        function openMod(id) { document.getElementById('mod-'+id).style.display='flex'; }
-        function closeMod() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }
-
-        function feed() {
-            if(s.f>0 && s.h<100) { s.f--; s.h=Math.min(100, s.h+20); updateUI(); saveG(); }
-        }
-
-        function buy(a,p) { if(s.c>=p){ s.c-=p; s.f+=a; updateUI(); saveG(); } }
-
-        function setHat(h) { s.hat = h; updateUI(); saveG(); }
-
-        function rollGacha() {
-            if(s.c < 100) return alert("เงินไม่พอ!");
-            s.c -= 100;
-            const res = ["🍖 x5", "💰 500", "💖 Love +10", "💩 ขยะ"];
-            const r = Math.floor(Math.random()*res.length);
-            document.getElementById('gacha-res').innerText = "คุณได้รับ: " + res[r];
-            if(r==0) s.f+=5; if(r==1) s.c+=500; if(r==2) s.love+=10;
-            updateUI(); saveG();
-        }
-
-        // --- GAME 1: STARS ---
-        function gameStar() {
-            closeMod(); activeG = true; let sc = 0;
-            const box = document.getElementById('score-box');
-            box.classList.remove('hidden');
-            
-            let si = setInterval(() => {
-                const st = document.createElement('div');
-                st.style.position='absolute'; st.style.top='0'; st.style.left=Math.random()*90+'%';
-                st.innerText='⭐'; st.style.fontSize='25px'; document.getElementById('sc').appendChild(st);
-                let fall = setInterval(() => {
-                    st.style.top = (parseInt(st.style.top)||0)+5+'px';
-                    let pR = document.getElementById('pet').getBoundingClientRect();
-                    let sR = st.getBoundingClientRect();
-                    if(sR.bottom >= pR.top && sR.left < pR.right && sR.right > pR.left) {
-                        sc++; box.innerText = sc; st.remove(); clearInterval(fall);
-                    }
-                    if(parseInt(st.style.top)>230){ st.remove(); clearInterval(fall); }
-                }, 30);
-            }, 800);
-
-            setTimeout(() => { clearInterval(si); activeG=false; box.classList.add('hidden'); s.c+=sc*20; alert("ได้เงิน "+sc*20); updateUI(); saveG(); }, 10000);
-        }
-
-        // --- GAME 2: JUMP RUN ---
-        function gameRun() {
-            closeMod(); activeG = true; let sc = 0;
-            const pet = document.getElementById('pet');
-            const enemy = document.getElementById('enemy');
-            const scBox = document.getElementById('score-box');
-            scBox.classList.remove('hidden'); scBox.innerText = "0";
-
-            // Jump Control
-            window.onclick = () => pet.classList.add('jump');
-            pet.onanimationend = () => pet.classList.remove('jump');
-
-            let runInt = setInterval(() => {
-                let eLeft = parseInt(window.getComputedStyle(enemy).getPropertyValue("right"));
-                if(eLeft > 500) { eLeft = -50; sc++; scBox.innerText = sc; }
-                enemy.style.right = (eLeft + 8) + "px";
-
-                let pBottom = parseInt(window.getComputedStyle(pet).getPropertyValue("bottom"));
-                let eRight = parseInt(window.getComputedStyle(enemy).getPropertyValue("right"));
-
-                // Collision Check (Simplified)
-                if(eRight > 200 && eRight < 250 && pBottom < 60) {
-                    clearInterval(runInt); activeG = false;
-                    scBox.classList.add('hidden');
-                    enemy.style.right = "-50px";
-                    s.love += sc; alert("เกมจบ! ได้แต้มรัก: " + sc);
-                    updateUI(); saveG();
-                }
-            }, 20);
-        }
-
-        function redeem() {
-            let i = document.getElementById('code-in').value.toUpperCase();
-            if(CODES[i]) { s.c+=(CODES[i].c||0); s.f+=(CODES[i].f||0); s.love+=(CODES[i].love||0); alert("สำเร็จ!"); closeMod(); updateUI(); saveG(); }
+            document.getElementById('u-gen').innerText = s.gen;
+            document.getElementById('loc-tag').innerText = s.loc;
+            updateAIUI();
         }
 
         function marry() {
-            if(confirm("เริ่ม Gen ใหม่? แต้มรักจะทำให้ลูกเก่งขึ้น!")) {
-                s.gen++; s.age=0; s.h=100; s.e=100; s.c+=s.love*10; // โบนัสเงินจากความรัก
-                s.love=0; updateUI(); saveG();
+            if(confirm("แต่งงานเพื่อสืบทอดรุ่นใหม่?")) {
+                s.gen++; s.age = 0; 
+                document.getElementById('btn-marry').classList.add('hidden');
+                updateUI(); save(); alert("ยินดีด้วยกับรุ่นที่ " + s.gen);
             }
         }
+
+        function redeem() {
+            const c = document.getElementById('code-in').value.toUpperCase();
+            if(c === "AYU2026") { s.c += 1000; alert("สำเร็จ!"); }
+            else if(c === "GODMODE") { s.c += 99999; s.f += 99; alert("โหมดพระเจ้า!"); }
+            else { alert("โค้ดผิด"); }
+            closeMod(); updateUI(); save();
+        }
+
+        function save() { localStorage.setItem('AYU_LEGACY_DATA', JSON.stringify(s)); }
+        window.onload = () => {
+            const saved = localStorage.getItem('AYU_LEGACY_DATA');
+            if(saved) {
+                s = JSON.parse(saved);
+                if(s.reg) { document.getElementById('scr-reg').classList.add('hidden'); document.getElementById('scr-hub').classList.remove('hidden'); init(); }
+            }
+        };
     </script>
 </body>
 </html>
