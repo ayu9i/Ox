@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AYU ARENA - THE ULTIMATE ANTHOLOGY</title>
+    <title>AYU ARENA - THE INFINITE LEGACY 2026</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #6366f1; --g: #fbbf24; --bg: #020617; --glass: rgba(15, 23, 42, 0.95); --green: #10b981; --red: #ef4444; }
+        :root { --p: #6366f1; --g: #fbbf24; --bg: #020617; --glass: rgba(15, 23, 42, 0.95); --green: #10b981; --red: #ef4444; --blue: #3b82f6; }
         * { box-sizing: border-box; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; min-height: 100vh; font-family: 'Kanit', sans-serif; background: var(--bg); color: white; overflow: hidden; }
 
-        /* --- STABILITY & NET --- */
+        /* --- STABILITY & NET STATUS --- */
         .net-status { position: fixed; top: 15px; right: 15px; z-index: 5000; display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.8); padding: 5px 12px; border-radius: 12px; font-size: 0.7rem; font-family: 'Orbitron'; border: 1px solid rgba(255,255,255,0.1); }
         .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
         .dot.off { background: var(--red); box-shadow: 0 0 10px var(--red); }
 
-        /* --- CONAN GATE --- */
+        /* --- CONAN GATE SYSTEM --- */
         #gate { position: fixed; inset: 0; z-index: 9999; display: none; perspective: 1000px; }
         .door { position: absolute; width: 50%; height: 100%; background: #0f172a; border: 1px solid #1e293b; display: flex; align-items: center; justify-content: center; transition: 1.5s ease-in-out; }
         .door-l { left: 0; transform-origin: left; border-right: 4px solid var(--g); }
@@ -23,7 +23,7 @@
         .gate-open .door-l { transform: rotateY(-110deg); opacity: 0; }
         .gate-open .door-r { transform: rotateY(110deg); opacity: 0; }
 
-        /* --- MAIN UI CONTAINER --- */
+        /* --- MAIN UI CONTAINERS --- */
         .c { width: 95%; max-width: 480px; background: var(--glass); border-radius: 35px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 60px #000; z-index: 100; max-height: 95vh; overflow-y: auto; text-align: center; }
         .hidden { display: none !important; }
         
@@ -31,39 +31,53 @@
         .screen { width: 100%; height: 210px; border-radius: 25px; border: 3px solid #1e293b; position: relative; overflow: hidden; background-size: cover; background-position: center; margin: 15px 0; background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800'); }
         #pet { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 60px; z-index: 10; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); }
         #pet-hat { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 25px; pointer-events: none; }
-        #enemy { position: absolute; bottom: 20px; right: -50px; font-size: 40px; }
+        #enemy { position: absolute; bottom: 20px; right: -100px; font-size: 40px; }
         .loc-tag { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; border: 1px solid var(--p); color: var(--g); font-family: 'Orbitron'; }
         
-        /* --- CHAT BOX --- */
-        .chat-box { height: 80px; background: rgba(0,0,0,0.4); border-radius: 15px; padding: 10px; font-size: 0.75rem; overflow-y: auto; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); text-align: left; }
-        
-        /* --- BARS --- */
-        .bar-bg { width: 100%; height: 8px; background: #0f172a; border-radius: 10px; overflow: hidden; margin-top: 4px; border: 1px solid rgba(255,255,255,0.1); }
-        .bar-fill { height: 100%; width: 100%; transition: 0.5s; background: var(--green); }
+        /* --- VITALS BARS (HP & ENERGY) --- */
+        .vitals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+        .bar-label { font-size: 0.65rem; text-align: left; display: block; font-weight: bold; margin-bottom: 2px; }
+        .bar-bg { width: 100%; height: 10px; background: #0f172a; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
+        .bar-fill { height: 100%; width: 100%; transition: 0.5s linear; }
+        .bg-hp { background: linear-gradient(90deg, #ef4444, #ff8080); }
+        .bg-en { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
 
-        /* --- BUTTONS & INPUTS --- */
-        .btn { border: none; border-radius: 15px; padding: 10px; color: white; font-family: 'Kanit'; font-weight: 700; cursor: pointer; background: var(--p); border-bottom: 4px solid #3730a3; margin: 3px 0; width: 100%; display: flex; flex-direction: column; align-items: center; font-size: 0.8rem; }
+        /* --- CHAT BOX --- */
+        .chat-box { height: 70px; background: rgba(0,0,0,0.4); border-radius: 15px; padding: 10px; font-size: 0.7rem; overflow-y: auto; margin: 10px 0; text-align: left; border: 1px solid rgba(255,255,255,0.05); color: #cbd5e1; }
+        
+        /* --- INTERACTIVE BUTTONS --- */
+        .btn { border: none; border-radius: 15px; padding: 10px; color: white; font-family: 'Kanit'; font-weight: 700; cursor: pointer; background: var(--p); border-bottom: 4px solid #3730a3; margin: 2px 0; width: 100%; display: flex; flex-direction: column; align-items: center; font-size: 0.75rem; }
         .btn:active { transform: translateY(2px); border-bottom-width: 2px; }
         .btn-g { background: var(--g); color: #000; border-bottom-color: #b45309; }
         .btn-green { background: var(--green); border-bottom-color: #064e3b; }
         
         input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--p); background: #000; color: white; margin: 8px 0; text-align: center; }
         
+        /* --- DEATH & GAME OVER --- */
+        #death-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+
         /* --- ANIMATIONS --- */
         .star { position: absolute; font-size: 24px; animation: fall 2s linear forwards; }
         @keyframes fall { to { top: 250px; } }
-        .jump { animation: jumpAnim 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .jump { animation: jumpAnim 0.5s ease-out; }
         @keyframes jumpAnim { 0%, 100% { bottom: 20px; } 50% { bottom: 120px; } }
     </style>
 </head>
 <body>
 
     <div class="net-status"><div id="net-dot" class="dot"></div><span id="ping">PING: --ms</span></div>
+    
     <div id="gate"><div class="door door-l"><h1>AYU</h1></div><div class="door door-r"><h1>ARENA</h1></div></div>
+
+    <div id="death-screen">
+        <h1 style="color:var(--red); font-family:Orbitron; font-size:3rem; margin:0;">DIED</h1>
+        <p id="death-msg" style="margin:20px;">สัตว์เลี้ยงของคุณจากไปแล้ว...</p>
+        <button class="btn btn-g" style="width:200px;" onclick="resetGame()">REBIRTH (GEN 1)</button>
+    </div>
 
     <div id="scr-lang" class="c">
         <h1 style="font-family:'Orbitron'; color:var(--g)">LANGUAGE</h1>
-        <p>เลือกภาษาเพื่อเริ่มต้น / Select Language</p>
+        <p>Choose Language / เลือกภาษา</p>
         <button class="btn btn-g" onclick="setLang('th')">🇹🇭 ภาษาไทย</button>
         <button class="btn" onclick="setLang('en')">🇺🇸 English</button>
     </div>
@@ -78,7 +92,7 @@
             <button class="btn" onclick="s.a='🐱'; alert('Selected 🐱')">🐱</button>
             <button class="btn" onclick="s.a='🐼'; alert('Selected 🐼')">🐼</button>
         </div>
-        <button id="t-launch" class="btn btn-g" style="margin-top:20px;" onclick="launch()">INITIALIZE</button>
+        <button id="t-launch" class="btn btn-g" style="margin-top:20px;" onclick="launch()">INITIALIZE GATE</button>
     </div>
 
     <div id="scr-hub" class="c hidden">
@@ -94,20 +108,29 @@
                 <span id="pet-emoji">🐶</span>
             </div>
             <div id="enemy">🌵</div>
-            <div id="game-val" class="hidden" style="position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); font-size:3rem; font-family:Orbitron; z-index:50; color:var(--g);">0</div>
+            <div id="game-val" class="hidden" style="position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); font-size:3.5rem; font-family:Orbitron; z-index:50; color:var(--g); text-shadow: 0 0 10px #000;">0</div>
         </div>
 
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px; font-size:0.6rem; margin-bottom:10px;">
+        <div class="vitals">
+            <div>
+                <span class="bar-label">HP: <span id="val-hp">100</span>%</span>
+                <div class="bar-bg"><div id="b-hp" class="bar-fill bg-hp"></div></div>
+            </div>
+            <div>
+                <span class="bar-label">ENERGY: <span id="val-en">100</span>%</span>
+                <div class="bar-bg"><div id="b-en" class="bar-fill bg-en"></div></div>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px; font-size:0.6rem; margin-bottom:5px;">
             <div><span id="t-f">Food</span>: <b id="u-f">0</b></div>
             <div><span id="t-age">Age</span>: <b id="u-age">0.0</b></div>
             <div><span id="t-gen">Gen</span>: <b id="u-gen">1</b></div>
         </div>
 
-        <div class="bar-bg"><div id="b-h" class="bar-fill"></div></div>
-
         <div class="chat-box" id="chat-box"></div>
 
-        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:6px;">
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:4px;">
             <button class="btn" onclick="feed()"><span>🍗</span><span id="b-feed">Feed</span></button>
             <button class="btn" onclick="openMod('game')"><span>🎮</span><span id="b-game">Games</span></button>
             <button class="btn" onclick="openMod('shop')"><span>🛒</span><span id="b-shop">Shop</span></button>
@@ -180,15 +203,13 @@
     </div>
 
     <script>
-        let s = { lang:'th', user:'', id:'', a:'🐶', c:200, f:5, age:0, gen:1, h:100, loc:'THAILAND', used:[], curW:'CAT', hat:'', reg:false };
+        let s = { lang:'th', user:'', id:'', a:'🐶', c:200, f:5, age:0, gen:1, hp:100, en:100, loc:'THAILAND', used:[], curW:'CAT', hat:'', reg:false };
         let activeG = false;
 
         const i18n = {
-            th: { title:"เข้าสู่ระบบ", name:"ชื่อผู้เล่น", id:"ไอดี", init:"เปิดระบบ", choose:"เลือกสัตว์เลี้ยง:", food:"อาหาร", age:"อายุ", gen:"รุ่น", feed:"ป้อนอาหาร", games:"มินิเกม", shop:"ร้านค้า", travel:"ท่องเที่ยว", dress:"แต่งตัว", wedding:"แต่งงาน (อายุ 10+)", welcome:"[ระบบ] ยินดีต้อนรับ!" },
-            en: { title:"PLAYER ENTRY", name:"Name", id:"ID", init:"INITIALIZE", choose:"Choose Pet:", food:"Food", age:"Age", gen:"Gen", feed:"Feed", games:"Games", shop:"Shop", travel:"Travel", dress:"Dress", wedding:"Wedding (Age 10+)", welcome:"[System] Welcome!" }
+            th: { title:"เข้าสู่ระบบผู้เล่น", name:"ชื่อผู้เล่น", id:"ไอดี", init:"เปิดระบบประตู", choose:"เลือกสัตว์เลี้ยง:", food:"อาหาร", age:"อายุ", gen:"รุ่น", feed:"ป้อนอาหาร", games:"มินิเกม", shop:"ร้านค้า", travel:"ท่องเที่ยว", dress:"แต่งตัว", wedding:"แต่งงาน & สืบทอด (อายุ 10+)", welcome:"[ระบบ] ยินดีต้อนรับสู่โลก AYU ARENA!", death:"สัตว์เลี้ยงของคุณจากไปแล้วเพราะขาดสารอาหาร..." },
+            en: { title:"PLAYER ENTRY", name:"Player Name", id:"Player ID", init:"INITIALIZE GATE", choose:"Choose Pet:", food:"Food", age:"Age", gen:"Gen", feed:"Feed", games:"Mini Games", shop:"Shop", travel:"Travel", dress:"Dress Up", wedding:"Wedding & Legacy (Age 10+)", welcome:"[System] Welcome to AYU ARENA!", death:"Your pet has passed away due to starvation..." }
         };
-
-        const CODES = { "AYU2026":{c:1000,f:10}, "GODMODE":{c:9999,f:99}, "RICH":{c:5000} };
 
         function setLang(l) {
             s.lang = l; document.getElementById('scr-lang').classList.add('hidden');
@@ -208,12 +229,13 @@
             document.getElementById('b-travel').innerText = t.travel;
             document.getElementById('b-dress').innerText = t.dress;
             document.getElementById('btn-marry').innerText = t.wedding;
+            document.getElementById('death-msg').innerText = t.death;
         }
 
         function launch() {
             const n = document.getElementById('in-name').value;
             const i = document.getElementById('in-id').value;
-            if(!n || !i) return alert("Error: No Data");
+            if(!n || !i) return alert("Please enter Name and ID");
             s.user = n; s.id = i; s.reg = true;
             const gate = document.getElementById('gate');
             gate.style.display = 'block';
@@ -234,11 +256,16 @@
             setInterval(() => {
                 const dot = document.getElementById('net-dot');
                 dot.className = navigator.onLine ? "dot" : "dot off";
-                document.getElementById('ping').innerText = "PING: " + (Math.floor(Math.random()*15)+10) + "ms";
+                document.getElementById('ping').innerText = "PING: " + (Math.floor(Math.random()*20)+10) + "ms";
+                
                 if(s.reg && !activeG) {
-                    s.h = Math.max(0, s.h - 1); s.age += 0.05;
+                    s.en = Math.max(0, s.en - 1.5); // พลังงานลด
+                    if(s.en <= 0) s.hp = Math.max(0, s.hp - 4); // ถ้าหิวมากเลือดลด
+                    s.age += 0.05;
+                    if(s.hp <= 0) gameOver();
                     if(s.age >= 10) document.getElementById('btn-marry').classList.remove('hidden');
-                    updateUI(); save(); if(Math.random()>0.8) simulateChat();
+                    updateUI(); save(); 
+                    if(Math.random()>0.8) simulateChat();
                 }
             }, 5000);
             updateUI();
@@ -249,34 +276,65 @@
             document.getElementById('u-f').innerText = s.f;
             document.getElementById('u-age').innerText = s.age.toFixed(1);
             document.getElementById('u-gen').innerText = s.gen;
-            document.getElementById('b-h').style.width = s.h + "%";
+            document.getElementById('b-hp').style.width = s.hp + "%";
+            document.getElementById('val-hp').innerText = Math.ceil(s.hp);
+            document.getElementById('b-en').style.width = s.en + "%";
+            document.getElementById('val-en').innerText = Math.ceil(s.en);
             document.getElementById('pet-emoji').innerText = s.a;
             document.getElementById('pet-hat').innerText = s.hat;
             document.getElementById('loc-tag').innerText = s.loc;
         }
 
-        function feed() { if(s.f > 0 && s.h < 100) { s.f--; s.h = Math.min(100, s.h+20); updateUI(); } }
+        function gameOver() {
+            document.getElementById('death-screen').style.display = 'flex';
+            s.reg = false; save();
+        }
+
+        function resetGame() {
+            localStorage.clear();
+            location.reload();
+        }
+
+        function feed() { 
+            if(s.f > 0 && s.en < 100) { 
+                s.f--; 
+                s.en = Math.min(100, s.en + 30); 
+                s.hp = Math.min(100, s.hp + 5); 
+                updateUI(); 
+                addChat(`[SYSTEM] ${s.user} ป้อนอาหารให้สัตว์เลี้ยง`);
+            } else if(s.f <= 0) {
+                alert(s.lang === 'th' ? "อาหารหมด!" : "No Food!");
+            }
+        }
+
         function openMod(id) { document.getElementById('mod-'+id).classList.remove('hidden'); }
         function closeMod() { document.querySelectorAll('.c').forEach(c => { if(c.id !== 'scr-hub') c.classList.add('hidden'); }); }
 
+        // AI WORD BATTLE SYSTEM
         function checkWord() {
             const val = document.getElementById('word-in').value.toUpperCase().trim();
-            if(val.startsWith(s.curW.slice(-1))) {
-                s.c += 20; s.curW = val; addChat(`[You] ${val}`);
+            const last = s.curW.slice(-1);
+            if(val.startsWith(last) && val.length > 1) {
+                s.c += 25; s.curW = val; addChat(`[${s.user}] ${val}`);
                 document.getElementById('word-in').value = "";
                 setTimeout(() => {
-                    const aiDict = ["TIGER", "RABBIT", "EGG", "GOAT", "YOYO"];
-                    s.curW = aiDict[Math.floor(Math.random()*aiDict.length)];
+                    const aiDict = ["TIGER", "RABBIT", "EGG", "GOAT", "YOYO", "ZEBRA", "APPLE", "EAGLE"];
+                    const choices = aiDict.filter(w => w.startsWith(s.curW.slice(-1)));
+                    s.curW = choices.length > 0 ? choices[Math.floor(Math.random()*choices.length)] : "QUEEN";
                     document.getElementById('ai-word-display').innerText = s.curW;
                     document.getElementById('next-char').innerText = s.curW.slice(-1);
                     addChat(`[AI] ${s.curW}`); updateUI();
                 }, 800);
+            } else {
+                alert("ต้องขึ้นต้นด้วย " + last);
             }
         }
 
+        // GAME 1: STAR CATCHER
         function gameStar() {
             closeMod(); activeG = true; let score = 0;
-            const overlay = document.getElementById('game-val'); overlay.classList.remove('hidden');
+            const overlay = document.getElementById('game-val'); 
+            overlay.classList.remove('hidden'); overlay.innerText = "0";
             let si = setInterval(() => {
                 const star = document.createElement('div'); star.className = 'star'; star.innerText = "⭐";
                 star.style.left = Math.random()*90+"%"; star.style.top = "0";
@@ -290,43 +348,69 @@
                     }
                     if(parseInt(star.style.top) > 210) { star.remove(); clearInterval(fall); }
                 }, 30);
-            }, 800);
-            setTimeout(() => { clearInterval(si); activeG = false; overlay.classList.add('hidden'); s.c += score*20; updateUI(); }, 10000);
+            }, 700);
+            setTimeout(() => { 
+                clearInterval(si); activeG = false; overlay.classList.add('hidden'); 
+                s.c += score*15; s.en = Math.max(0, s.en-15); updateUI(); 
+                alert("Game Over! Earned: " + (score*15) + "💰");
+            }, 10000);
         }
 
+        // GAME 2: DINO RUN
         function gameRun() {
             closeMod(); activeG = true; let sc = 0;
             const pet = document.getElementById('pet'); const enemy = document.getElementById('enemy');
-            const overlay = document.getElementById('game-val'); overlay.classList.remove('hidden');
-            window.onclick = () => pet.classList.add('jump');
+            const overlay = document.getElementById('game-val'); overlay.classList.remove('hidden'); overlay.innerText = "0";
+            
+            const handleJump = () => { if(activeG) pet.classList.add('jump'); };
+            window.addEventListener('mousedown', handleJump);
+            window.addEventListener('touchstart', handleJump);
             pet.onanimationend = () => pet.classList.remove('jump');
+
             let runInt = setInterval(() => {
-                let eL = parseInt(window.getComputedStyle(enemy).right);
-                if(eL > 500) { eL = -50; sc++; overlay.innerText = sc; }
-                enemy.style.right = (eL + 8) + "px";
+                let eR = parseInt(window.getComputedStyle(enemy).right);
+                if(eR > 520) { eR = -100; sc++; overlay.innerText = sc; }
+                enemy.style.right = (eR + 9) + "px";
+                
                 let pB = parseInt(window.getComputedStyle(pet).bottom);
-                if(eL > 200 && eL < 250 && pB < 60) {
+                if(eR > 210 && eR < 260 && pB < 70) {
                     clearInterval(runInt); activeG = false; overlay.classList.add('hidden');
-                    enemy.style.right = "-50px"; s.c += sc*10; updateUI();
+                    enemy.style.right = "-100px"; s.c += sc*10; s.en = Math.max(0, s.en-20); updateUI();
+                    alert("Hit! Earned: " + (sc*10) + "💰");
+                    window.removeEventListener('mousedown', handleJump);
+                    window.removeEventListener('touchstart', handleJump);
                 }
-            }, 20);
+            }, 25);
+        }
+
+        function buy(a,p) { if(s.c >= p) { s.c -= p; s.f += a; updateUI(); } else alert("No Money!"); }
+        
+        function travel(n, img, p) { 
+            if(s.c >= p) { s.c -= p; s.loc = n; document.getElementById('main-sc').style.backgroundImage = `url('${img}')`; closeMod(); updateUI(); } 
+            else alert("No Money!");
         }
 
         function rollGacha() {
-            if(s.c < 100) return; s.c -= 100;
-            const r = Math.random(); let msg = r > 0.5 ? "🍖 x3" : "💰 500";
-            if(r > 0.5) s.f += 3; else s.c += 500;
-            document.getElementById('gacha-res').innerText = msg; updateUI();
+            if(s.c < 100) return alert("Need 100💰"); s.c -= 100;
+            const r = Math.random(); 
+            let res = r > 0.7 ? "🍖 x5" : (r > 0.3 ? "💰 200" : "👑 RARE HAT");
+            if(r > 0.7) s.f += 5; else if(r > 0.3) s.c += 200; else s.hat = '👑';
+            document.getElementById('gacha-res').innerText = res; updateUI();
         }
 
         function redeem() {
             const c = document.getElementById('code-in').value.toUpperCase();
-            if(CODES[c]) { s.c += CODES[c].c; s.f += CODES[c].f; alert("Redeemed!"); closeMod(); updateUI(); }
+            if(c === "AYU2026") { s.c += 1000; s.f += 5; alert("Success!"); closeMod(); updateUI(); }
+            else if(c === "GOD") { s.hp=100; s.en=100; s.c+=5000; alert("God Mode!"); closeMod(); updateUI(); }
         }
 
-        function travel(n, img, p) { if(s.c >= p) { s.c -= p; s.loc = n; document.getElementById('main-sc').style.backgroundImage = `url('${img}')`; closeMod(); updateUI(); } }
-        
-        function marry() { s.gen++; s.age = 0; document.getElementById('btn-marry').classList.add('hidden'); updateUI(); save(); }
+        function marry() { 
+            if(confirm("แต่งงานเพื่อสืบทอดรุ่นต่อไป? (รุ่นจะเพิ่มขึ้นและอายุรีเซ็ต)")) {
+                s.gen++; s.age = 0; s.hp = 100; s.en = 100; 
+                document.getElementById('btn-marry').classList.add('hidden'); 
+                updateUI(); save(); addChat(`[SYSTEM] ยินดีด้วย! คุณเข้าสู่ Gen ${s.gen}`);
+            }
+        }
         
         function addChat(m) {
             const box = document.getElementById('chat-box');
@@ -334,17 +418,22 @@
         }
 
         function simulateChat() {
-            const bots = ["Zaza", "Mochi", "Admin", "Killer"];
-            const msgs = ["Hi All!", "Look at my Pet", "Gen 5!", "Code?"];
-            addChat(`[${bots[Math.floor(Math.random()*4)]}] ${msgs[Math.floor(Math.random()*4)]}`);
+            const bots = ["Zaza_007", "Mochi_Fan", "Admin_Ayu", "Killer_X", "Panda_Lover"];
+            const msgs = ["เจเนอเรชั่น 5 แล้วนะ!", "มีใครมีโค้ดลับบ้าง?", "หิวข้าวววว", "มินิเกมวิ่งยากจัง", "ไปเที่ยวญี่ปุ่นมาสวยมาก"];
+            addChat(`[${bots[Math.floor(Math.random()*bots.length)]}] ${msgs[Math.floor(Math.random()*msgs.length)]}`);
         }
 
-        function save() { localStorage.setItem('AYU_ULT_DATA', JSON.stringify(s)); }
+        function save() { localStorage.setItem('AYU_LEGACY_FINAL', JSON.stringify(s)); }
+        
         window.onload = () => {
-            const saved = localStorage.getItem('AYU_ULT_DATA');
+            const saved = localStorage.getItem('AYU_LEGACY_FINAL');
             if(saved) {
                 s = JSON.parse(saved);
-                if(s.reg) { document.getElementById('scr-lang').classList.add('hidden'); document.getElementById('scr-hub').classList.remove('hidden'); setLang(s.lang); startEngine(); }
+                if(s.reg) { 
+                    document.getElementById('scr-lang').classList.add('hidden'); 
+                    document.getElementById('scr-hub').classList.remove('hidden'); 
+                    setLang(s.lang); startEngine(); 
+                }
             }
         };
     </script>
