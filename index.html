@@ -3,162 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AYU GAME ARENA - ULTIMATE</title>
+    <title>AYU ARENA - ENTER THE GATE</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1; --primary-dark: #4f46e5;
-            --bg: #020617; --card: rgba(30, 41, 59, 0.7);
-            --text: #f8fafc;
+            --primary: #6366f1;
+            --gold: #fbbf24;
+            --bg: #020617;
         }
 
         body, html {
             margin: 0; padding: 0; min-height: 100vh;
             font-family: 'Kanit', sans-serif; background: var(--bg);
-            color: var(--text); display: flex; justify-content: center; align-items: center;
-            overflow: hidden;
+            color: white; overflow: hidden;
         }
 
-        /* Ambient Glow Background */
-        .glow {
-            position: fixed; width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
-            z-index: -1; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        /* --- ฉากประตูโคนัน (Conan Gate) --- */
+        #conan-gate {
+            position: fixed; inset: 0; z-index: 10000;
+            display: none; justify-content: center; align-items: center;
+        }
+        .door {
+            position: absolute; width: 50%; height: 100%;
+            background: #111; border: 2px solid #222;
+            transition: transform 1.5s cubic-bezier(0.7, 0, 0.3, 1);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 50px #000;
+        }
+        .door-left { left: 0; transform-origin: left; border-right: 2px solid var(--gold); }
+        .door-right { right: 0; transform-origin: right; border-left: 2px solid var(--gold); }
+        
+        /* เมื่อประตูเปิด */
+        .gate-open .door-left { transform: perspective(1200px) rotateY(-100deg); }
+        .gate-open .door-right { transform: perspective(1200px) rotateY(100deg); }
+        
+        .gate-light {
+            position: absolute; width: 10px; height: 100%;
+            background: white; box-shadow: 0 0 100px 50px white;
+            opacity: 0; transition: 0.5s;
+        }
+        .gate-open .gate-light { opacity: 0.8; }
+
+        /* --- หน้าตั้งชื่อ (Setup Screen) --- */
+        .setup-container {
+            width: 100%; max-width: 400px; padding: 40px;
+            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px);
+            border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+            text-align: center; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); z-index: 100;
         }
 
-        .container {
-            width: 100%; max-width: 450px; background: var(--card);
-            backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px; padding: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            text-align: center; position: relative; transition: 0.5s;
-        }
-
-        .hidden { display: none !important; }
-        .logo { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; font-weight: 900; 
-                background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        /* Form Styles */
+        .logo { font-family: 'Orbitron'; font-size: 3rem; font-weight: 900; color: var(--primary); text-shadow: 0 0 20px rgba(99,102,241,0.5); }
+        
         input {
-            width: 100%; padding: 12px 15px; margin: 10px 0; background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; color: white; box-sizing: border-box;
+            width: 100%; padding: 15px; margin: 20px 0;
+            background: #0f172a; border: 1px solid #334155;
+            border-radius: 10px; color: white; text-align: center; font-size: 1.2rem;
         }
-        button {
-            width: 100%; padding: 14px; margin-top: 15px; background: var(--primary);
-            color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s;
+
+        .btn-enter {
+            width: 100%; padding: 15px; background: var(--primary);
+            border: none; border-radius: 10px; color: white;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
         }
-        button:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .btn-enter:hover { background: #4f46e5; letter-spacing: 2px; }
 
-        /* Pet System Styles */
-        .pet-visual { font-size: 80px; margin: 20px 0; transition: 0.3s; animation: float 2s infinite ease-in-out; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
-        .stat-bar { background: #1e293b; border-radius: 5px; height: 10px; overflow: hidden; margin-top: 5px; }
-        .stat-fill { background: var(--primary); height: 100%; width: 50%; transition: 0.5s; }
+        /* --- หน้าหลักหลังเข้าประตู --- */
+        #main-game {
+            display: none; padding: 20px; text-align: center;
+            animation: fadeIn 2s forwards;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Word Chain Styles */
-        .word-history { height: 120px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; text-align: left; margin-bottom: 15px; font-size: 0.9rem; }
-        .current-word { font-size: 1.5rem; color: #fbbf24; margin-bottom: 10px; font-weight: bold; }
+        .player-tag {
+            background: rgba(255,255,255,0.05); padding: 10px 20px;
+            border-radius: 50px; display: inline-block; margin-bottom: 30px;
+            border: 1px solid var(--gold);
+        }
+        .hidden { display: none; }
+
+        /* ปุ่มเกม */
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 600px; margin: 0 auto; }
+        .game-card {
+            background: #1e293b; padding: 30px; border-radius: 15px;
+            cursor: pointer; border: 1px solid transparent; transition: 0.3s;
+        }
+        .game-card:hover { border-color: var(--primary); transform: translateY(-5px); }
     </style>
 </head>
 <body>
-    <div class="glow"></div>
 
-    <div id="screen-login" class="container">
+    <div id="setup-screen" class="setup-container">
         <div class="logo">AYU</div>
-        <p style="letter-spacing: 3px; font-size: 0.8rem; color: #94a3b8;">SECURE LOGIN</p>
-        <input type="text" id="user" placeholder="Username (admin)">
-        <input type="password" id="pass" placeholder="Password (1234)">
-        <button onclick="login()">ENTER ARENA</button>
-        <div style="margin-top: 20px; cursor: pointer; font-size: 0.8rem; color: #6366f1;" onclick="toggleRedeem()">+ REDEEM CODE</div>
-        <div id="redeem-box" class="hidden">
-            <input type="text" id="code-val" placeholder="CODE-XXXX">
-            <button style="background: #a855f7;" onclick="redeem()">REDEEM</button>
+        <p style="color: #94a3b8; letter-spacing: 2px;">IDENTIFICATION REQUIRED</p>
+        <input type="text" id="player-name" placeholder="ใส่ชื่อของคุณที่นี่..." maxlength="15">
+        <button class="btn-enter" onclick="startSequence()">ยืนยันตัวตน</button>
+    </div>
+
+    <div id="conan-gate">
+        <div class="gate-light"></div>
+        <div class="door door-left">
+            <div style="width: 40px; height: 40px; border: 2px solid var(--gold); border-radius: 50%;"></div>
+        </div>
+        <div class="door door-right">
+            <div style="width: 40px; height: 40px; border: 2px solid var(--gold); border-radius: 50%;"></div>
         </div>
     </div>
 
-    <div id="screen-menu" class="container hidden">
-        <div class="logo" style="font-size: 1.5rem;">SELECT GAME</div>
-        <div style="margin: 30px 0;">
-            <button onclick="startPet()">🐾 AYU PET (ทามาก็อตจิ)</button>
-            <button onclick="startWord()">📚 WORD CHAIN (ต่อคำ)</button>
+    <div id="main-game">
+        <div class="player-tag">
+            👤 <span id="display-name" style="color: var(--gold); font-weight: bold;"></span> 
+            | ID: <span id="display-id" style="font-family: 'Orbitron';"></span>
         </div>
-        <button style="background: transparent; border: 1px solid #ef4444; color: #ef4444;" onclick="location.reload()">LOGOUT</button>
-    </div>
+        
+        <h1 style="font-family: 'Orbitron';">WELCOME TO THE ARENA</h1>
+        
+        <div class="game-grid">
+            <div class="game-card" onclick="alert('กำลังเริ่มเกมสัตว์เลี้ยง...')">
+                <div style="font-size: 3rem;">🐾</div>
+                <h3>AYU PET</h3>
+            </div>
+            <div class="game-card" onclick="alert('กำลังเริ่มเกมต่อคำ...')">
+                <div style="font-size: 3rem;">📚</div>
+                <h3>WORD CHAIN</h3>
+            </div>
+        </div>
 
-    <div id="screen-pet" class="container hidden">
-        <div class="logo" style="font-size: 1.5rem;">AYU PET</div>
-        <div id="pet-char" class="pet-visual">🐱</div>
-        <div class="stats-grid">
-            <div>หิว: <div class="stat-bar"><div id="bar-hunger" class="stat-fill"></div></div></div>
-            <div>ความสุข: <div class="stat-bar"><div id="bar-happy" class="stat-fill"></div></div></div>
-        </div>
-        <div style="display: flex; gap: 10px;">
-            <button onclick="feed()">🍖 กิน</button>
-            <button onclick="play()">🎾 เล่น</button>
-        </div>
-        <button style="background: #1e293b;" onclick="showMenu()">กลับหน้าหลัก</button>
-    </div>
-
-    <div id="screen-word" class="container hidden">
-        <div class="logo" style="font-size: 1.5rem;">WORD CHAIN</div>
-        <p>คำปัจจุบัน:</p>
-        <div id="current-word" class="current-word">APPLE</div>
-        <div id="word-log" class="word-history"></div>
-        <input type="text" id="word-input" placeholder="คำถัดไป (เริ่มด้วยตัวสุดท้าย)">
-        <button onclick="submitWord()">SUBMIT WORD</button>
-        <button style="background: #1e293b;" onclick="showMenu()">กลับหน้าหลัก</button>
+        <button onclick="location.reload()" style="background:none; border:none; color: #475569; margin-top: 50px; cursor: pointer;">LOGOUT SYSTEM</button>
     </div>
 
     <script>
-        // -- Core System --
-        function login() {
-            if(document.getElementById('user').value === 'admin' && document.getElementById('pass').value === '1234') {
-                showMenu();
-            } else { alert('Access Denied'); }
-        }
-
-        function showMenu() {
-            hideAll(); document.getElementById('screen-menu').classList.remove('hidden');
-        }
-
-        function hideAll() {
-            document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
-        }
-
-        function toggleRedeem() { document.getElementById('redeem-box').classList.toggle('hidden'); }
-        function redeem() { alert('โค้ดสำเร็จ! คุณได้รับ 500 AYU Coins'); }
-
-        // -- AYU PET Logic --
-        let hunger = 80, happy = 50;
-        function startPet() {
-            hideAll(); document.getElementById('screen-pet').classList.remove('hidden');
-            updatePetUI();
-        }
-        function updatePetUI() {
-            document.getElementById('bar-hunger').style.width = hunger + '%';
-            document.getElementById('bar-happy').style.width = happy + '%';
-            if(hunger < 20) document.getElementById('pet-char').innerText = '😿';
-            else if(happy > 80) document.getElementById('pet-char').innerText = '😺';
-            else document.getElementById('pet-char').innerText = '🐱';
-        }
-        function feed() { hunger = Math.min(100, hunger + 20); updatePetUI(); }
-        function play() { happy = Math.min(100, happy + 20); hunger -= 10; updatePetUI(); }
-
-        // -- Word Chain Logic --
-        let lastWord = 'APPLE';
-        function startWord() {
-            hideAll(); document.getElementById('screen-word').classList.remove('hidden');
-        }
-        function submitWord() {
-            let input = document.getElementById('word-input').value.toUpperCase().trim();
-            if(input.startsWith(lastWord.slice(-1))) {
-                document.getElementById('word-log').innerHTML += `<div>✅ ${input}</div>`;
-                lastWord = input;
-                document.getElementById('current-word').innerText = lastWord;
-                document.getElementById('word-input').value = '';
-            } else {
-                alert(`ต้องเริ่มด้วยตัว ${lastWord.slice(-1)}`);
+        function startSequence() {
+            const name = document.getElementById('player-name').value;
+            if (name.trim() === "") {
+                alert("กรุณาใส่ชื่อเพื่อยืนยันตัวตน");
+                return;
             }
+
+            // 1. สร้าง ID สุ่ม
+            const playerID = "AYU-" + Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('display-name').innerText = name;
+            document.getElementById('display-id').innerText = playerID;
+
+            // 2. ซ่อนหน้าตั้งชื่อ
+            document.getElementById('setup-screen').style.display = 'none';
+
+            // 3. เริ่มฉากประตูโคนัน
+            const gate = document.getElementById('conan-gate');
+            gate.style.display = 'flex';
+
+            // หน่วงเวลาเล็กน้อยแล้วเปิดประตู
+            setTimeout(() => {
+                gate.classList.add('gate-open');
+                
+                // 4. เมื่อประตูเปิดเสร็จ (1.5 วินาที) ให้แสดงหน้าเกม
+                setTimeout(() => {
+                    gate.style.opacity = '0';
+                    setTimeout(() => {
+                        gate.style.display = 'none';
+                        document.getElementById('main-game').style.display = 'block';
+                    }, 500);
+                }, 1500);
+
+            }, 500);
         }
     </script>
 </body>
