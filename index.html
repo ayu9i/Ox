@@ -3,341 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AYU ARENA - INFINITE LEGACY 2026</title>
+    <title>AYU ARENA - THE MULTIVERSE</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
     <style>
         :root { --p: #6366f1; --g: #fbbf24; --bg: #020617; --glass: rgba(15, 23, 42, 0.95); --green: #10b981; --red: #ef4444; }
-        * { box-sizing: border-box; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); touch-action: manipulation; }
-        body, html { margin: 0; padding: 0; min-height: 100vh; font-family: 'Kanit', sans-serif; background: var(--bg); color: white; overflow: hidden; }
+        * { box-sizing: border-box; transition: 0.2s; -webkit-tap-highlight-color: transparent; }
+        body, html { margin: 0; padding: 0; min-height: 100vh; font-family: 'Kanit', sans-serif; background: var(--bg); color: white; overflow: hidden; display: flex; align-items: center; justify-content: center; }
 
-        /* --- STABILITY & NETWORK --- */
-        .net-status { position: fixed; top: 15px; right: 15px; z-index: 2000; display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 10px; font-size: 0.7rem; font-family: 'Orbitron'; border: 1px solid rgba(255,255,255,0.1); }
-        .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
-        .dot.offline { background: var(--red); box-shadow: 0 0 8px var(--red); }
-
-        /* --- CONAN GATE --- */
-        #gate { position: fixed; inset: 0; z-index: 10000; display: none; perspective: 1500px; }
-        .door { position: absolute; width: 50%; height: 100%; background: #0f172a; border: 1px solid #1e293b; display: flex; align-items: center; justify-content: center; transition: 1.5s ease-in-out; box-shadow: inset 0 0 100px #000; }
-        .door-l { left: 0; transform-origin: left; border-right: 3px solid var(--g); }
-        .door-r { right: 0; transform-origin: right; border-left: 3px solid var(--g); }
-        .gate-open .door-l { transform: rotateY(-100deg); }
-        .gate-open .door-r { transform: rotateY(100deg); }
-
-        /* --- UI CONTAINER --- */
-        .c { width: 95%; max-width: 500px; padding: 25px; background: var(--glass); backdrop-filter: blur(25px); border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); text-align: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 20px 80px rgba(0,0,0,0.8); z-index: 100; max-height: 90vh; overflow-y: auto; }
+        .game-card { width: 95%; max-width: 480px; background: var(--glass); border-radius: 40px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); position: relative; box-shadow: 0 0 50px #000; }
         .hidden { display: none !important; }
-        .btn { width: 100%; padding: 12px; background: var(--p); border: none; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; margin-top: 8px; font-family: 'Kanit'; font-size: 1rem; }
-        .btn:disabled { background: #1e293b; color: #475569; }
-        .btn-gold { background: var(--g); color: #000; }
 
-        /* --- TOP STATS --- */
-        .top-bar { position: fixed; top: 10px; display: flex; flex-wrap: wrap; gap: 5px; z-index: 500; width: 100%; justify-content: center; pointer-events: none; }
-        .pill { background: rgba(0,0,0,0.8); padding: 5px 12px; border-radius: 50px; border: 1px solid var(--g); font-size: 0.75rem; pointer-events: auto; }
+        /* --- STATS --- */
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-bottom: 15px; }
+        .stat-i { background: #1e293b; padding: 5px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+        .stat-i b { display: block; font-size: 0.8rem; color: var(--g); font-family: 'Orbitron'; }
+        .stat-i span { font-size: 0.6rem; color: #94a3b8; }
 
-        /* --- GAME WORLD --- */
-        .world { height: 200px; background-size: cover; background-position: center; border-radius: 20px; position: relative; overflow: hidden; border: 2px solid #334155; margin: 10px 0; }
-        #pet { position: absolute; bottom: 20px; left: 50%; font-size: 55px; transform: translateX(-50%); z-index: 10; filter: drop-shadow(0 0 10px rgba(255,255,255,0.4)); }
-        #baby { position: absolute; bottom: 20px; left: 62%; font-size: 30px; display: none; }
-        .loc-tag { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 3px 10px; border-radius: 10px; font-size: 0.7rem; border: 1px solid var(--p); color: var(--g); font-family: 'Orbitron'; }
-        .score-tag { position: absolute; top: 10px; left: 10px; color: var(--g); font-family: 'Orbitron'; font-weight: 900; z-index: 20; font-size: 1.1rem; }
-        .star { position: absolute; font-size: 25px; animation: fall 2s linear forwards; }
-        @keyframes fall { to { top: 250px; } }
+        /* --- SCREEN --- */
+        .screen { width: 100%; height: 230px; border-radius: 30px; border: 3px solid #334155; position: relative; overflow: hidden; background-size: cover; margin-bottom: 15px; }
+        #pet { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 60px; z-index: 10; }
+        #pet-hat { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 25px; pointer-events: none; }
+        #enemy { position: absolute; bottom: 20px; right: -50px; font-size: 40px; } /* สำหรับเกมวิ่ง */
+        .weather-layer { position: absolute; inset: 0; pointer-events: none; background: transparent; z-index: 5; }
 
-        /* --- LOG & INPUTS --- */
-        .bar-o { width: 100%; height: 10px; background: #1e293b; border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
-        .bar-i { height: 100%; background: var(--g); width: 100%; }
-        .log-box { height: 90px; background: rgba(0,0,0,0.4); border-radius: 15px; padding: 10px; overflow-y: auto; text-align: left; font-size: 0.8rem; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); }
-        input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--p); background: #000; color: white; text-align: center; margin-top: 10px; font-family: 'Kanit'; }
+        /* --- BARS --- */
+        .bar-container { display: flex; gap: 10px; margin-bottom: 15px; }
+        .bar-wrap { flex: 1; }
+        .bar-bg { height: 8px; background: #0f172a; border-radius: 10px; overflow: hidden; margin-top: 4px; }
+        .bar-fill { height: 100%; transition: 0.5s; }
+
+        /* --- CONTROLS --- */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .btn { border: none; border-radius: 18px; padding: 12px 5px; color: white; font-family: 'Kanit'; font-weight: 700; cursor: pointer; background: #1e293b; border-bottom: 4px solid #000; display: flex; flex-direction: column; align-items: center; font-size: 0.8rem; }
+        .btn:active { transform: translateY(2px); border-bottom-width: 2px; }
+        .btn-p { background: var(--p); }
+        .btn-g { background: var(--g); color: #000; }
+
+        /* --- MODAL --- */
+        .modal { position: absolute; inset: 15px; background: #0f172a; border-radius: 30px; z-index: 100; padding: 20px; border: 1px solid var(--p); display: none; flex-direction: column; }
+        
+        /* --- ANIMATIONS --- */
+        .jump { animation: jumpAnim 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes jumpAnim { 0%, 100% { bottom: 20px; } 50% { bottom: 120px; } }
+        .rain { background: rgba(0, 100, 255, 0.1); box-shadow: inset 0 0 30px rgba(0,100,255,0.2); }
     </style>
 </head>
 <body>
 
-    <div class="net-status"><div id="net-dot" class="dot"></div><span id="ping">PING: --ms</span></div>
-
-    <div id="gate"><div class="door door-l"></div><div class="door door-r"></div></div>
-
-    <div id="ui-top" class="top-bar hidden">
-        <div class="pill">💰 <span id="u-c">0</span></div>
-        <div class="pill">🍖 <span id="u-f">0</span></div>
-        <div class="pill">🎂 Age: <span id="u-age">0</span></div>
-        <div class="pill">🧬 Gen: <span id="u-gen">1</span></div>
-    </div>
-
-    <div id="scr-reg" class="c">
-        <h1 style="font-family:'Orbitron'; color:var(--p); margin:0">AYU ARENA</h1>
-        <p style="font-size:0.7rem; color:#94a3b8; letter-spacing:2px; margin-bottom:20px;">ULTIMATE LEGACY v4.0</p>
-        <input type="text" id="in-n" placeholder="ชื่อไอดีผู้เล่น...">
-        <p style="font-size:0.85rem; margin-top:15px;">เลือกสายพันธุ์เริ่มต้น (ถาวร)</p>
-        <div style="display:flex; gap:10px; margin-bottom:20px;">
-            <button class="btn" onclick="selP('🐶')">🐶</button>
-            <button class="btn" onclick="selP('🐱')">🐱</button>
-            <button class="btn" onclick="selP('🐼')">🐼</button>
+    <div class="game-card">
+        <div class="stats">
+            <div class="stat-i"><span>MONEY</span><b id="u-c">0</b></div>
+            <div class="stat-i"><span>FOOD</span><b id="u-f">0</b></div>
+            <div class="stat-i"><span>AGE</span><b id="u-age">0.0</b></div>
+            <div class="stat-i"><span>LOVE</span><b id="u-love">0</b></div>
         </div>
-        <button class="btn btn-gold" onclick="launch()">INITIALIZE SYSTEM</button>
-    </div>
 
-    <div id="scr-hub" class="c hidden">
-        <h2 style="font-family:'Orbitron'; color:var(--g)">COMMAND HUB</h2>
-        <button class="btn" onclick="nav('pet')">🐾 เลี้ยงสัตว์ & มินิเกม</button>
-        <button class="btn" onclick="nav('word')">🤖 ต่อคำศัพท์ VS AI</button>
-        <button class="btn" onclick="nav('world')">✈️ เดินทางต่างประเทศ</button>
-        <button class="btn" onclick="nav('shop')">🛒 ร้านค้าอาหาร</button>
-        <button class="btn" onclick="nav('code')">🔑 ใส่โค้ดลับ</button>
-        <button class="btn" style="background:#1e293b; color:var(--red); margin-top:20px;" onclick="wipe()">RESET ALL</button>
-    </div>
-
-    <div id="scr-pet" class="c hidden">
-        <div id="score-val" class="score-tag hidden">STARS: 0</div>
-        <div class="world" id="pet-world" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500');">
-            <div id="loc-tag" class="loc-tag">THAILAND</div>
-            <div id="pet">🐶</div>
-            <div id="baby">🍼</div>
-        </div>
-        
-        <div id="pet-ui">
-            <div style="display:flex; justify-content:space-between; font-size:0.75rem"><span>HUNGER (ความหิว)</span><span id="t-h">100%</span></div>
-            <div class="bar-o"><div id="b-h" class="bar-i"></div></div>
-            
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-                <button id="btn-feed" class="btn btn-gold" onclick="feed()">🍖 ป้อนอาหาร (สต็อก: <span id="inv-f">0</span>)</button>
-                <button class="btn btn-gold" onclick="startMiniGame()">⭐ เล่นเกมหาเงิน</button>
-                <button id="btn-marry" class="btn hidden" style="background:var(--green); grid-column: span 2;" onclick="marry()">💒 แต่งงาน & มีทายาท (Age 10+)</button>
-                <button class="btn" style="grid-column: span 2" onclick="nav('hub')">กลับหน้าหลัก</button>
+        <div class="screen" id="sc" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500');">
+            <div id="weather" class="weather-layer"></div>
+            <div id="pet">
+                <div id="pet-hat"></div>
+                <span id="pet-emoji">🐶</span>
             </div>
-            <p style="font-size:0.7rem; color:#94a3b8; margin-top:10px;">*แตะหรือเลื่อนที่พื้นสีดำเพื่อรับดาวหาเงิน*</p>
+            <div id="enemy">🌵</div>
+            <div id="score-box" class="hidden" style="position:absolute; top:10px; left:50%; transform:translateX(-50%); font-family:Orbitron; font-size:1.5rem; color:var(--g); z-index:20;">0</div>
         </div>
-    </div>
 
-    <div id="scr-word" class="c hidden">
-        <div style="background:rgba(0,0,0,0.5); padding:20px; border-radius:20px; border: 1px solid var(--g);">
-            <div id="cur-w" style="font-size:2.2rem; color:var(--g); font-weight:900">SKY</div>
-            <p>ต่อด้วยอักษร: <b id="next-l" style="color:var(--red)">Y</b></p>
+        <div class="bar-container">
+            <div class="bar-wrap">
+                <span style="font-size:0.6rem">HUNGER (หิว)</span>
+                <div class="bar-bg"><div id="b-h" class="bar-fill" style="background:var(--red)"></div></div>
+            </div>
+            <div class="bar-wrap">
+                <span style="font-size:0.6rem">ENERGY (พลัง)</span>
+                <div class="bar-bg"><div id="b-e" class="bar-fill" style="background:var(--p)"></div></div>
+            </div>
         </div>
-        <div id="w-log" class="log-box">ประวัติการต่อสู้กับ AI...</div>
-        <input type="text" id="w-in" placeholder="พิมพ์คำศัพท์...">
-        <button class="btn btn-gold" onclick="wCheck()">ส่งคำตอบ (+20💰)</button>
-        <button class="btn" onclick="nav('hub')">กลับ</button>
-    </div>
 
-    <div id="scr-world" class="c hidden">
-        <h2 style="font-family:'Orbitron'; color:var(--p)">WORLD TRAVEL</h2>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <button class="btn" onclick="travel('JAPAN', 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=500', 300)">🇯🇵 ญี่ปุ่น (300💰)</button>
-            <button class="btn" onclick="travel('USA', 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=500', 500)">🇺🇸 อเมริกา (500💰)</button>
-            <button class="btn" onclick="travel('EGYPT', 'https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?w=500', 400)">🇪🇬 อียิปต์ (400💰)</button>
-            <button class="btn" onclick="travel('PARIS', 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=500', 600)">🇫🇷 ปารีส (600💰)</button>
+        <div class="grid">
+            <button class="btn btn-p" onclick="feed()"><span>🍖</span>ป้อนข้าว</button>
+            <button class="btn btn-p" onclick="openMod('game')"><span>🎮</span>เล่นเกม</button>
+            <button class="btn btn-p" onclick="openMod('shop')"><span>🛒</span>ร้านค้า</button>
+            
+            <button class="btn btn-g" onclick="openMod('gacha')"><span>🎲</span>สุ่มโชค</button>
+            <button class="btn btn-g" onclick="openMod('hat')"><span>👒</span>แต่งตัว</button>
+            <button class="btn btn-g" onclick="openMod('code')"><span>🔑</span>โค้ดลับ</button>
+            
+            <button id="btn-marry" class="btn hidden" style="grid-column: span 3; background:var(--green)" onclick="marry()">💒 พร้อมมีทายาท (Age 10)</button>
         </div>
-        <button class="btn" style="margin-top:15px;" onclick="nav('hub')">กลับ</button>
-    </div>
 
-    <div id="scr-shop" class="c hidden">
-        <h2 style="font-family:'Orbitron'; color:var(--g)">PET SHOP</h2>
-        <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:15px;">
-            <p>🍗 อาหารสัตว์ (อิ่ม +25)</p>
-            <button class="btn btn-gold" onclick="buy(1, 50)">1 ชิ้น (50💰)</button>
-            <button class="btn btn-gold" onclick="buy(10, 450)">10 ชิ้น (450💰)</button>
+        <div id="mod-shop" class="modal">
+            <h2 style="color:var(--g)">SHOP</h2>
+            <button class="btn btn-g" style="width:100%; margin-bottom:10px" onclick="buy(1, 50)">น่องไก่ x1 (50💰)</button>
+            <button class="btn btn-g" style="width:100%" onclick="buy(10, 450)">น่องไก่ x10 (450💰)</button>
+            <button class="btn" style="margin-top:auto" onclick="closeMod()">ปิด</button>
         </div>
-        <button class="btn" onclick="nav('hub')">กลับ</button>
-    </div>
 
-    <div id="scr-code" class="c hidden">
-        <h2 style="font-family:'Orbitron'; color:var(--g)">REDEEM CODE</h2>
-        <input type="text" id="code-in" placeholder="กรอกโค้ดลับ...">
-        <button class="btn btn-gold" onclick="redeem()">ตกลง</button>
-        <button class="btn" onclick="nav('hub')">กลับ</button>
+        <div id="mod-game" class="modal">
+            <h2 style="color:var(--p)">ARCADE</h2>
+            <button class="btn btn-p" style="width:100%; margin-bottom:10px" onclick="gameStar()">⭐ เก็บดาว (หาเงิน)</button>
+            <button class="btn btn-p" style="width:100%" onclick="gameRun()">🏃 วิ่งสู้ฟัด (หาแต้มรัก)</button>
+            <button class="btn" style="margin-top:auto" onclick="closeMod()">ปิด</button>
+        </div>
+
+        <div id="mod-gacha" class="modal">
+            <h2 style="color:var(--g)">GACHA</h2>
+            <p>สุ่มของรางวัล (100💰 ต่อครั้ง)</p>
+            <button class="btn btn-g" style="width:100%" onclick="rollGacha()">เสี่ยงโชค!</button>
+            <div id="gacha-res" style="margin-top:20px; text-align:center; font-size:1.5rem"></div>
+            <button class="btn" style="margin-top:auto" onclick="closeMod()">ปิด</button>
+        </div>
+
+        <div id="mod-hat" class="modal">
+            <h2 style="color:var(--g)">DRESS UP</h2>
+            <div class="grid">
+                <button class="btn" onclick="setHat('👑')">👑</button>
+                <button class="btn" onclick="setHat('🎩')">🎩</button>
+                <button class="btn" onclick="setHat('👒')">👒</button>
+                <button class="btn" onclick="setHat('🎀')">🎀</button>
+                <button class="btn" onclick="setHat('')">ถอด</button>
+            </div>
+            <button class="btn" style="margin-top:auto" onclick="closeMod()">ปิด</button>
+        </div>
+
+        <div id="mod-code" class="modal">
+            <h2 style="color:var(--green)">CODE</h2>
+            <input type="text" id="code-in" placeholder="ใส่โค้ดลับ...">
+            <button class="btn btn-p" style="width:100%" onclick="redeem()">REDEEM</button>
+            <button class="btn" style="margin-top:auto" onclick="closeMod()">ปิด</button>
+        </div>
     </div>
 
     <script>
-        let s = { n:'', a:'🐶', c:100, f:5, h:100, age:0, gen:1, loc:'THAILAND', reg:false, usedCodes:[], w:'SKY' };
-        let gameActive = false, starInt;
+        let s = { c:200, f:5, h:100, e:100, age:0, love:0, hat:'', gen:1, used:[], reg:false, p:'🐶' };
+        let activeG = false;
 
-        // 20 SECRET CODES DATABASE
-        const secretCodes = {
-            "AYU2026": {c:1000, f:10}, "STARTUP": {c:500, f:5}, "LOVEPET": {c:0, f:20},
-            "WORLD": {c:300, f:0}, "FOODIE": {c:0, f:50}, "RICHMAN": {c:5000, f:0},
-            "BABY": {c:100, f:2}, "DOGGY": {c:200, f:0}, "CATTY": {c:200, f:0},
-            "PANDA": {c:200, f:0}, "JAPANESE": {c:500, f:0}, "EGYPTIAN": {c:400, f:0},
-            "PARIS": {c:600, f:0}, "NEWYORK": {c:700, f:0}, "GODMODE": {c:9999, f:99},
-            "LUCKY": {c:777, f:7}, "HIDDEN": {c:1000, f:0}, "GEMINI": {c:888, f:8},
-            "SMILE": {c:100, f:10}, "FINAL": {c:2000, f:20}
-        };
+        // 20 CODES
+        const CODES = { "AYU2026":{c:1000}, "GODMODE":{c:9999,f:99}, "RICH":{c:5000}, "LOVE":{love:50}, "STARTER":{c:200,f:5} /* ... เพิ่มเติมได้ตามชอบ */ };
 
-        // --- STABILITY SYSTEM ---
-        setInterval(() => {
-            const dot = document.getElementById('net-dot');
-            dot.className = navigator.onLine ? "dot" : "dot offline";
-            document.getElementById('ping').innerText = "PING: " + (Math.floor(Math.random()*15)+10) + "ms";
-        }, 3000);
-
-        // --- DATA ENGINE ---
         window.onload = () => {
-            const saved = localStorage.getItem('AYU_ULTIMATE_SAVE');
-            if(saved) {
-                s = JSON.parse(saved);
-                if(s.reg) { document.getElementById('scr-reg').classList.add('hidden'); init(); nav('hub'); }
-            }
+            const save = localStorage.getItem('AYU_MULTIVERSE');
+            if(save) { s = JSON.parse(save); updateUI(); }
             setInterval(() => {
-                if(s.reg) {
+                if(!activeG) {
                     s.h = Math.max(0, s.h - 1);
+                    s.e = Math.max(0, s.e - 0.5);
                     s.age += 0.05;
                     if(s.age >= 10) document.getElementById('btn-marry').classList.remove('hidden');
-                    updateUI(); save();
+                    updateUI(); saveG();
                 }
             }, 10000);
         };
 
-        function save() { localStorage.setItem('AYU_ULTIMATE_SAVE', JSON.stringify(s)); }
-        function selP(i) { s.a = i; alert("เลือก " + i + " แล้ว!"); }
-        
-        function launch() {
-            if(!document.getElementById('in-n').value) return alert("กรุณาใส่ชื่อ!");
-            s.n = document.getElementById('in-n').value; s.reg = true;
-            document.getElementById('scr-reg').classList.add('hidden');
-            const g = document.getElementById('gate'); g.style.display='block';
-            setTimeout(() => { g.classList.add('gate-open'); setTimeout(() => { g.style.display='none'; init(); nav('hub'); }, 1500); }, 100);
-            save();
-        }
-
-        function init() {
-            document.getElementById('ui-top').classList.remove('hidden');
-            document.getElementById('pet').innerText = s.a;
-            updateUI();
-        }
-
+        function saveG() { localStorage.setItem('AYU_MULTIVERSE', JSON.stringify(s)); }
         function updateUI() {
-            document.getElementById('u-c').innerText = Math.floor(s.c).toLocaleString();
+            document.getElementById('u-c').innerText = Math.floor(s.c);
             document.getElementById('u-f').innerText = s.f;
             document.getElementById('u-age').innerText = s.age.toFixed(1);
-            document.getElementById('u-gen').innerText = s.gen;
-            document.getElementById('t-h').innerText = s.h + "%";
+            document.getElementById('u-love').innerText = s.love;
             document.getElementById('b-h').style.width = s.h + "%";
-            document.getElementById('inv-f').innerText = s.f;
-            document.getElementById('loc-tag').innerText = s.loc;
-            document.getElementById('cur-w').innerText = s.w;
-            document.getElementById('next-l').innerText = s.w.slice(-1).toUpperCase();
-            document.getElementById('btn-feed').disabled = (s.f <= 0 || s.h >= 100);
+            document.getElementById('b-e').style.width = s.e + "%";
+            document.getElementById('pet-emoji').innerText = s.p;
+            document.getElementById('pet-hat').innerText = s.hat;
         }
 
-        function nav(scr) {
-            document.querySelectorAll('.c').forEach(el => el.classList.add('hidden'));
-            document.getElementById('scr-' + scr).classList.remove('hidden');
-            gameActive = false; clearInterval(starInt);
-            document.getElementById('pet-ui').classList.remove('hidden');
-            document.getElementById('score-val').classList.add('hidden');
-        }
+        function openMod(id) { document.getElementById('mod-'+id).style.display='flex'; }
+        function closeMod() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }
 
-        // --- TAMAGOTCHI & MINIGAME ---
         function feed() {
-            if(s.f > 0) {
-                s.f--; s.h = Math.min(100, s.h + 25);
-                updateUI(); save();
-                document.getElementById('pet').animate([{transform:'translateX(-50%) scale(1.3)'},{transform:'translateX(-50%) scale(1)'}], 300);
-            }
+            if(s.f>0 && s.h<100) { s.f--; s.h=Math.min(100, s.h+20); updateUI(); saveG(); }
         }
 
-        function startMiniGame() {
-            gameActive = true; let score = 0;
-            document.getElementById('pet-ui').classList.add('hidden');
-            document.getElementById('score-val').classList.remove('hidden');
-            document.getElementById('score-val').innerText = "STARS: 0";
-            
-            const area = document.getElementById('game-area');
-            const move = (e) => {
-                if(!gameActive) return;
-                let rect = area.getBoundingClientRect();
-                let x = (e.clientX || e.touches[0].clientX) - rect.left;
-                document.getElementById('pet').style.left = Math.max(30, Math.min(x, rect.width-30)) + "px";
-            };
-            area.onmousemove = move; area.ontouchmove = move;
+        function buy(a,p) { if(s.c>=p){ s.c-=p; s.f+=a; updateUI(); saveG(); } }
 
-            starInt = setInterval(() => {
-                if(!gameActive) return;
-                const star = document.createElement('div');
-                star.className = 'star'; star.innerText = "⭐";
-                star.style.left = Math.random() * 90 + "%"; star.style.top = "0px";
-                area.appendChild(star);
+        function setHat(h) { s.hat = h; updateUI(); saveG(); }
+
+        function rollGacha() {
+            if(s.c < 100) return alert("เงินไม่พอ!");
+            s.c -= 100;
+            const res = ["🍖 x5", "💰 500", "💖 Love +10", "💩 ขยะ"];
+            const r = Math.floor(Math.random()*res.length);
+            document.getElementById('gacha-res').innerText = "คุณได้รับ: " + res[r];
+            if(r==0) s.f+=5; if(r==1) s.c+=500; if(r==2) s.love+=10;
+            updateUI(); saveG();
+        }
+
+        // --- GAME 1: STARS ---
+        function gameStar() {
+            closeMod(); activeG = true; let sc = 0;
+            const box = document.getElementById('score-box');
+            box.classList.remove('hidden');
+            
+            let si = setInterval(() => {
+                const st = document.createElement('div');
+                st.style.position='absolute'; st.style.top='0'; st.style.left=Math.random()*90+'%';
+                st.innerText='⭐'; st.style.fontSize='25px'; document.getElementById('sc').appendChild(st);
                 let fall = setInterval(() => {
-                    let pRect = document.getElementById('pet').getBoundingClientRect();
-                    let sRect = star.getBoundingClientRect();
-                    if(sRect.bottom >= pRect.top && sRect.left < pRect.right && sRect.right > pRect.left) {
-                        score++; document.getElementById('score-val').innerText = "STARS: " + score;
-                        star.remove(); clearInterval(fall);
+                    st.style.top = (parseInt(st.style.top)||0)+5+'px';
+                    let pR = document.getElementById('pet').getBoundingClientRect();
+                    let sR = st.getBoundingClientRect();
+                    if(sR.bottom >= pR.top && sR.left < pR.right && sR.right > pR.left) {
+                        sc++; box.innerText = sc; st.remove(); clearInterval(fall);
                     }
-                    if(parseInt(star.style.top) > 200) { star.remove(); clearInterval(fall); }
-                    star.style.top = (parseInt(star.style.top) || 0) + 5 + "px";
+                    if(parseInt(st.style.top)>230){ st.remove(); clearInterval(fall); }
                 }, 30);
             }, 800);
 
-            setTimeout(() => {
-                gameActive = false; clearInterval(starInt);
-                let reward = score * 25; s.c += reward;
-                alert(`จบเกม! เก็บได้ ${score} ดวง รับเงิน ${reward} 💰`);
-                nav('pet'); updateUI(); save();
-            }, 15000);
+            setTimeout(() => { clearInterval(si); activeG=false; box.classList.add('hidden'); s.c+=sc*20; alert("ได้เงิน "+sc*20); updateUI(); saveG(); }, 10000);
         }
 
-        // --- AI WORD BATTLE ---
-        function wCheck() {
-            const v = document.getElementById('w-in').value.trim().toUpperCase();
-            const last = s.w.slice(-1).toUpperCase();
-            if(v.startsWith(last) && v.length > 1) {
-                s.w = v; s.c += 20;
-                addLog(`👤 คุณ: ${v}`, "var(--green)");
-                document.getElementById('w-in').value = "";
-                updateUI();
-                setTimeout(() => {
-                    const aiDict = ["APPLE", "EGG", "GOAT", "TIGER", "RABBIT", "TEA", "ANT", "YOYO", "YOUTH", "ZEBRA", "NOSE"];
-                    const choice = aiDict.filter(w => w.startsWith(s.w.slice(-1).toUpperCase()));
-                    if(choice.length > 0) {
-                        s.w = choice[Math.floor(Math.random()*choice.length)];
-                        addLog(`🤖 AI: ${s.w}`, "var(--g)");
-                    } else { addLog(`🤖 AI: ยอมแพ้แล้ว!`, "var(--red)"); s.c += 100; }
-                    updateUI(); save();
-                }, 1000);
-            } else alert("ต้องเริ่มด้วย " + last);
-        }
-        function addLog(t, c) {
-            const l = document.getElementById('w-log');
-            if(l.innerText.includes("ประวัติ")) l.innerHTML = "";
-            l.innerHTML = `<div style="color:${c}">${t}</div>` + l.innerHTML;
-        }
+        // --- GAME 2: JUMP RUN ---
+        function gameRun() {
+            closeMod(); activeG = true; let sc = 0;
+            const pet = document.getElementById('pet');
+            const enemy = document.getElementById('enemy');
+            const scBox = document.getElementById('score-box');
+            scBox.classList.remove('hidden'); scBox.innerText = "0";
 
-        // --- TRAVEL & LEGACY & CODES ---
-        function travel(name, img, cost) {
-            if(s.c >= cost) {
-                s.c -= cost; s.loc = name;
-                document.getElementById('pet-world').style.backgroundImage = `url('${img}')`;
-                nav('pet'); updateUI(); save();
-                alert("เดินทางถึง " + name);
-            } else alert("เงินไม่พอ!");
+            // Jump Control
+            window.onclick = () => pet.classList.add('jump');
+            pet.onanimationend = () => pet.classList.remove('jump');
+
+            let runInt = setInterval(() => {
+                let eLeft = parseInt(window.getComputedStyle(enemy).getPropertyValue("right"));
+                if(eLeft > 500) { eLeft = -50; sc++; scBox.innerText = sc; }
+                enemy.style.right = (eLeft + 8) + "px";
+
+                let pBottom = parseInt(window.getComputedStyle(pet).getPropertyValue("bottom"));
+                let eRight = parseInt(window.getComputedStyle(enemy).getPropertyValue("right"));
+
+                // Collision Check (Simplified)
+                if(eRight > 200 && eRight < 250 && pBottom < 60) {
+                    clearInterval(runInt); activeG = false;
+                    scBox.classList.add('hidden');
+                    enemy.style.right = "-50px";
+                    s.love += sc; alert("เกมจบ! ได้แต้มรัก: " + sc);
+                    updateUI(); saveG();
+                }
+            }, 20);
         }
 
         function redeem() {
-            const input = document.getElementById('code-in').value.toUpperCase();
-            if(s.usedCodes.includes(input)) return alert("ใช้ไปแล้ว!");
-            if(secretCodes[input]) {
-                s.c += secretCodes[input].c; s.f += secretCodes[input].f;
-                s.usedCodes.push(input);
-                alert(`สำเร็จ! ได้เงิน ${secretCodes[input].c} และอาหาร ${secretCodes[input].f}`);
-                document.getElementById('code-in').value = ""; updateUI(); save();
-            } else alert("โค้ดผิด!");
+            let i = document.getElementById('code-in').value.toUpperCase();
+            if(CODES[i]) { s.c+=(CODES[i].c||0); s.f+=(CODES[i].f||0); s.love+=(CODES[i].love||0); alert("สำเร็จ!"); closeMod(); updateUI(); saveG(); }
         }
 
         function marry() {
-            if(confirm("แต่งงานเพื่อรับ Gen ใหม่? (เงินยังอยู่ครบ)")) {
-                s.gen++; s.age = 0; s.h = 100;
-                document.getElementById('baby').style.display = 'block';
-                setTimeout(() => { document.getElementById('baby').style.display = 'none'; }, 5000);
-                document.getElementById('btn-marry').classList.add('hidden');
-                updateUI(); save(); alert("ทายาทรุ่นที่ " + s.gen + " เกิดแล้ว!");
+            if(confirm("เริ่ม Gen ใหม่? แต้มรักจะทำให้ลูกเก่งขึ้น!")) {
+                s.gen++; s.age=0; s.h=100; s.e=100; s.c+=s.love*10; // โบนัสเงินจากความรัก
+                s.love=0; updateUI(); saveG();
             }
         }
-
-        function buy(amt, price) {
-            if(s.c >= price) { s.c -= price; s.f += amt; updateUI(); save(); } else alert("เงินไม่พอ!");
-        }
-
-        function wipe() { if(confirm("ลบข้อมูลทั้งหมด?")) { localStorage.clear(); location.reload(); } }
     </script>
 </body>
 </html>
